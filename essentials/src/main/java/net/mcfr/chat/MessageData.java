@@ -98,7 +98,8 @@ public class MessageData {
     Set<Player> players = new HashSet<>();
     Sponge.getServer().getOnlinePlayers().stream()
         .filter(p -> p.equals(getSender()) || p.getWorld().equals(getSender().getWorld())
-            && McFrPlayer.distance(getSender(), p) <= getChatType().getDistance() && p.hasPermission(getChatType().getListenPermission()))
+            && (McFrPlayer.distance(getSender(), p) <= getChatType().getDistance() || getChatType().getDistance() == -1)
+            && p.hasPermission(getChatType().getListenPermission()))
         .forEach(players::add);
     return players;
   }

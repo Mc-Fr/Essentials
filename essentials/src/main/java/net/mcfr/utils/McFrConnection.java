@@ -15,8 +15,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 
-//TODO : pSQL et ReqPrep
-
 public final class McFrConnection {
   private static String jdbcUrl;
   private static boolean configRead = false;
@@ -54,11 +52,9 @@ public final class McFrConnection {
   }
 
   /**
-   * Lit les identifiants de connexion renseignées dans le fichier de config :
-   * config/essentials-config/database.json.
+   * Lit les identifiants de connexion renseignées dans le fichier de config : config/essentials-config/database.json.
    * 
-   * Fichier de la forme (valeurs par défaut renseignées) : { "user" : "root",
-   * "password" : "" }
+   * Fichier de la forme (valeurs par défaut renseignées) : { "user" : "root", "password" : "" }
    */
   private static void readConfigFile() {
     File commandsFile = new File("config/essentials-config/database.json");
