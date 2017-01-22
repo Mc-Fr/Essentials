@@ -32,8 +32,6 @@ import net.mcfr.utils.McFrPlayer;
  * Remove doit retirer le terrier de la sélection des joueurs
  */
 
-//TODO : PL/SQL
-
 public class Burrow {
   private final static long M_TO_MS = 60000;
   private final static PreparedStatement insertQuery;
@@ -310,10 +308,9 @@ public class Burrow {
     burrow.getPopulation().killAllEntities();
     burrow.deleteFromDatabase();
     burrow.setInvisibleForAll();
-    
-    Sponge.getServer().getOnlinePlayers().stream()
-      .filter(p -> McFrPlayer.getMcFrPlayer(p).getSelectedBurrow().get() == burrow)
-      .forEach(p -> McFrPlayer.getMcFrPlayer(p).unselectBurrow());
+
+    Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).getSelectedBurrow().get() == burrow)
+        .forEach(p -> McFrPlayer.getMcFrPlayer(p).unselectBurrow());
   }
 
   public static Optional<Burrow> removeBurrow(Optional<Burrow> burrowOpt) {
