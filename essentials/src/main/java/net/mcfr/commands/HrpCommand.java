@@ -14,32 +14,29 @@ import org.spongepowered.api.text.Text;
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
 
-  //TODO : mettre un bon panneau quand le panneau HRP est fini dans le mod
-
 public class HrpCommand extends AbstractCommand {
-  
+
   public HrpCommand(Essentials plugin) {
     super(plugin);
   }
-  
+
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (src instanceof Player) {
       Player p = (Player) src;
-      
+
       int quantity = 1;
       if (args.hasAny("quantité")) {
-        quantity = Math.min(args.<Integer> getOne("quantité").get(), 16);
+        quantity = Math.min(args.<Integer>getOne("quantité").get(), 16);
       }
       ItemStack nrpSign = ItemStack.builder().itemType(ItemTypes.SIGN).quantity(quantity).build();
       p.getInventory().offer(nrpSign);
-    }
-    else {
+    } else {
       src.sendMessage(ONLY_PLAYERS_COMMAND);
     }
     return CommandResult.success();
   }
-  
+
   @Override
   public CommandSpec getCommandSpec() {
     //#f:0
@@ -51,10 +48,10 @@ public class HrpCommand extends AbstractCommand {
             .build();
     //#f:1
   }
-  
+
   @Override
   public String[] getAliases() {
     return new String[] { "hrp" };
   }
-  
+
 }
