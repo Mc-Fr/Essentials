@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -463,11 +464,25 @@ public class McFrPlayer {
   }
 
   public int getSkillLevel(Skills skill) {
-    int skillLevel = -3;
+    List<Integer> scores = new ArrayList<>();
     if (this.skills.containsKey(skill)) {
-      skillLevel = this.skills.get(skill);
+      scores.add(this.skills.get(skill) + skill.getDifficulty());
+    } else {
+      scores.add(-3 + skill.getDifficulty());
     }
-    return skillLevel;
+    
+    for (Map.Entry<Skills, Integer> dependency : skill.getDependencies().entrySet()) {
+      Skills depSkill = dependency.getKey();
+      int depScore = dependency.getValue();
+      
+      if (this.skills.containsKey(depSkill)) {
+        scores.add(this.skills.get(depSkill) + depSkill.getDifficulty() + depScore);
+      } else {
+        scores.add(-3 + depSkill.getDifficulty() + depScore);
+      }
+    }
+    
+    return scores.stream().max((s1, s2) -> Integer.compare(s1, s2)).get();
   }
 
   public int getLanguageLevel(Language lang) {

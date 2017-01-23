@@ -25,7 +25,7 @@ public class Skills {
     this.name = name;
     this.displayName = displayName.toLowerCase();
     this.attribute = attribute;
-    this.difficulty = -difficulty - 1;
+    this.difficulty = - difficulty;
     this.dependencies = new HashMap<>();
   }
   
@@ -43,6 +43,10 @@ public class Skills {
 
   public int getDifficulty() {
     return this.difficulty;
+  }
+  
+  public Map<Skills, Integer> getDependencies() {
+    return this.dependencies;
   }
 
   public static void loadFromDatabase() {

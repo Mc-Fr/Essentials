@@ -30,8 +30,7 @@ public class RolePlayImp implements RolePlayService {
   public SkillRollResult skillRoll(Player player, Skills skill, int modifier) {
     int roll = rollThreeDice();
     Attributes attribute = skill.getAttribute();
-    int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(attribute) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(skill)
-        + skill.getDifficulty() + modifier;
+    int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(attribute) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(skill) + modifier;
 
     switch (skill.getName()) {
     case "escalade":
@@ -136,7 +135,7 @@ public class RolePlayImp implements RolePlayService {
     
     Skills attackSkill = Skills.getWeaponSkill(player);
     McFrPlayer mcfrPlayer = McFrPlayer.getMcFrPlayer(player);
-    int score = mcfrPlayer.getAttributePoints(attackSkill.getAttribute()) + mcfrPlayer.getSkillLevel(attackSkill) + attackSkill.getDifficulty() + modifier;
+    int score = mcfrPlayer.getAttributePoints(attackSkill.getAttribute()) + mcfrPlayer.getSkillLevel(attackSkill) + modifier;
     
     int margin = score - roll;
     return new AttackRollResult(player, attackSkill, attackSkill.getAttribute(), modifier, roll, score, margin);
@@ -152,8 +151,7 @@ public class RolePlayImp implements RolePlayService {
       if (!player.getItemInHand(HandTypes.MAIN_HAND).equals(ItemTypes.SHIELD) && !player.getItemInHand(HandTypes.OFF_HAND).equals(ItemTypes.SHIELD))
         throw new IllegalStateException("Player can't block without shield!");
       Skills shieldSkill = Skills.getSkills().get("bouclier");
-      score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(shieldSkill)
-          + shieldSkill.getDifficulty();
+      score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(shieldSkill);
       score /= 2;
       score += 3;
       break;
@@ -166,8 +164,7 @@ public class RolePlayImp implements RolePlayService {
       break;
     case PARADE:
       Skills weaponSkill = Skills.getWeaponSkill(player);
-      score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(weaponSkill)
-          + weaponSkill.getDifficulty();
+      score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(weaponSkill);
       score /= 2;
       score += 3;
       if ((weaponSkill.getName().equals("pugilat") || weaponSkill.getName().equals("lutte"))
@@ -178,7 +175,8 @@ public class RolePlayImp implements RolePlayService {
       }
       break;
     }
-
+    
+    score += modifier;
     score += McFrPlayer.getMcFrPlayer(player).hasTrait("reflexes_de_combat") ? 1 : 0;
 
     int margin = score - roll;
