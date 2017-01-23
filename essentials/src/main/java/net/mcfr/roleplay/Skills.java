@@ -63,15 +63,36 @@ public class Skills {
 
   public static Skills getWeaponSkill(Player player) {
     Optional<ItemStack> optUsedWeapon = player.getItemInHand(HandTypes.MAIN_HAND);
-    if (!optUsedWeapon.isPresent() || !isWeapon(optUsedWeapon.get())) {
+    if (!optUsedWeapon.isPresent()) {
       optUsedWeapon = player.getItemInHand(HandTypes.OFF_HAND);
-      if (!optUsedWeapon.isPresent() || !isWeapon(optUsedWeapon.get()))
+      if (!optUsedWeapon.isPresent())
         return skills.get("pugilat");
     }
-    return skills.get("pugilat");
-  }
 
-  private static boolean isWeapon(ItemStack itemStack) {
-    return false;
+    String usedWeaponName = optUsedWeapon.get().getItem().getName();
+    if (usedWeaponName.contains("dagger"))
+      return skills.get("dague");
+    if (usedWeaponName.contains("rapier"))
+      return skills.get("rapiere");
+    if (usedWeaponName.contains("scimitar"))
+      return skills.get("sabre");
+    if (usedWeaponName.endsWith("sword"))
+      return skills.get("epee_courte");
+    if (usedWeaponName.contains("bastard"))
+      return skills.get("epee_a_deux_mains");
+    if (usedWeaponName.contains("mace") || usedWeaponName.contains("war_hammer"))
+      return skills.get("hache/masse_a_une_main");
+    if (usedWeaponName.contains("battle_axe"))
+      return skills.get("hache/masse_a_deux_mains");
+    if (usedWeaponName.contains("halberd"))
+      return skills.get("hallebarde");
+    if (usedWeaponName.contains("spear") || usedWeaponName.contains("pointy"))
+      return skills.get("lance");
+    if (usedWeaponName.contains("bow"))
+      return skills.get("arc");
+    if (usedWeaponName.contains("boStaff"))
+      return skills.get("baton");
+
+    return skills.get("pugilat");
   }
 }
