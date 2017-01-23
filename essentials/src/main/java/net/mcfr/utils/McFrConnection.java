@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.sql.SqlService;
@@ -31,7 +33,11 @@ public final class McFrConnection {
     }
 
     try {
-      this.connection = Sponge.getServiceManager().provide(SqlService.class).get().getDataSource(jdbcUrl + database).getConnection();
+      Optional<SqlService> optService = Sponge.getServiceManager().provide(SqlService.class);
+      if (optService.isPresent()) {
+        this.connection = optService.get().getDataSource(jdbcUrl + database).getConnection();
+      } else
+        throw new NoSuchElementException("Service SQL inexistant !");
     } catch (SQLException e) {
       e.printStackTrace();
     }

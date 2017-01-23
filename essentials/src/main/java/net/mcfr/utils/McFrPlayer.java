@@ -330,7 +330,6 @@ public class McFrPlayer {
       this.skills.clear();
       this.attributes.clear();
       this.traits.clear();
-      McFrConnection jdrDatabase = McFrConnection.getJdrConnection();
 
       getPseudonym.setString(1, this.player.getName());
       ResultSet playerData = getPseudonym.executeQuery();

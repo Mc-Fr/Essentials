@@ -55,16 +55,6 @@ import net.mcfr.utils.McFrPlayer;
 @Plugin(id = "essentials", name = "Essentials", version = "1.0", dependencies = @Dependency(id = "mcfr_b_i"))
 public class Essentials {
 
-  private final static PreparedStatement forumAccountId, activeCharacterSheet, deathDataReq;
-
-  static {
-    forumAccountId = McFrConnection.getJdrConnection()
-        .prepare("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
-    activeCharacterSheet = McFrConnection.getJdrConnection().prepare("SELECT id FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
-    deathDataReq = McFrConnection.getJdrConnection()
-        .prepare("SELECT avantage FROM fiche_perso_personnage_avantage WHERE avantage = \"mort\" AND id_fiche_perso_personnage = ?");
-  }
-
   private boolean serverLock;
 
   @Inject
@@ -113,16 +103,21 @@ public class Essentials {
     } else {
       try {
         int userId = -1;
-
+        PreparedStatement forumAccountId = McFrConnection.getJdrConnection()
+            .prepare("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
         forumAccountId.setString(1, e.getTargetUser().getName());
         ResultSet user = forumAccountId.executeQuery();
 
         if (user.next()) {
           userId = user.getInt(1);
+          PreparedStatement activeCharacterSheet = McFrConnection.getJdrConnection()
+              .prepare("SELECT id FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
           activeCharacterSheet.setInt(1, userId);
           ResultSet characterSheet = activeCharacterSheet.executeQuery();
 
           if (characterSheet.next()) {
+            PreparedStatement deathDataReq = McFrConnection.getJdrConnection()
+                .prepare("SELECT avantage FROM fiche_perso_personnage_avantage WHERE avantage = \"mort\" AND id_fiche_perso_personnage = ?");
             deathDataReq.setInt(1, characterSheet.getInt(1));
             ResultSet deathData = deathDataReq.executeQuery();
             if (deathData.next()) {
