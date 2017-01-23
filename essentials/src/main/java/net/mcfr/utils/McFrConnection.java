@@ -72,14 +72,6 @@ public final class McFrConnection {
     }
   }
 
-  public void execute(String query) {
-    try {
-      this.connection.prepareStatement(query).execute();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-  }
-
   public ResultSet executeQuery(String query) {
     try {
       return this.connection.prepareStatement(query).executeQuery();

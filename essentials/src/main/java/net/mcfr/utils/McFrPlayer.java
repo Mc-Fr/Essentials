@@ -1,5 +1,6 @@
 package net.mcfr.utils;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,7 +32,25 @@ import net.mcfr.roleplay.Skills;
 
 public class McFrPlayer {
   private static List<McFrPlayer> players = new ArrayList<>();
+  private final static PreparedStatement killCharacter, incrementDeaths, changeDescription, changeName, getPseudonym, getUserId, getCharacterSheetId,
+      getCharacterSheet, getAttributes, getAdvantages;
 
+  static {
+    killCharacter = McFrConnection.getJdrConnection().prepare("INSERT INTO fiche_perso_personnage_avantage VALUES (?, ?, ?)");
+    incrementDeaths = McFrConnection.getServerConnection().prepare("UPDATE Player SET deaths = ? WHERE pseudonym = ?");
+    changeDescription = McFrConnection.getServerConnection().prepare("UPDATE Player SET description = ? WHERE pseudonym = ?");
+    changeName = McFrConnection.getServerConnection().prepare("UPDATE Player SET name = ? WHERE pseudonym = ?");
+    getPseudonym = McFrConnection.getServerConnection().prepare("SELECT * FROM Player WHERE pseudonym = ?");
+    getUserId = McFrConnection.getJdrConnection()
+        .prepare("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
+    getCharacterSheetId = McFrConnection.getJdrConnection().prepare("SELECT id FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
+    getCharacterSheet = McFrConnection.getJdrConnection()
+        .prepare("SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = ?");
+    getAttributes = McFrConnection.getJdrConnection()
+        .prepare("SELECT attribut,level FROM fiche_perso_personnage_attribut WHERE id_fiche_perso_personnage = ?");
+    getAdvantages = McFrConnection.getJdrConnection()
+        .prepare("SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
+  }
   private Player player;
   private int deaths;
   /**
@@ -259,7 +278,13 @@ public class McFrPlayer {
   }
 
   public void setName(String name) {
-    McFrConnection.getServerConnection().execute("UPDATE Player SET name = \"" + name + "\" WHERE pseudonym = \"" + this.player.getName() + "\"");
+    try {
+      changeName.setString(1, name);
+      changeName.setString(2, this.player.getName());
+      changeName.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
     this.name = name;
   }
 
@@ -268,8 +293,13 @@ public class McFrPlayer {
   }
 
   public void setDescription(String description) {
-    McFrConnection.getServerConnection()
-        .execute("UPDATE Player SET description = \"" + description + "\" WHERE pseudonym = \"" + this.player.getName() + "\"");
+    try {
+      changeDescription.setString(1, description);
+      changeDescription.setString(2, this.player.getName());
+      changeDescription.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
     this.description = Optional.of(description);
   }
 
@@ -304,8 +334,9 @@ public class McFrPlayer {
       this.traits.clear();
       McFrConnection jdrDatabase = McFrConnection.getJdrConnection();
 
-      ResultSet playerData = McFrConnection.getServerConnection()
-          .executeQuery("SELECT * FROM Player WHERE pseudonym = \"" + this.player.getName() + "\"");
+      getPseudonym.setString(1, this.player.getName());
+      ResultSet playerData = getPseudonym.executeQuery();
+
       if (playerData.next()) {
         this.name = playerData.getString(2);
         String description = playerData.getString(3);
@@ -315,35 +346,37 @@ public class McFrPlayer {
       playerData.close();
 
       int userId = -1;
-      ResultSet user = jdrDatabase.executeQuery(
-          "SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = \"" + this.player.getName() + "\"");
+      getUserId.setString(1, this.player.getName());
+      ResultSet user = getUserId.executeQuery();
       if (user.next()) {
         userId = user.getInt(1);
       }
       user.close();
 
-      ResultSet characterSheet = jdrDatabase.executeQuery("SELECT id FROM fiche_perso_personnage WHERE id_user =" + userId + " AND active = 1");
+      getCharacterSheetId.setInt(1, userId);
+      ResultSet characterSheet = getCharacterSheetId.executeQuery();
 
       if (characterSheet.next()) {
         this.booleans |= 0b1_0000_0000;
         this.sheetId = characterSheet.getInt(1);
+        getCharacterSheet.setInt(1, this.sheetId);
+        ResultSet skillData = getCharacterSheet.executeQuery();
 
-        ResultSet skillData = jdrDatabase
-            .executeQuery("SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = " + this.sheetId);
         while (skillData.next()) {
           this.skills.put(Skills.getSkills().get(skillData.getString(2)), skillData.getInt(3));
         }
         skillData.close();
 
-        ResultSet attributeData = jdrDatabase
-            .executeQuery("SELECT attribut,level FROM fiche_perso_personnage_attribut WHERE id_fiche_perso_personnage = " + this.sheetId);
+        getAttributes.setInt(1, this.sheetId);
+        ResultSet attributeData = getAttributes.executeQuery();
         while (attributeData.next()) {
           this.attributes.put(Attributes.getAttributeFromString(attributeData.getString(1)), attributeData.getInt(2));
         }
         attributeData.close();
 
-        ResultSet traitData = jdrDatabase
-            .executeQuery("SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = " + this.sheetId);
+        getAdvantages.setInt(1, this.sheetId);
+        ResultSet traitData = getAdvantages.executeQuery();
+
         while (traitData.next()) {
           this.traits.put(traitData.getString(1), traitData.getInt(2));
         }
@@ -478,8 +511,14 @@ public class McFrPlayer {
   public void addTrait(String trait, int level) {
     if (!hasTrait(trait)) {
       this.traits.put(trait, level);
-      McFrConnection.getJdrConnection()
-          .execute("INSERT INTO fiche_perso_personnage_avantage VALUES (" + this.sheetId + ",'" + trait + "'," + level + ")");
+      try {
+        killCharacter.setInt(1, this.sheetId);
+        killCharacter.setString(2, trait);
+        killCharacter.setInt(3, level);
+        killCharacter.execute();
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
     }
   }
 
@@ -489,8 +528,13 @@ public class McFrPlayer {
 
   public void incrementNumberOfDeaths() {
     this.deaths++;
-    McFrConnection.getServerConnection()
-        .execute("UPDATE Player SET deaths = " + this.deaths + " WHERE pseudonym = \"" + this.player.getName() + "\"");
+    try {
+      incrementDeaths.setInt(1, this.deaths);
+      incrementDeaths.setString(2, this.player.getName());
+      incrementDeaths.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 
   public String getUsedWeapon() {

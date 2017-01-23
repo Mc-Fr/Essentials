@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
@@ -54,6 +55,16 @@ import net.mcfr.utils.McFrPlayer;
 @Plugin(id = "essentials", name = "Essentials", version = "1.0", dependencies = @Dependency(id = "mcfr_b_i"))
 public class Essentials {
 
+  private final static PreparedStatement forumAccountId, activeCharacterSheet, deathDataReq;
+
+  static {
+    forumAccountId = McFrConnection.getJdrConnection()
+        .prepare("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
+    activeCharacterSheet = McFrConnection.getJdrConnection().prepare("SELECT id FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
+    deathDataReq = McFrConnection.getJdrConnection()
+        .prepare("SELECT avantage FROM fiche_perso_personnage_avantage WHERE avantage = \"mort\" AND id_fiche_perso_personnage = ?");
+  }
+
   private boolean serverLock;
 
   @Inject
@@ -102,19 +113,18 @@ public class Essentials {
     } else {
       try {
         int userId = -1;
-        ResultSet user = McFrConnection.getJdrConnection()
-            .executeQuery("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = \""
-                + e.getTargetUser().getName() + "\"");
+
+        forumAccountId.setString(1, e.getTargetUser().getName());
+        ResultSet user = forumAccountId.executeQuery();
+
         if (user.next()) {
-
           userId = user.getInt(1);
-          ResultSet characterSheet = McFrConnection.getJdrConnection()
-              .executeQuery("SELECT id FROM fiche_perso_personnage WHERE id_user =" + userId + " AND active = 1");
-          if (characterSheet.next()) {
+          activeCharacterSheet.setInt(1, userId);
+          ResultSet characterSheet = activeCharacterSheet.executeQuery();
 
-            ResultSet deathData = McFrConnection.getJdrConnection()
-                .executeQuery("SELECT avantage FROM fiche_perso_personnage_avantage WHERE avantage = \"mort\" AND id_fiche_perso_personnage = "
-                    + characterSheet.getInt(1));
+          if (characterSheet.next()) {
+            deathDataReq.setInt(1, characterSheet.getInt(1));
+            ResultSet deathData = deathDataReq.executeQuery();
             if (deathData.next()) {
               e.setCancelled(true);
             }
