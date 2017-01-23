@@ -158,7 +158,7 @@ public class RolePlayImp implements RolePlayService {
       score += McFrPlayer.getMcFrPlayer(player).hasTrait("esquive_amelioree") ? 1 : 0;
       break;
     case PARADE:
-      Skills weaponSkill = Skills.getSkills().get(McFrPlayer.getMcFrPlayer(player).getUsedWeapon());
+      Skills weaponSkill = Skills.getWeaponSkill(player);
       score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(weaponSkill)
           + weaponSkill.getDifficulty();
       score /= 2;

@@ -534,10 +534,6 @@ public class McFrPlayer {
     }
   }
 
-  public String getUsedWeapon() {
-    return "pugilat"; // TODO
-  }
-
   public int getArmorModifier() {
     return 0; // TODO
   }

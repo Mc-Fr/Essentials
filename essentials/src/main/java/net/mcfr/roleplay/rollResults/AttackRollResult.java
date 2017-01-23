@@ -2,7 +2,7 @@ package net.mcfr.roleplay.rollResults;
 
 import org.spongepowered.api.entity.living.player.Player;
 
-import net.mcfr.utils.McFrPlayer;
+import net.mcfr.roleplay.Skills;
 
 public class AttackRollResult extends RollResult {
 
@@ -11,7 +11,7 @@ public class AttackRollResult extends RollResult {
   }
 
   public String getWeaponName() {
-    return McFrPlayer.getMcFrPlayer(getPlayer()).getUsedWeapon();
+    return Skills.getWeaponSkill(getPlayer()).getName();
   }
 
 }

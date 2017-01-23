@@ -4,6 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import org.spongepowered.api.data.type.HandTypes;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 import net.mcfr.utils.McFrConnection;
 
@@ -54,5 +59,19 @@ public class Skills {
 
   public static Map<String, Skills> getSkills() {
     return skills;
+  }
+
+  public static Skills getWeaponSkill(Player player) {
+    Optional<ItemStack> optUsedWeapon = player.getItemInHand(HandTypes.MAIN_HAND);
+    if (!optUsedWeapon.isPresent() || !isWeapon(optUsedWeapon.get())) {
+      optUsedWeapon = player.getItemInHand(HandTypes.OFF_HAND);
+      if (!optUsedWeapon.isPresent() || !isWeapon(optUsedWeapon.get()))
+        return skills.get("pugilat");
+    }
+    return skills.get("pugilat");
+  }
+
+  private static boolean isWeapon(ItemStack itemStack) {
+    return false;
   }
 }
