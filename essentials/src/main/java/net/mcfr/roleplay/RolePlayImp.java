@@ -118,7 +118,7 @@ public class RolePlayImp implements RolePlayService {
     case ODORAT:
       score += McFrPlayer.getMcFrPlayer(player).getTraitLevel("gout_et_odorat_accentues");
       break;
-    default:
+    case TOUCHER:
       break;
     }
 
