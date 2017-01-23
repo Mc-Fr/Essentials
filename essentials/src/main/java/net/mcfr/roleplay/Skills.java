@@ -60,7 +60,7 @@ public class Skills {
       skillData.close();
       
       ResultSet dependenciesData = McFrConnection.getJdrConnection()
-          .executeQuery("SELECT skill1, skill2, default FROM fiche_perso_dependances");
+          .executeQuery("SELECT skill1, skill2, score FROM fiche_perso_dependances");
       while (dependenciesData.next()) {
         Skills skill1 = skills.get(dependenciesData.getString(1));
         Skills skill2 = skills.get(dependenciesData.getString(2));
