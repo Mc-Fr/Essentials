@@ -1,5 +1,6 @@
 package net.mcfr.babel;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -12,11 +13,16 @@ import java.util.Random;
 
 import net.mcfr.utils.McFrConnection;
 
-  //TODO : pSQL et ReqPrep
+//TODO : pSQL et ReqPrep
 
 public class Language {
   private static Map<String, Language> languages = new HashMap<>();
   private static Random rand = new Random();
+  private final static PreparedStatement loadLanguages;
+
+  static {
+    loadLanguages = McFrConnection.getJdrConnection().prepare("SELECT symbol FROM fiche_perso_langue_symbole WHERE lang = ?");
+  }
 
   private String name;
   private String displayName;
@@ -37,7 +43,7 @@ public class Language {
   public String getDisplayName() {
     return this.displayName;
   }
-  
+
   public String getAlias() {
     return this.alias;
   }
@@ -46,19 +52,19 @@ public class Language {
     try {
       ResultSet langData = McFrConnection.getJdrConnection().executeQuery("SELECT * FROM fiche_perso_langue");
       while (langData.next()) {
+        loadLanguages.setString(1, langData.getString(1));
+        ResultSet symbolsData = loadLanguages.executeQuery();
+
         ArrayList<Character> symbols = new ArrayList<>();
-        ResultSet symbolsData = McFrConnection.getJdrConnection()
-            .executeQuery("SELECT symbol FROM fiche_perso_langue_symbole WHERE lang = \"" + langData.getString(1) + "\"");
-        
         while (symbolsData.next()) {
           symbols.add(symbolsData.getString(1).charAt(0));
         }
         if (symbols.size() == 0) {
           symbols.add('#');
         }
-        
+
         languages.put(langData.getString(3), new Language(langData.getString(1), langData.getString(2), langData.getString(3), symbols));
-        
+
         symbolsData.close();
       }
       langData.close();
@@ -98,13 +104,12 @@ public class Language {
     int symbolsSize = this.symbols.size();
     int wordLength = word.length();
 
-    if (languageLevel == 0 || (languageLevel == 1 && (wordLength < 4 || wordLength > 7)) || (languageLevel == 2 && wordLength > 8)) {
+    if (languageLevel == 0 || languageLevel == 1 && (wordLength < 4 || wordLength > 7) || languageLevel == 2 && wordLength > 8) {
       for (int i = 0; i < wordLength; i++) {
         result += this.symbols.get(rand.nextInt(symbolsSize));
       }
       return result;
-    } else {
+    } else
       return word;
-    }
   }
 }

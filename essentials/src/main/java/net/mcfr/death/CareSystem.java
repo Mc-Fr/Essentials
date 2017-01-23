@@ -75,30 +75,35 @@ public class CareSystem {
   public void onPlayerDeath(DestructEntityEvent.Death e) {
     if (e.getTargetEntity() instanceof Player) {
       Player player = (Player) e.getTargetEntity();
-      Optional<CareCenter> centerOpt = getNearest(player.getLocation());
-      if (centerOpt.isPresent()) {
-        RollResult result = Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll(player, Attributes.ENDURANCE,
-            computeModifier(player));
-        switch (result.getResult()) {
-        case CRITICAL_SUCCESS:
-          player.sendMessage(Text.of(TextColors.GREEN, "Vous n'avez aucune séquelle, tout juste quelques cicatrices."));
-          break;
-        case SUCCESS:
-          player.sendMessage(Text.of(TextColors.DARK_GREEN, "Vous gardez les marques de votre accident, mais d'ici quelques jours, tout ira mieux."));
-          break;
-        case FAILURE:
-          McFrPlayer.getMcFrPlayer(player).incrementNumberOfDeaths();
-          player.sendMessage(Text.of(TextColors.DARK_RED,
-              "Malgré les soins, vous gardez une séquelle de votre accident, celle-ci sera handicapante pendant les semaines à venir."));
-          break;
-        case CRITICAL_FAILURE:
-          McFrPlayer.getMcFrPlayer(player).incrementNumberOfDeaths();
-          player.sendMessage(Text.of(TextColors.RED,
-              "Malgré les soins, vous gardez une séquelle importante de votre accident, celle-ci sera handicapante pendant les mois à venir."));
-          break;
+      McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
+      if (mcFrPlayer.hasCharacter()) {
+        Optional<CareCenter> centerOpt = getNearest(player.getLocation());
+        Text deathMessage = null;
+        if (centerOpt.isPresent()) {
+          RollResult result = Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll(player, Attributes.ENDURANCE,
+              computeModifier(mcFrPlayer));
+          switch (result.getResult()) {
+          case CRITICAL_SUCCESS:
+            deathMessage = Text.of(TextColors.GREEN, "Vous n'avez aucune séquelle, tout juste quelques cicatrices.");
+            break;
+          case SUCCESS:
+            deathMessage = Text.of(TextColors.DARK_GREEN, "Vous gardez les marques de votre accident, mais d'ici quelques jours, tout ira mieux.");
+            break;
+          case FAILURE:
+            mcFrPlayer.incrementNumberOfDeaths();
+            deathMessage = Text.of(TextColors.DARK_RED,
+                "Malgré les soins, vous gardez une séquelle de votre accident, celle-ci sera handicapante pendant les semaines à venir.");
+            break;
+          case CRITICAL_FAILURE:
+            mcFrPlayer.incrementNumberOfDeaths();
+            deathMessage = Text.of(TextColors.RED,
+                "Malgré les soins, vous gardez une séquelle importante de votre accident, celle-ci sera handicapante pendant les mois à venir.");
+            break;
+          }
+          player.sendMessage(deathMessage);
+        } else {
+          McFrPlayer.getMcFrPlayer(player).killCharacter("Trop éloigné d'un centre de soin, vous mourrez sur place.");
         }
-      } else {
-        McFrPlayer.getMcFrPlayer(player).killCharacter("");
       }
     }
   }
@@ -120,19 +125,18 @@ public class CareSystem {
         .min((o1, o2) -> Double.compare(o1.distance(loc), o2.distance(loc)));
   }
 
-  private int computeModifier(Player player) {
+  private int computeModifier(McFrPlayer player) {
     int modifier = 0;
-    McFrPlayer mcfrPlayer = McFrPlayer.getMcFrPlayer(player);
-    modifier += mcfrPlayer.hasTrait("difficile_a_tuer") ? 1 : 0;
-    modifier += mcfrPlayer.hasTrait("guerison_rapide_naturelle") ? 2 : 0;
-    modifier += mcfrPlayer.hasTrait("recuperation") ? 3 : 0;
-    modifier += mcfrPlayer.hasTrait("guerison_rapide_surnaturelle") ? 5 : 0;
+    modifier += player.hasTrait("difficile_a_tuer") ? 1 : 0;
+    modifier += player.hasTrait("guerison_rapide_naturelle") ? 2 : 0;
+    modifier += player.hasTrait("recuperation") ? 3 : 0;
+    modifier += player.hasTrait("guerison_rapide_surnaturelle") ? 5 : 0;
 
-    modifier -= mcfrPlayer.hasTrait("facile_a_tuer") ? 1 : 0;
-    modifier -= mcfrPlayer.hasTrait("guerison_lente") ? 2 : 0;
-    modifier -= mcfrPlayer.hasTrait("hemophile") ? 6 : 0;
+    modifier -= player.hasTrait("facile_a_tuer") ? 1 : 0;
+    modifier -= player.hasTrait("guerison_lente") ? 2 : 0;
+    modifier -= player.hasTrait("hemophile") ? 6 : 0;
 
-    modifier -= mcfrPlayer.getNumberOfDeaths();
+    modifier -= player.getNumberOfDeaths();
 
     return modifier;
   }

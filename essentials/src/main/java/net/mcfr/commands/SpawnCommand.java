@@ -31,7 +31,7 @@ public class SpawnCommand extends AbstractCommand {
       src.sendMessage(ONLY_PLAYERS_COMMAND);
     }
 
-    return null;
+    return CommandResult.success();
   }
 
   @Override

@@ -282,8 +282,8 @@ public class Burrow {
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).seesBurrows()).forEach(p -> setInvisible(p));
   }
 
-  public static Burrow createBurrow(int id, Optional<String> name, Location<World> location, long delay, int maxPopulation, int initMalePopulation,
-      int initFemalePopulation, Optional<EntityType> entityType, boolean alreadyInDatabase) {
+  public static Optional<Burrow> createBurrow(int id, Optional<String> name, Location<World> location, long delay, int maxPopulation,
+      int initMalePopulation, int initFemalePopulation, Optional<EntityType> entityType, boolean alreadyInDatabase) {
 
     if (entityType.isPresent()) {
       Burrow newBurrow = new Burrow(id, name, location, delay, maxPopulation, initMalePopulation, initFemalePopulation, entityType.get());
@@ -291,12 +291,12 @@ public class Burrow {
       if (!alreadyInDatabase) {
         newBurrow.registerInDatabase();
       }
-      return newBurrow;
+      return Optional.of(newBurrow);
     }
-    return null;
+    return Optional.empty();
   }
 
-  public static Burrow createBurrow(Optional<String> name, Location<World> location, long delay, int maxPopulation, int initMalePopulation,
+  public static Optional<Burrow> createBurrow(Optional<String> name, Location<World> location, long delay, int maxPopulation, int initMalePopulation,
       int initFemalePopulation, Class<? extends EntityGendered> entityClass) {
     Optional<EntityType> entityType = Sponge.getGame().getRegistry().getAllOf(EntityType.class).stream()
         .filter(e -> e.getEntityClass().equals(entityClass)).findAny();

@@ -31,23 +31,43 @@ import net.mcfr.roleplay.Skills;
 
 public class McFrPlayer {
   private static List<McFrPlayer> players = new ArrayList<>();
+
   private Player player;
   private int deaths;
-  private boolean mute;
-  private boolean god;
-  private boolean spyMP;
-  private boolean wantMP;
-  private boolean wantTeam;
-  private boolean wantRealName;
-  private boolean seeBurrows;
+  /**
+   * Représente tous les booléens présents dans la classe.
+   * <table style="border-collapse: collapse">
+   * <tr>
+   * <td style="border: 1px solid black">hasCharacter</td>
+   * <td style="border: 1px solid black">isInCareCenterEffectArea</td>
+   * <td style="border: 1px solid black">seeBurrows</td>
+   * <td style="border: 1px solid black">wantRealName</td>
+   * <td style="border: 1px solid black">wantTeam</td>
+   * <td style="border: 1px solid black">wantMP</td>
+   * <td style="border: 1px solid black">spyMP</td>
+   * <td style="border: 1px solid black">god</td>
+   * <td style="border: 1px solid black">mute</td>
+   * </tr>
+   * <tr>
+   * <td style="border: 1px solid black">0b1_0000_0000</td>
+   * <td style="border: 1px solid black">0b0_1000_0000</td>
+   * <td style="border: 1px solid black">0b0_0100_0000</td>
+   * <td style="border: 1px solid black">0b0_0010_0000</td>
+   * <td style="border: 1px solid black">0b0_0001_0000</td>
+   * <td style="border: 1px solid black">0b0_0000_1000</td>
+   * <td style="border: 1px solid black">0b0_0000_0100</td>
+   * <td style="border: 1px solid black">0b0_0000_0010</td>
+   * <td style="border: 1px solid black">0b0_0000_0001</td>
+   * </tr>
+   * </table>
+   */
+  private int booleans;
   private Optional<Burrow> selectedBurrow;
   private String name;
   private Optional<String> description;
   private ChatType defaultChat;
   private Language language;
   private Player lastCorrespondent;
-  private boolean inCareCenterEffectArea;
-  private boolean hasCharacter;
   private int sheetId;
   private HashMap<Skills, Integer> skills;
   private HashMap<Attributes, Integer> attributes;
@@ -75,10 +95,7 @@ public class McFrPlayer {
   }
 
   public static double distance(Player p1, Player p2) {
-    Location<World> loc1 = p1.getLocation();
-    Location<World> loc2 = p2.getLocation();
-
-    return Math.hypot(Math.hypot(loc1.getX() - loc2.getX(), loc1.getY() - loc2.getY()), loc1.getZ() - loc2.getZ());
+    return p1.getLocation().getBlockPosition().distance(p2.getLocation().getBlockPosition());
   }
 
   public static void setLastCorrespondents(Player emitter, Player recipient) {
@@ -86,10 +103,14 @@ public class McFrPlayer {
     getMcFrPlayer(recipient).setLastCorrespondent(emitter);
   }
 
+  public static boolean toBoolean(int i) {
+    return i > 0;
+  }
+
   public McFrPlayer(Player player) {
     Objects.requireNonNull(player);
     this.player = player;
-    this.mute = false;
+    this.booleans = 0;
     this.name = player.getName();
     this.description = Optional.empty();
     this.defaultChat = ChatType.MEDIUM;
@@ -98,7 +119,6 @@ public class McFrPlayer {
     this.attributes = new HashMap<>();
     this.traits = new HashMap<>();
     this.previousLocation = null;
-    this.seeBurrows = false;
     this.selectedBurrow = Optional.empty();
   }
 
@@ -107,17 +127,29 @@ public class McFrPlayer {
   }
 
   public boolean isInCareCenterEffectArea() {
-    return this.inCareCenterEffectArea;
+    return toBoolean(this.booleans & 0b0_1000_0000);
   }
 
   public boolean hasCharacter() {
-    return this.hasCharacter;
+    return toBoolean(this.booleans & 0b1_0000_0000);
+  }
+
+  public void toggleSeesBurrows() {
+    if (seesBurrows()) {
+      this.booleans |= 0b0_0100_0000;
+    } else {
+      this.booleans ^= 0b0_0100_0000;
+    }
+  }
+
+  public boolean seesBurrows() {
+    return toBoolean(this.booleans & 0b0_0100_0000);
   }
 
   public void selectBurrow(Burrow burrow) {
     unselectBurrow();
     this.selectedBurrow = Optional.of(burrow);
-    if (this.seeBurrows) {
+    if (seesBurrows()) {
       burrow.setVisible(this.player);
     }
   }
@@ -125,11 +157,11 @@ public class McFrPlayer {
   public void unselectBurrow() {
     boolean hasSelectedBurrow = this.selectedBurrow.isPresent();
     Burrow burrow = null;
-    if (hasSelectedBurrow && this.seeBurrows) {
+    if (hasSelectedBurrow && seesBurrows()) {
       burrow = this.selectedBurrow.get();
     }
     this.selectedBurrow = Optional.empty();
-    if (hasSelectedBurrow && this.seeBurrows) {
+    if (hasSelectedBurrow && seesBurrows()) {
       burrow.setVisible(this.player);
     }
   }
@@ -139,7 +171,11 @@ public class McFrPlayer {
   }
 
   public void setInCareCenterEffectArea(boolean inCareCenterEffectArea) {
-    this.inCareCenterEffectArea = inCareCenterEffectArea;
+    if (inCareCenterEffectArea) {
+      this.booleans |= 0b0_1000_0000;
+    } else {
+      this.booleans ^= 0b0_1000_0000;
+    }
   }
 
   public void toggleInCareCenterEffectArea() {
@@ -147,83 +183,75 @@ public class McFrPlayer {
   }
 
   public boolean isMuted() {
-    return this.mute;
-  }
-
-  public void setMute(boolean mute) {
-    this.mute = mute;
+    return toBoolean(this.booleans & 0b0_0000_0001);
   }
 
   public void toggleMute() {
-    setMute(!isMuted());
+    if (isMuted()) {
+      this.booleans ^= 0b0_0000_0001;
+    } else {
+      this.booleans |= 0b0_0000_0001;
+    }
   }
 
   public boolean isGod() {
-    return this.god;
-  }
-
-  public void setGod(boolean god) {
-    this.god = god;
+    return toBoolean(this.booleans & 0b0_0000_0010);
   }
 
   public void toggleGod() {
-    setGod(!isGod());
+    if (isGod()) {
+      this.booleans ^= 0b0_0000_0010;
+    } else {
+      this.booleans |= 0b0_0000_0010;
+    }
   }
 
   public boolean spiesMp() {
-    return this.spyMP;
-  }
-
-  public void setSpyMp(boolean spyMP) {
-    this.spyMP = spyMP;
+    return toBoolean(this.booleans & 0b0_0000_0100);
   }
 
   public void toggleSpyMp() {
-    setSpyMp(!spiesMp());
+    if (spiesMp()) {
+      this.booleans ^= 0b0_0000_0100;
+    } else {
+      this.booleans |= 0b0_0000_0100;
+    }
   }
 
   public boolean wantsMP() {
-    return this.wantMP;
-  }
-
-  public void setWantMp(boolean wantMP) {
-    this.wantMP = wantMP;
+    return toBoolean(this.booleans & 0b0_0000_1000);
   }
 
   public void toggleWantMp() {
-    setWantMp(!wantsMP());
+    if (wantsMP()) {
+      this.booleans ^= 0b0_0000_1000;
+    } else {
+      this.booleans |= 0b0_0000_1000;
+    }
   }
 
   public boolean wantsTeam() {
-    return this.wantTeam;
-  }
-
-  public void setWantTeam(boolean wantTeam) {
-    this.wantTeam = wantTeam;
+    return toBoolean(this.booleans & 0b0_0001_0000);
   }
 
   public void toggleWantTeam() {
-    setWantTeam(!wantsTeam());
+    if (wantsTeam()) {
+      this.booleans ^= 0b0_0001_0000;
+    } else {
+      this.booleans |= 0b0_0001_0000;
+    }
   }
 
   public boolean wantsRealName() {
-    return this.wantRealName;
-  }
-
-  public void setWantRealName(boolean wantRealName) {
-    this.wantRealName = wantRealName;
+    return toBoolean(this.booleans & 0b0_0010_0000);
   }
 
   public void toggleWantRealName() {
-    setWantRealName(wantsRealName());
-  }
-
-  public void setSeeBurrows(boolean seeBurrows) {
-    this.seeBurrows = seeBurrows;
-  }
-
-  public boolean seesBurrows() {
-    return this.seeBurrows;
+    if (wantsRealName()) {
+      this.booleans ^= 0b0_0010_0000;
+    } else {
+      this.booleans |= 0b0_0010_0000;
+    }
   }
 
   public String getName() {
@@ -297,7 +325,7 @@ public class McFrPlayer {
       ResultSet characterSheet = jdrDatabase.executeQuery("SELECT id FROM fiche_perso_personnage WHERE id_user =" + userId + " AND active = 1");
 
       if (characterSheet.next()) {
-        this.hasCharacter = true;
+        this.booleans |= 0b1_0000_0000;
         this.sheetId = characterSheet.getInt(1);
 
         ResultSet skillData = jdrDatabase

@@ -94,14 +94,17 @@ public class BurrowCommand extends AbstractCommand {
         Class<? extends EntityGendered> entityClass = ((GenderedEntityClasses) args.getOne("entité").get()).getEntityClass();
         Optional<String> name = args.<String>getOne("nom");
 
-        Burrow burrow = Burrow.createBurrow(name, location, delay, maxPopulation, malePopulation, femalePopulation, entityClass);
+        Optional<Burrow> optBurrow = Burrow.createBurrow(name, location, delay, maxPopulation, malePopulation, femalePopulation, entityClass);
 
-        src.sendMessage(Text.of(TextColors.YELLOW, "Le terrier " + burrow.getName() + " a été créé à votre position et est sélectionné."));
-        src.sendMessage(Text.of(TextColors.YELLOW, "Population maximale : " + burrow.getPopulation().getMax() + " - Mâles : "
-            + burrow.getPopulation().getMales() + " - Femelles : " + burrow.getPopulation().getFemales()));
-        src.sendMessage(Text.of(TextColors.YELLOW, "Délai : " + burrow.getFormatedDelay() + " - Créature : " + burrow.getEntityName()));
+        if (optBurrow.isPresent()) {
+          Burrow burrow = optBurrow.get();
+          src.sendMessage(Text.of(TextColors.YELLOW, "Le terrier " + burrow.getName() + " a été créé à votre position et est sélectionné."));
+          src.sendMessage(Text.of(TextColors.YELLOW, "Population maximale : " + burrow.getPopulation().getMax() + " - Mâles : "
+              + burrow.getPopulation().getMales() + " - Femelles : " + burrow.getPopulation().getFemales()));
+          src.sendMessage(Text.of(TextColors.YELLOW, "Délai : " + burrow.getFormatedDelay() + " - Créature : " + burrow.getEntityName()));
 
-        McFrPlayer.getMcFrPlayer((Player) src).selectBurrow(burrow);
+          McFrPlayer.getMcFrPlayer((Player) src).selectBurrow(burrow);
+        }
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
       }
@@ -187,7 +190,7 @@ public class BurrowCommand extends AbstractCommand {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
 
       String loadResult = Burrow.loadFromDatabase();
-      
+
       if (this.firstTimeCalled) {
         Task.Builder taskBuilder = Sponge.getScheduler().createTaskBuilder();
         taskBuilder.execute(() -> Burrow.updateBurrows()).delay(10, TimeUnit.SECONDS).interval(10, TimeUnit.SECONDS).submit(this.plugin);
@@ -597,20 +600,19 @@ public class BurrowCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
-        Burrow burrow = getSelectedBurrow((Player) src).orElse(null);
         Player player = (Player) src;
         McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
 
         if (mcFrPlayer.seesBurrows()) {
-          mcFrPlayer.setSeeBurrows(false);
           Burrow.setAllInvisible(player);
         } else {
-          mcFrPlayer.setSeeBurrows(true);
           Burrow.setAllVisible(player);
         }
+        mcFrPlayer.toggleSeesBurrows();
 
-        if (burrow != null) {
-          // TODO
+        Optional<Burrow> burrow = mcFrPlayer.getSelectedBurrow();
+        if (burrow.isPresent()) {
+          // TODO ???
         }
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
