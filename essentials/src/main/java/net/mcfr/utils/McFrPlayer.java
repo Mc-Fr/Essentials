@@ -453,8 +453,8 @@ public class McFrPlayer {
     return 0;
   }
 
-  public void setLanguage(Language lang) {
-    this.language = lang;
+  public void setLanguage(Language language) {
+    this.language = language;
   }
 
   public Language getLanguage() {
@@ -489,6 +489,8 @@ public class McFrPlayer {
 
   public void incrementNumberOfDeaths() {
     this.deaths++;
+    McFrConnection.getServerConnection()
+        .execute("UPDATE Player SET deaths = " + this.deaths + " WHERE pseudonym = \"" + this.player.getName() + "\"");
   }
 
   public String getUsedWeapon() {

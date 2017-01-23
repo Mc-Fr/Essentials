@@ -28,7 +28,7 @@ import com.google.gson.stream.JsonReader;
 
 import net.mcfr.roleplay.Attributes;
 import net.mcfr.roleplay.RolePlayService;
-import net.mcfr.roleplay.rollResults.RollResult;
+import net.mcfr.roleplay.rollResults.AttributeRollResult;
 import net.mcfr.utils.McFrPlayer;
 
 public class CareSystem {
@@ -78,26 +78,28 @@ public class CareSystem {
       McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
       if (mcFrPlayer.hasCharacter()) {
         Optional<CareCenter> centerOpt = getNearest(player.getLocation());
-        Text deathMessage = null;
         if (centerOpt.isPresent()) {
-          RollResult result = Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll(player, Attributes.ENDURANCE,
+          AttributeRollResult result = Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll(player, Attributes.ENDURANCE,
               computeModifier(mcFrPlayer));
+          Text deathMessage = Text.of(String.format("%s fait un jet de %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""),
+              McFrPlayer.getMcFrPlayer(player).getName(), result.getAttributeName(), result.getScore(), result.getMargin()));
           switch (result.getResult()) {
           case CRITICAL_SUCCESS:
-            deathMessage = Text.of(TextColors.GREEN, "Vous n'avez aucune séquelle, tout juste quelques cicatrices.");
+            deathMessage.concat(Text.of(TextColors.GREEN, "Vous n'avez aucune séquelle, tout juste quelques cicatrices."));
             break;
           case SUCCESS:
-            deathMessage = Text.of(TextColors.DARK_GREEN, "Vous gardez les marques de votre accident, mais d'ici quelques jours, tout ira mieux.");
+            deathMessage
+                .concat(Text.of(TextColors.DARK_GREEN, "Vous gardez les marques de votre accident, mais d'ici quelques jours, tout ira mieux."));
             break;
           case FAILURE:
             mcFrPlayer.incrementNumberOfDeaths();
-            deathMessage = Text.of(TextColors.DARK_RED,
-                "Malgré les soins, vous gardez une séquelle de votre accident, celle-ci sera handicapante pendant les semaines à venir.");
+            deathMessage.concat(Text.of(TextColors.DARK_RED,
+                "Malgré les soins, vous gardez une séquelle de votre accident, celle-ci sera handicapante pendant les semaines à venir."));
             break;
           case CRITICAL_FAILURE:
             mcFrPlayer.incrementNumberOfDeaths();
-            deathMessage = Text.of(TextColors.RED,
-                "Malgré les soins, vous gardez une séquelle importante de votre accident, celle-ci sera handicapante pendant les mois à venir.");
+            deathMessage.concat(Text.of(TextColors.RED,
+                "Malgré les soins, vous gardez une séquelle importante de votre accident, celle-ci sera handicapante pendant les mois à venir."));
             break;
           }
           player.sendMessage(deathMessage);

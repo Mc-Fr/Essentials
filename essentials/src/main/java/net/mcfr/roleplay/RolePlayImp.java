@@ -7,15 +7,15 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
 
 import net.mcfr.babel.Language;
+import net.mcfr.roleplay.rollResults.AttackRollResult;
 import net.mcfr.roleplay.rollResults.AttributeRollResult;
 import net.mcfr.roleplay.rollResults.DefenseRollResult;
 import net.mcfr.roleplay.rollResults.PerceptionRollResult;
 import net.mcfr.roleplay.rollResults.ResistanceRollResult;
-import net.mcfr.roleplay.rollResults.RollResult;
 import net.mcfr.roleplay.rollResults.SkillRollResult;
 import net.mcfr.utils.McFrPlayer;
 
-  //TODO : détection de l'arme portée
+//TODO : détection de l'arme portée
 
 public class RolePlayImp implements RolePlayService {
   private Random rd;
@@ -27,7 +27,7 @@ public class RolePlayImp implements RolePlayService {
   }
 
   @Override
-  public RollResult skillRoll(Player player, Skills skill, int modifier) {
+  public SkillRollResult skillRoll(Player player, Skills skill, int modifier) {
     int roll = rollDice(6) + rollDice(6) + rollDice(6);
     Attributes attribute = skill.getAttribute();
     int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(attribute) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(skill)
@@ -75,7 +75,7 @@ public class RolePlayImp implements RolePlayService {
   }
 
   @Override
-  public RollResult attributeRoll(Player player, Attributes attribute, int modifier) {
+  public AttributeRollResult attributeRoll(Player player, Attributes attribute, int modifier) {
     int roll = rollDice(6) + rollDice(6) + rollDice(6);
     int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(attribute) + modifier;
 
@@ -84,7 +84,7 @@ public class RolePlayImp implements RolePlayService {
   }
 
   @Override
-  public RollResult resistanceRoll(Player player, int modifier) {
+  public ResistanceRollResult resistanceRoll(Player player, int modifier) {
     int roll = rollDice(6) + rollDice(6) + rollDice(6);
     int armorModifier = McFrPlayer.getMcFrPlayer(player).getArmorModifier();
     int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.ENDURANCE) + modifier + armorModifier;
@@ -97,7 +97,7 @@ public class RolePlayImp implements RolePlayService {
   }
 
   @Override
-  public RollResult perceptionRoll(Player player, Senses sense, int modifier) {
+  public PerceptionRollResult perceptionRoll(Player player, Senses sense, int modifier) {
     int roll = rollDice(6) + rollDice(6) + rollDice(6);
     int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.INTELLECT);
 
@@ -131,12 +131,12 @@ public class RolePlayImp implements RolePlayService {
   }
 
   @Override
-  public RollResult attackRoll(Player player, int modifier) {
+  public AttackRollResult attackRoll(Player player, int modifier) {
     return null;
   }
 
   @Override
-  public RollResult defenseRoll(Player player, Defenses defense, int modifier) {
+  public DefenseRollResult defenseRoll(Player player, Defenses defense, int modifier) {
     int roll = rollDice(6) + rollDice(6) + rollDice(6);
     int score = 0;
 
@@ -145,8 +145,8 @@ public class RolePlayImp implements RolePlayService {
       if (!player.getItemInHand(HandTypes.MAIN_HAND).equals(ItemTypes.SHIELD) && !player.getItemInHand(HandTypes.OFF_HAND).equals(ItemTypes.SHIELD))
         throw new IllegalStateException("Player can't block without shield!");
       Skills shieldSkill = Skills.getSkills().get("bouclier");
-      score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE)
-          + McFrPlayer.getMcFrPlayer(player).getSkillLevel(shieldSkill) + shieldSkill.getDifficulty();
+      score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(shieldSkill)
+          + shieldSkill.getDifficulty();
       score /= 2;
       score += 3;
       break;
@@ -159,8 +159,8 @@ public class RolePlayImp implements RolePlayService {
       break;
     case PARADE:
       Skills weaponSkill = Skills.getSkills().get(McFrPlayer.getMcFrPlayer(player).getUsedWeapon());
-      score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE)
-          + McFrPlayer.getMcFrPlayer(player).getSkillLevel(weaponSkill) + weaponSkill.getDifficulty();
+      score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(weaponSkill)
+          + weaponSkill.getDifficulty();
       score /= 2;
       score += 3;
       if ((weaponSkill.getName().equals("pugilat") || weaponSkill.getName().equals("lutte"))
