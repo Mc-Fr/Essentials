@@ -13,18 +13,24 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import net.mcfr.utils.McFrConnection;
 
 public class Skills {
-  private static HashMap<String, Skills> skills = new HashMap<>();
+  private static Map<String, Skills> skills = new HashMap<>();
 
   private String name;
   private String displayName;
   private Attributes attribute;
   private int difficulty;
+  private Map<Skills, Integer> dependencies;
 
-  public Skills(String name, String displayName, Attributes attribute, int difficulty) {
+  private Skills(String name, String displayName, Attributes attribute, int difficulty) {
     this.name = name;
     this.displayName = displayName.toLowerCase();
     this.attribute = attribute;
     this.difficulty = -difficulty - 1;
+    this.dependencies = new HashMap<>();
+  }
+  
+  private void addDependency(Skills otherSkill, int score) {
+    this.dependencies.put(otherSkill, score);
   }
 
   public String getName() {
@@ -48,6 +54,17 @@ public class Skills {
             Attributes.getAttributeFromString(skillData.getString(3)), skillData.getInt(4)));
       }
       skillData.close();
+      
+      ResultSet dependenciesData = McFrConnection.getJdrConnection()
+          .executeQuery("SELECT skill1, skill2, default FROM fiche_perso_dependances");
+      while (dependenciesData.next()) {
+        Skills skill1 = skills.get(dependenciesData.getString(1));
+        Skills skill2 = skills.get(dependenciesData.getString(2));
+        int score = dependenciesData.getInt(3);
+        skill1.addDependency(skill2, score);
+        skill2.addDependency(skill1, score);
+      }
+      dependenciesData.close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
