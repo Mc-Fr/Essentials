@@ -23,5 +23,5 @@ public interface RolePlayService {
 
   DefenseRollResult defenseRoll(Player player, Defenses defense, int modifier);
 
-  int rollDice(int faces);
+  int rollDie(int faces);
 }

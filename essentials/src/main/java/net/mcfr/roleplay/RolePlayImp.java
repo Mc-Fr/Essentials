@@ -28,7 +28,7 @@ public class RolePlayImp implements RolePlayService {
 
   @Override
   public SkillRollResult skillRoll(Player player, Skills skill, int modifier) {
-    int roll = rollDice(6) + rollDice(6) + rollDice(6);
+    int roll = rollThreeDice();
     Attributes attribute = skill.getAttribute();
     int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(attribute) + McFrPlayer.getMcFrPlayer(player).getSkillLevel(skill)
         + skill.getDifficulty() + modifier;
@@ -76,7 +76,7 @@ public class RolePlayImp implements RolePlayService {
 
   @Override
   public AttributeRollResult attributeRoll(Player player, Attributes attribute, int modifier) {
-    int roll = rollDice(6) + rollDice(6) + rollDice(6);
+    int roll = rollThreeDice();
     int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(attribute) + modifier;
 
     int margin = score - roll;
@@ -85,7 +85,7 @@ public class RolePlayImp implements RolePlayService {
 
   @Override
   public ResistanceRollResult resistanceRoll(Player player, int modifier) {
-    int roll = rollDice(6) + rollDice(6) + rollDice(6);
+    int roll = rollThreeDice();
     int armorModifier = McFrPlayer.getMcFrPlayer(player).getArmorModifier();
     int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.ENDURANCE) + modifier + armorModifier;
 
@@ -98,7 +98,7 @@ public class RolePlayImp implements RolePlayService {
 
   @Override
   public PerceptionRollResult perceptionRoll(Player player, Senses sense, int modifier) {
-    int roll = rollDice(6) + rollDice(6) + rollDice(6);
+    int roll = rollThreeDice();
     int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.INTELLECT);
 
     switch (sense) {
@@ -132,12 +132,19 @@ public class RolePlayImp implements RolePlayService {
 
   @Override
   public AttackRollResult attackRoll(Player player, int modifier) {
-    return null;
+    int roll = rollThreeDice();
+    
+    Skills attackSkill = Skills.getWeaponSkill(player);
+    McFrPlayer mcfrPlayer = McFrPlayer.getMcFrPlayer(player);
+    int score = mcfrPlayer.getAttributePoints(attackSkill.getAttribute()) + mcfrPlayer.getSkillLevel(attackSkill) + attackSkill.getDifficulty() + modifier;
+    
+    int margin = score - roll;
+    return new AttackRollResult(player, attackSkill, attackSkill.getAttribute(), modifier, roll, score, margin);
   }
 
   @Override
   public DefenseRollResult defenseRoll(Player player, Defenses defense, int modifier) {
-    int roll = rollDice(6) + rollDice(6) + rollDice(6);
+    int roll = rollThreeDice();
     int score = 0;
 
     switch (defense) {
@@ -177,9 +184,13 @@ public class RolePlayImp implements RolePlayService {
     int margin = score - roll;
     return new DefenseRollResult(player, defense, modifier, roll, score, margin);
   }
-
+  
+  public int rollThreeDice() {
+    return rollDie(6) + rollDie(6) + rollDie(6);
+  }
+  
   @Override
-  public int rollDice(int faces) {
+  public int rollDie(int faces) {
     return this.rd.nextInt(faces - 1) + 1;
   }
 }
