@@ -13,8 +13,6 @@ import java.util.Random;
 
 import net.mcfr.utils.McFrConnection;
 
-//TODO : pSQL et ReqPrep
-
 public class Language {
   private static Map<String, Language> languages = new HashMap<>();
   private static Random rand = new Random();

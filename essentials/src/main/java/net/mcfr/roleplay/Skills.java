@@ -7,8 +7,6 @@ import java.util.Map;
 
 import net.mcfr.utils.McFrConnection;
 
-  //TODO : pSQL et ReqPrep
-
 public class Skills {
   private static HashMap<String, Skills> skills = new HashMap<>();
 

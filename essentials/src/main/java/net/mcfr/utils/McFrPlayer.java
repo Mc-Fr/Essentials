@@ -28,8 +28,6 @@ import net.mcfr.chat.ChatType;
 import net.mcfr.roleplay.Attributes;
 import net.mcfr.roleplay.Skills;
 
-//TODO : pSQL et ReqPrep
-
 public class McFrPlayer {
   private static List<McFrPlayer> players = new ArrayList<>();
   private final static PreparedStatement killCharacter, incrementDeaths, changeDescription, changeName, getPseudonym, getUserId, getCharacterSheetId,
