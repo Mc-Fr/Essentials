@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
@@ -28,8 +29,6 @@ import net.mcfr.utils.McFrPlayer;
  * Aide sur les commandes
  * Règles sur les commandes
  * Commandes cliquables
- * Délai pété
- * Remove doit retirer le terrier de la sélection des joueurs
  */
 
 public class Burrow {
@@ -88,9 +87,9 @@ public class Burrow {
     this.location = location;
     this.delay = delay * M_TO_MS;
     this.lastEventTime = Calendar.getInstance().getTime().getTime();
-    this.population = new BurrowPopulation(maxPopulation, initMalePopulation, initFemalePopulation, entityType);
+    this.population = new BurrowPopulation(this.location, maxPopulation, initMalePopulation, initFemalePopulation, entityType);
 
-    this.population.spawnAllEntities(this.location);
+    this.population.spawnAllEntities();
     setVisibleForAll();
   }
 
@@ -99,18 +98,18 @@ public class Burrow {
 
     this.population.count();
 
+    if (this.population.isEmpty()) {
+      removeBurrow(this);
+    }
+    
     if (this.population.hasBeenDeaths()) {
       this.lastEventTime = currentTime;
       this.population.actualize();
     }
 
     if (this.lastEventTime + this.delay < currentTime) {
-      this.population.tryBirth(this.location);
+      this.population.tryBirth();
       this.lastEventTime = currentTime;
-    }
-
-    if (this.population.isEmpty()) {
-      removeBurrow(this);
     }
 
     saveInDatabase();
@@ -169,7 +168,7 @@ public class Burrow {
   }
 
   public void reset() {
-    this.population.reset(this.location);
+    this.population.reset();
   }
 
   private Location<World> getLocation() {
@@ -213,12 +212,12 @@ public class Burrow {
   }
 
   public void setMalePopulation(int newMalePopulation) {
-    this.population.setMales(newMalePopulation, this.location);
+    this.population.setMales(newMalePopulation);
     saveInDatabase();
   }
 
   public void setFemalePopulation(int newFemalePopulation) {
-    this.population.setFemales(newFemalePopulation, this.location);
+    this.population.setFemales(newFemalePopulation);
     saveInDatabase();
   }
 
@@ -245,7 +244,7 @@ public class Burrow {
   }
 
   public void setMaximumPopulation(int maxPopulation) {
-    this.population.setMax(maxPopulation, this.location);
+    this.population.setMax(maxPopulation);
     saveInDatabase();
   }
 
@@ -302,15 +301,19 @@ public class Burrow {
         .filter(e -> e.getEntityClass().equals(entityClass)).findAny();
     return createBurrow(getUnusedId(), name, location, delay, maxPopulation, initMalePopulation, initFemalePopulation, entityType, false);
   }
-
+  
+  public static void removeFromBurrow(UUID id) {
+    burrows.forEach(b -> b.population.removeEntity(id));
+  }
+  
   public static void removeBurrow(Burrow burrow) {
     burrows.remove(burrow);
     burrow.getPopulation().killAllEntities();
     burrow.deleteFromDatabase();
-    burrow.setInvisibleForAll();
 
-    Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).getSelectedBurrow().get() == burrow)
+    Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).getSelectedBurrow().orElse(null) == burrow)
         .forEach(p -> McFrPlayer.getMcFrPlayer(p).unselectBurrow());
+    burrow.setInvisibleForAll();
   }
 
   public static Optional<Burrow> removeBurrow(Optional<Burrow> burrowOpt) {

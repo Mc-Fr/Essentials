@@ -19,6 +19,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -45,6 +46,7 @@ import net.mcfr.chat.MessageData;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.commands.utils.Commands;
 import net.mcfr.death.CareSystem;
+import net.mcfr.entities.mobs.gender.EntityBurrowed;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.DamageListener;
 import net.mcfr.roleplay.RolePlayImp;
@@ -202,6 +204,14 @@ public class Essentials {
     }
 
     e.setCancelled(true);
+  }
+  
+  @Listener
+  public void onEntityDestruct(DestructEntityEvent event) {
+    if (event.getTargetEntity() instanceof EntityBurrowed) {
+      System.out.println("Entité liée à un terrier morte !");
+      Burrow.removeFromBurrow(event.getTargetEntity().getUniqueId());
+    }
   }
 
   @Listener
