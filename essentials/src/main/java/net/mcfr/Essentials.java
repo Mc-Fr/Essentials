@@ -209,7 +209,6 @@ public class Essentials {
   @Listener
   public void onEntityDestruct(DestructEntityEvent event) {
     if (event.getTargetEntity() instanceof EntityBurrowed) {
-      System.out.println("Entité liée à un terrier morte !");
       Burrow.removeFromBurrow(event.getTargetEntity().getUniqueId());
     }
   }
