@@ -46,7 +46,7 @@ import net.mcfr.chat.MessageData;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.commands.utils.Commands;
 import net.mcfr.death.CareSystem;
-import net.mcfr.entities.mobs.gender.EntityBurrowed;
+import net.mcfr.entities.mobs.EntityBurrowed;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.DamageListener;
 import net.mcfr.roleplay.RolePlayImp;
