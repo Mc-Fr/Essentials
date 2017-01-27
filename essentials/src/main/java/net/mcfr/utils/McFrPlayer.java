@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,8 @@ public class McFrPlayer {
   private HashMap<Attributes, Integer> attributes;
   private HashMap<String, Integer> traits;
   private Location<World> previousLocation;
-
+  private long readDescriptionTime;
+  
   public static void addPlayer(McFrPlayer player) {
     players.add(player);
   }
@@ -566,7 +568,15 @@ public class McFrPlayer {
 
     return lightLevel;
   }
-
+  
+  public long getReadDescriptionTime() {
+    return this.readDescriptionTime;
+  }
+  
+  public void updateReadDescriptionTime() {
+    this.readDescriptionTime = Calendar.getInstance().getTime().getTime();
+  }
+  
   @Override
   public int hashCode() {
     return 31 + (this.player == null ? 0 : this.player.hashCode());

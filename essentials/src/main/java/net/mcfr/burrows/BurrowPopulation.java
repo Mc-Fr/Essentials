@@ -18,6 +18,7 @@ import org.spongepowered.api.world.World;
 
 import com.flowpowered.math.vector.Vector3i;
 
+import net.mcfr.entities.mobs.EntityBurrowed;
 import net.mcfr.entities.mobs.gender.EntityGendered;
 import net.mcfr.entities.mobs.gender.Genders;
 
@@ -35,9 +36,11 @@ public class BurrowPopulation {
   private List<UUID> maleEntityIds;
   private List<UUID> femaleEntityIds;
   private EntityType entityType;
+  private int burrowId;
 
-  public BurrowPopulation(Location<World> location, int max, int males, int females, EntityType entityType) {
+  public BurrowPopulation(Location<World> location, int burrowId, int max, int males, int females, EntityType entityType) {
     this.location = location;
+    this.burrowId = burrowId;
     
     this.max = Math.min(max, MAX_POPULATION);
     this.males = Math.min(males, this.max);
@@ -111,6 +114,8 @@ public class BurrowPopulation {
     if (!gender.equals(Genders.RANDOM)) {
       ((EntityGendered) entity).setGender(gender);
     }
+    
+    ((EntityBurrowed) entity).setBurrow(this.burrowId, this.location.getBlockX(), this.location.getBlockY(), this.location.getBlockZ());
 
     world.spawnEntity(entity, cause);
     

@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -152,7 +153,10 @@ public class Essentials {
   public void onPlayerRightClick(InteractEntityEvent.Secondary e, @First Player player) {
     Entity target = e.getTargetEntity();
     if (target instanceof Player) {
-      player.sendMessage(Text.of(TextColors.DARK_GREEN, "* " + McFrPlayer.getMcFrPlayer((Player) e.getTargetEntity()).getDescription() + " *"));
+      if (Calendar.getInstance().getTime().getTime() - McFrPlayer.getMcFrPlayer(player).getReadDescriptionTime() > 100) {
+        McFrPlayer.getMcFrPlayer(player).updateReadDescriptionTime();
+        player.sendMessage(Text.of(TextColors.DARK_GREEN, "* " + McFrPlayer.getMcFrPlayer((Player) e.getTargetEntity()).getDescription() + " *"));
+      }
     }
   }
 

@@ -87,7 +87,7 @@ public class Burrow {
     this.location = location;
     this.delay = delay * M_TO_MS;
     this.lastEventTime = Calendar.getInstance().getTime().getTime();
-    this.population = new BurrowPopulation(this.location, maxPopulation, initMalePopulation, initFemalePopulation, entityType);
+    this.population = new BurrowPopulation(this.location, this.id, maxPopulation, initMalePopulation, initFemalePopulation, entityType);
 
     this.population.spawnAllEntities();
     setVisibleForAll();

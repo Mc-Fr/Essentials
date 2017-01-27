@@ -23,19 +23,27 @@ public final class McFrConnection {
 
   private static McFrConnection jdrConnection;
   private static McFrConnection serverConnection;
+  
+  private String database;
 
   private Connection connection;
 
   private McFrConnection(String database) {
+    this.database = database;
+    
     if (!configRead) {
       readConfigFile();
       configRead = true;
     }
 
+    this.openConnection();
+  }
+  
+  public void openConnection() {
     try {
       Optional<SqlService> optService = Sponge.getServiceManager().provide(SqlService.class);
       if (optService.isPresent()) {
-        this.connection = optService.get().getDataSource(jdbcUrl + database).getConnection();
+        this.connection = optService.get().getDataSource(jdbcUrl + this.database).getConnection();
       } else
         throw new NoSuchElementException("Service SQL inexistant !");
     } catch (SQLException e) {
@@ -89,6 +97,9 @@ public final class McFrConnection {
 
   public PreparedStatement prepare(String query) {
     try {
+      if (this.connection.isClosed()) {
+        this.openConnection();
+      }
       return this.connection.prepareStatement(query);
     } catch (SQLException e) {
       e.printStackTrace();
