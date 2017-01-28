@@ -20,12 +20,12 @@ public class CommandListener {
     }
   }
 
-  public void registerPositionForBack(SendCommandEvent e) {
+  private void registerPositionForBack(SendCommandEvent e) {
     String[] args = e.getArguments().split(" ");
-    
+
     Optional<Player> teleportedPlayer;
     if (args.length == 1 || args.length == 3 || args.length == 5) {
-      
+
       Optional<CommandSource> source = e.getCause().<CommandSource>get(NamedCause.SOURCE, CommandSource.class);
       if (source.isPresent() && source.get() instanceof Player) {
         teleportedPlayer = Optional.of((Player) source.get());
