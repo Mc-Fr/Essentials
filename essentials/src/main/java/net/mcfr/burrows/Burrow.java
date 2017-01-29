@@ -235,6 +235,7 @@ public class Burrow {
   public void setLocation(Location<World> location) {
     Vector3i prevPosition = this.location.getBlockPosition();
     this.location = location;
+    this.population.setLocation(location);
     saveInDatabase();
     moveDisplay(prevPosition);
   }

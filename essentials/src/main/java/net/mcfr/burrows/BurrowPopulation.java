@@ -222,4 +222,8 @@ public class BurrowPopulation {
   public String getEntityName() {
     return this.entityType.getName();
   }
+
+  public void setLocation(Location<World> location) {
+    this.location = location;
+  }
 }

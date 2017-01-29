@@ -33,7 +33,7 @@ import net.mcfr.roleplay.Skills;
 public class McFrPlayer {
   private static List<McFrPlayer> players = new ArrayList<>();
   private final static PreparedStatement killCharacter, incrementDeaths, changeDescription, changeName, getPseudonym, getUserId, getCharacterSheetId,
-      getCharacterSheet, getAttributes, getAdvantages;
+      getCharacterSheet, getAttributes, getAdvantages, registerPlayer;
 
   static {
     killCharacter = McFrConnection.getJdrConnection().prepare("INSERT INTO fiche_perso_personnage_avantage VALUES (?, ?, ?)");
@@ -50,6 +50,8 @@ public class McFrPlayer {
         .prepare("SELECT attribut,level FROM fiche_perso_personnage_attribut WHERE id_fiche_perso_personnage = ?");
     getAdvantages = McFrConnection.getJdrConnection()
         .prepare("SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
+    registerPlayer = McFrConnection.getServerConnection()
+        .prepare("INSERT INTO `Player`(`uuid`, `pseudonym`, `name`, `description`, `gender`, `race`, `deaths`) VALUES (?,?,?,?,?,?,?)");
   }
   private Player player;
   private int deaths;
@@ -342,6 +344,19 @@ public class McFrPlayer {
         String description = playerData.getString(3);
         this.description = description == null ? Optional.empty() : Optional.of(description);
         this.deaths = playerData.getInt(9);
+      } else {
+        this.name = this.player.getName();
+        this.description = Optional.of("Un nouveau colon");
+        this.deaths = 0;
+        
+        registerPlayer.setString(1, this.player.getUniqueId().toString());
+        registerPlayer.setString(2, this.name);
+        registerPlayer.setString(3, this.name);
+        registerPlayer.setString(4, this.description.get());
+        registerPlayer.setString(5, "M");
+        registerPlayer.setString(6, "human");
+        registerPlayer.setInt(7, this.deaths);
+        registerPlayer.execute();
       }
       playerData.close();
 

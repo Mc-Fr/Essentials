@@ -603,16 +603,13 @@ public class BurrowCommand extends AbstractCommand {
         Player player = (Player) src;
         McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
 
+        mcFrPlayer.toggleSeesBurrows();
         if (mcFrPlayer.seesBurrows()) {
           Burrow.setAllInvisible(player);
+          src.sendMessage(Text.of(TextColors.YELLOW, "Les terriers sont désormais cachés pour vous."));
         } else {
           Burrow.setAllVisible(player);
-        }
-        mcFrPlayer.toggleSeesBurrows();
-
-        Optional<Burrow> burrow = mcFrPlayer.getSelectedBurrow();
-        if (burrow.isPresent()) {
-          // TODO ???
+          src.sendMessage(Text.of(TextColors.YELLOW, "Les terriers sont désormais visibles pour vous."));
         }
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
