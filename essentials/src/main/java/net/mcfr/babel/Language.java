@@ -97,7 +97,7 @@ public class Language {
     return result;
   }
 
-  public String transformWord(String word, int languageLevel) {
+  private String transformWord(String word, int languageLevel) {
     String result = "";
     int symbolsSize = this.symbols.size();
     int wordLength = word.length();
