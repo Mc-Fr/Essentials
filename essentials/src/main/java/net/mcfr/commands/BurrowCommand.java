@@ -605,11 +605,11 @@ public class BurrowCommand extends AbstractCommand {
 
         mcFrPlayer.toggleSeesBurrows();
         if (mcFrPlayer.seesBurrows()) {
-          Burrow.setAllInvisible(player);
-          src.sendMessage(Text.of(TextColors.YELLOW, "Les terriers sont désormais cachés pour vous."));
-        } else {
           Burrow.setAllVisible(player);
           src.sendMessage(Text.of(TextColors.YELLOW, "Les terriers sont désormais visibles pour vous."));
+        } else {
+          Burrow.setAllInvisible(player);
+          src.sendMessage(Text.of(TextColors.YELLOW, "Les terriers sont désormais cachés pour vous."));
         }
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);

@@ -101,7 +101,7 @@ public class Burrow {
     if (this.population.isEmpty()) {
       removeBurrow(this);
     }
-    
+
     if (this.population.hasBeenDeaths()) {
       this.lastEventTime = currentTime;
       this.population.actualize();
@@ -270,7 +270,7 @@ public class Burrow {
   private void moveDisplay(Vector3i prevPosition) {
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).seesBurrows()).forEach(p -> {
       p.resetBlockChange(prevPosition);
-      setAllVisible(p);
+      setVisible(p);
     });
   }
 
@@ -302,19 +302,19 @@ public class Burrow {
         .filter(e -> e.getEntityClass().equals(entityClass)).findAny();
     return createBurrow(getUnusedId(), name, location, delay, maxPopulation, initMalePopulation, initFemalePopulation, entityType, false);
   }
-  
+
   public static void removeFromBurrow(UUID id) {
     burrows.forEach(b -> b.population.removeEntity(id));
   }
-  
-  public static void removeBurrow(Burrow burrow) {
-    burrows.remove(burrow);
-    burrow.getPopulation().killAllEntities();
-    burrow.deleteFromDatabase();
 
+  public static void removeBurrow(Burrow burrow) {
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).getSelectedBurrow().orElse(null) == burrow)
         .forEach(p -> McFrPlayer.getMcFrPlayer(p).unselectBurrow());
     burrow.setInvisibleForAll();
+
+    burrows.remove(burrow);
+    burrow.getPopulation().killAllEntities();
+    burrow.deleteFromDatabase();
   }
 
   public static Optional<Burrow> removeBurrow(Optional<Burrow> burrowOpt) {
