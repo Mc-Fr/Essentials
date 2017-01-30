@@ -73,7 +73,7 @@ public class TribalWord {
     List<TribalWord> levelWords = getByLevel(level);
     List<TribalWord> result = new LinkedList<>();
     
-    numberOfWords = Math.max(numberOfWords, levelWords.size());
+    numberOfWords = Math.min(numberOfWords, levelWords.size());
     
     while (result.size() < numberOfWords) {
       TribalWord word = levelWords.get(rand.nextInt(levelWords.size()));
