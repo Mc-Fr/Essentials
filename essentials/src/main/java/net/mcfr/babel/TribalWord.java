@@ -1,5 +1,6 @@
 package net.mcfr.babel;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -11,7 +12,8 @@ import net.mcfr.utils.McFrConnection;
 
 public class TribalWord {
   private static List<TribalWord> words = new LinkedList<>();
-  private static Random rand = new Random();
+  private final static Random rand = new Random();
+  private final static PreparedStatement addWord  = McFrConnection.getJdrConnection().prepare("INSERT INTO langue_tribale VALUES (?, ?, ?)");;
   private String word;
   private String translation;
   private int level;
@@ -36,6 +38,17 @@ public class TribalWord {
   
   public String getTranslationString() {
     return this.word + " = " + this.translation;
+  }
+  
+  public void registerToDatabase() {
+    try {
+      addWord.setString(1, this.word);
+      addWord.setString(2, this.translation);
+      addWord.setInt(3, this.level);
+      addWord.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 
   public static void loadFromDatabase() {
@@ -71,10 +84,14 @@ public class TribalWord {
     return result;
   }
   
-  public static TribalWord add(String tribal, String common, int level) {
+  public static Optional<TribalWord> add(String tribal, String common, int level) {
+    if (getTribalTranslation(common).isPresent() || getCommonTranslation(tribal).isPresent()) {
+      return Optional.empty();
+    }
     TribalWord word = new TribalWord(tribal, common, level);
     words.add(word);
-    return word;
+    word.registerToDatabase();
+    return Optional.of(word);
   }
   
   public static Optional<String> getTribalTranslation(String common) {

@@ -1,5 +1,7 @@
 package net.mcfr.commands;
 
+import java.util.Optional;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -21,7 +23,7 @@ public class TribalLanguageCommand extends AbstractCommand {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-    src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner l'action que vous souhaitez effectuer."));
+    src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner l'action que vous souhaitez effectuer : random, add, tribal, common"));
     return CommandResult.empty();
   }
 
@@ -64,7 +66,7 @@ public class TribalLanguageCommand extends AbstractCommand {
 
         player.sendMessage(Text.of(TextColors.BLUE, this.message));
       } else {
-        src.sendMessage(Text.of(TextColors.YELLOW, "Merci de renseigner les arguments : /tribal random <joueur> <nombre de mots> <niveau des mots>"));
+        src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner les arguments : /tribal random <joueur> <nombre de mots> <niveau des mots>"));
       }
       return CommandResult.success();
     }
@@ -98,10 +100,18 @@ public class TribalLanguageCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (args.hasAny("mot tribal") && args.hasAny("mot commun") && args.hasAny("niveau")) {
-        TribalWord word = TribalWord.add(args.<String>getOne("mot tribal").get(), args.<String>getOne("mot commun").get(), args.<Integer>getOne("niveau").get());
-        src.sendMessage(Text.of(TextColors.YELLOW, "Mot de niveau " + word.getLevel() + " ajouté : " + word.getWord() + " = " + word.getTranslation()));
+        Optional<TribalWord> optWord = TribalWord.add(args.<String>getOne("mot tribal").get(), args.<String>getOne("mot commun").get(),
+            args.<Integer>getOne("niveau").get());
+
+        if (optWord.isPresent()) {
+          TribalWord word = optWord.get();
+          src.sendMessage(
+              Text.of(TextColors.YELLOW, "Mot de niveau " + word.getLevel() + " ajouté : " + word.getWord() + " = " + word.getTranslation()));
+        } else {
+          src.sendMessage(Text.of(TextColors.YELLOW, "Le mot que vous souhaitez ajouter existe déjà dans l'une des deux formes"));
+        }
       } else {
-        src.sendMessage(Text.of(TextColors.YELLOW, "Merci de renseigner les arguments : /tribal add <mot tribal> <mot commun> <niveau>"));
+        src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner les arguments : /tribal add <mot tribal> <mot commun> <niveau>"));
       }
       return CommandResult.success();
     }
@@ -138,7 +148,7 @@ public class TribalLanguageCommand extends AbstractCommand {
         String word = args.<String>getOne("mot").get();
         src.sendMessage(Text.of(TextColors.YELLOW, "- " + word + " = " + TribalWord.getTribalTranslation(word).orElse("Non traduit")));
       } else {
-        src.sendMessage(Text.of(TextColors.YELLOW, "Merci de renseigner les arguments : /tribal tribal <mot commun>"));
+        src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner les arguments : /tribal tribal <mot commun>"));
       }
       return CommandResult.success();
     }
@@ -173,7 +183,7 @@ public class TribalLanguageCommand extends AbstractCommand {
         String word = args.<String>getOne("mot").get();
         src.sendMessage(Text.of(TextColors.YELLOW, "- " + word + " = " + TribalWord.getCommonTranslation(word).orElse("Non traduit")));
       } else {
-        src.sendMessage(Text.of(TextColors.YELLOW, "Merci de renseigner les arguments : /tribal common <mot tribal>"));
+        src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner les arguments : /tribal common <mot tribal>"));
       }
       return CommandResult.success();
     }
