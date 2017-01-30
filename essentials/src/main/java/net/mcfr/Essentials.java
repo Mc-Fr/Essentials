@@ -27,7 +27,6 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
-import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -172,11 +171,6 @@ public class Essentials {
     }
   }
 
-  @Listener
-  public void onItemDrop(DropItemEvent.Destruct e) {
-    e.setCancelled(true);
-  }
-
   @Listener(order = Order.POST)
   public void onServerStart(GameStartedServerEvent event) throws IOException {
     File commandsFile = new File("config/esssentials-config/commands.json");
@@ -209,7 +203,7 @@ public class Essentials {
 
     e.setCancelled(true);
   }
-  
+
   @Listener
   public void onEntityDestruct(DestructEntityEvent event) {
     if (event.getTargetEntity() instanceof EntityBurrowed) {
