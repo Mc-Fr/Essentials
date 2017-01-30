@@ -11,8 +11,7 @@ public class AttackRollResult extends SkillRollResult {
     super(player, skill, attribute, modifier, roll, score, margin);
   }
 
-  public String getWeaponName() {
-    return Skills.getWeaponSkill(getPlayer()).getName();
+  public Skills getWeaponSkill() {
+    return Skills.getWeaponSkill(getPlayer());
   }
-
 }

@@ -22,6 +22,7 @@ import net.mcfr.commands.SpawnCommand;
 import net.mcfr.commands.SpeedCommand;
 import net.mcfr.commands.SpyMpCommand;
 import net.mcfr.commands.TpHereCommand;
+import net.mcfr.commands.TribalLanguageCommand;
 import net.mcfr.commands.VanishCommand;
 import net.mcfr.commands.WhoIsCommand;
 
@@ -48,6 +49,7 @@ public enum Commands {
   SPEED(SpeedCommand.class),
   SPYMP(SpyMpCommand.class),
   TPH(TpHereCommand.class),
+  TRIBELANG(TribalLanguageCommand.class),
   VANISH(VanishCommand.class),
   WHOIS(WhoIsCommand.class);
 
