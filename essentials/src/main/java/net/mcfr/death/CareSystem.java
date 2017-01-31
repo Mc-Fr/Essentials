@@ -122,7 +122,7 @@ public class CareSystem {
     }
   }
 
-  private Optional<CareCenter> getNearest(Location<World> loc) {
+  public Optional<CareCenter> getNearest(Location<World> loc) {
     return centers.stream().filter(c -> c.distance(loc) < CARE_CENTER_RADIUS_EFFECT_AREA)
         .min((o1, o2) -> Double.compare(o1.distance(loc), o2.distance(loc)));
   }
@@ -143,7 +143,7 @@ public class CareSystem {
     return modifier;
   }
 
-  private static class CareCenter {
+  public static class CareCenter {
     private String name;
     private Location<World> location;
 
