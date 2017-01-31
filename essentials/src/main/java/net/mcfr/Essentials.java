@@ -124,7 +124,7 @@ public class Essentials {
             deathDataReq.setInt(1, characterSheet.getInt(1));
             ResultSet deathData = deathDataReq.executeQuery();
             if (deathData.next()) {
-              e.setCancelled(true);
+              e.setCancelled(!e.getTargetUser().hasPermission("essentials.admin.connect_without_character"));
             }
             deathData.close();
 

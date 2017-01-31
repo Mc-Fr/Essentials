@@ -24,7 +24,8 @@ import net.mcfr.entities.mobs.gender.Genders;
 
 public class BurrowPopulation {
   private final static int MAX_POPULATION = 40;
-  private final static float BIRTH_CHANCE = 0.5F;
+  private final static float BIRTH_CHANCE = 0.8F;
+  private final static float BIRTH_CHANCE_NOMIX = 0.15F;
   private final static Random RAND = new Random();
 
   private Location<World> location;
@@ -84,7 +85,7 @@ public class BurrowPopulation {
   private boolean birthAvailable() {
 
     boolean needsBirth = this.males + this.females < this.max;
-    boolean hasMaleAndFemale = this.males > 0 && this.females > 0;
+    boolean hasMaleAndFemale = (this.males > 0 && this.females > 0) || (RAND.nextFloat() < BIRTH_CHANCE_NOMIX);
     boolean birthRandom = RAND.nextFloat() < BIRTH_CHANCE;
 
     return needsBirth && hasMaleAndFemale && birthRandom;
