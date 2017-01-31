@@ -41,6 +41,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.google.inject.Inject;
 
+import net.mcfr.babel.TribalWord;
 import net.mcfr.burrows.Burrow;
 import net.mcfr.chat.MessageData;
 import net.mcfr.commands.utils.AbstractCommand;
@@ -192,6 +193,7 @@ public class Essentials {
 
     Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load"))
         .delay(3, TimeUnit.SECONDS).submit(this);
+    TribalWord.loadFromDatabase();
   }
 
   @Listener

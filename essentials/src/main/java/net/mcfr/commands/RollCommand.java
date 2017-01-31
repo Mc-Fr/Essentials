@@ -1,6 +1,6 @@
 package net.mcfr.commands;
 
-import static org.spongepowered.api.text.format.TextColors.*;
+import static org.spongepowered.api.text.format.TextColors.YELLOW;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -66,17 +66,27 @@ public class RollCommand extends AbstractCommand {
     switch (type) {
     case ATTACK: {
       AttackRollResult result = (AttackRollResult) res;
+      String displayName = result.getWeaponSkill().getDisplayName();
 
       String weaponString;
-      switch (result.getWeaponName()) {
+      switch (result.getWeaponSkill().getName()) {
       case "pugilat":
         weaponString = "aux poings";
         break;
       case "lutte":
         weaponString = "à la lutte";
         break;
+      case "sabre":
+      case "baton":
+        weaponString = "au " + displayName;
+        break;
+      case "arc":
+      case "epee_courte":
+      case "epee_a_deux_mains":
+        weaponString = "à l'" + displayName;
+        break;
       default:
-        weaponString = "au " + result.getWeaponName();
+        weaponString = "à la " + displayName;
         break;
       }
 
