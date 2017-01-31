@@ -34,8 +34,9 @@ public class WhoIsCommand extends AbstractCommand {
       }
     }
 
-    src.sendMessage(Text.of(TextColors.DARK_GREEN, player.getName() + " -> " + McFrPlayer.getMcFrPlayer(player).getName()));
-    src.sendMessage(Text.of(TextColors.DARK_GREEN, "    Desc : " + McFrPlayer.getMcFrPlayer(player).getDescription()));
+    String name = McFrPlayer.getMcFrPlayer(player).getName();
+    src.sendMessage(Text.of(TextColors.DARK_GREEN, player.getName() + " -> " + name));
+    src.sendMessage(Text.of(TextColors.DARK_GREEN, " - Desc : " + McFrPlayer.getMcFrPlayer(player).getDescription()));
 
     return CommandResult.success();
   }

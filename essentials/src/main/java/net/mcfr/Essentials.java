@@ -132,7 +132,7 @@ public class Essentials {
           }
           characterSheet.close();
         } else {
-          e.setCancelled(true);
+          e.setCancelled(!e.getTargetUser().hasPermission("essentials.admin.connect_without_character"));
         }
         user.close();
       } catch (SQLException ex) {
