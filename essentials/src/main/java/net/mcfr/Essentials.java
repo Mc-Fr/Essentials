@@ -21,6 +21,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
@@ -52,6 +53,7 @@ import net.mcfr.death.CareSystem;
 import net.mcfr.entities.mobs.EntityBurrowed;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.DamageListener;
+import net.mcfr.roleplay.Attributes;
 import net.mcfr.roleplay.RolePlayImp;
 import net.mcfr.roleplay.RolePlayService;
 import net.mcfr.roleplay.Skills;
@@ -174,19 +176,31 @@ public class Essentials {
       e.setCancelled(true);
     }
   }
-  
-  /* Déclenché quand un item est looté depuis un bloc cassé ou une entité tuée
+
+  /**
+   * Déclenché quand un item est looté depuis un bloc cassé ou une entité tuée
    */
   @Listener
   public void onLootItem(DropItemEvent.Destruct e) {
-    if (e.getCause().first(Entity.class).isPresent()) {
-      Optional<Player> playerOpt = e.getCause().first(Player.class);
-      if (playerOpt.isPresent()) {
-        e.setCancelled(McFrPlayer.getMcFrPlayer(playerOpt.get()).getSkillLevel(Skills.getSkills().get("chasse")) < 12);
-      } else {
-        e.setCancelled(true);
+    boolean mustLoot = true;
+    
+    Optional<EntityDamageSource> optDamageSource = e.getCause().first(EntityDamageSource.class);
+    
+    if (optDamageSource.isPresent()) {
+      mustLoot = false;
+      Entity source = optDamageSource.get().getSource();
+      
+      if (source instanceof Player) {
+        McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) source);
+        int skillLevel = player.getAttributePoints(Attributes.DEXTERITE) + player.getSkillLevel(Skills.getSkillByName("chasse"));
+        
+        if (skillLevel > 12) {
+          mustLoot = true;
+        }
       }
     }
+    
+    e.setCancelled(!mustLoot);
   }
 
   @Listener(order = Order.POST)

@@ -81,6 +81,10 @@ public class Skills {
   public static Map<String, Skills> getSkills() {
     return skills;
   }
+  
+  public static Skills getSkillByName(String name) {
+    return skills.get(name);
+  }
 
   public static Skills getWeaponSkill(Player player) {
     Optional<ItemStack> optUsedWeapon = player.getItemInHand(HandTypes.MAIN_HAND);
