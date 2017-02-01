@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -52,6 +54,7 @@ import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.DamageListener;
 import net.mcfr.roleplay.RolePlayImp;
 import net.mcfr.roleplay.RolePlayService;
+import net.mcfr.roleplay.Skills;
 import net.mcfr.utils.McFrConnection;
 import net.mcfr.utils.McFrPlayer;
 
@@ -169,6 +172,20 @@ public class Essentials {
   public void onBlockChange(ChangeBlockEvent.Place e) {
     if (!e.getCause().first(Player.class).isPresent()) {
       e.setCancelled(true);
+    }
+  }
+  
+  /* Déclenché quand un item est looté depuis un bloc cassé ou une entité tuée
+   */
+  @Listener
+  public void onLootItem(DropItemEvent.Destruct e) {
+    if (e.getCause().first(Entity.class).isPresent()) {
+      Optional<Player> playerOpt = e.getCause().first(Player.class);
+      if (playerOpt.isPresent()) {
+        e.setCancelled(McFrPlayer.getMcFrPlayer(playerOpt.get()).getSkillLevel(Skills.getSkills().get("chasse")) < 12);
+      } else {
+        e.setCancelled(true);
+      }
     }
   }
 
