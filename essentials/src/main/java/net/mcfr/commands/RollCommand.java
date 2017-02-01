@@ -11,6 +11,7 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
@@ -29,7 +30,7 @@ import net.mcfr.roleplay.rollResults.RollResult;
 import net.mcfr.roleplay.rollResults.SkillRollResult;
 import net.mcfr.utils.McFrPlayer;
 
-  //TODO : accessibilité générale
+//TODO : accessibilité générale
 
 public class RollCommand extends AbstractCommand {
   public RollCommand(Essentials plugin) {
@@ -48,7 +49,13 @@ public class RollCommand extends AbstractCommand {
             .description(Text.of("Permet de faire des jets de dés."))
             .permission("essentials.command.roll")
             .executor(this)
-            .children(getChildrenList(new Skill(getPlugin()), new Attribute(getPlugin()), new Resistance(getPlugin()), new Perception(getPlugin()), new Attack(getPlugin()), new Defense(getPlugin())))
+            .children(getChildrenList(new Skill(getPlugin()),
+                new Attribute(getPlugin()),
+                new Resistance(getPlugin()),
+                new Perception(getPlugin()),
+                new Attack(getPlugin()),
+                new Defense(getPlugin()),
+                new None(getPlugin())))
             .build();
     //#f:1
   }
@@ -147,8 +154,8 @@ public class RollCommand extends AbstractCommand {
         skillDisplayName = "de " + skillDisplayName;
       }
 
-      line1 = String.format("%s fait un jet %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""),
-          McFrPlayer.getMcFrPlayer(player).getName(), skillDisplayName, result.getScore(), result.getMargin());
+      line1 = String.format("%s fait un jet %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""), McFrPlayer.getMcFrPlayer(player).getName(),
+          skillDisplayName, result.getScore(), result.getMargin());
     }
       break;
     }
@@ -159,7 +166,8 @@ public class RollCommand extends AbstractCommand {
       p.sendMessage(text1);
       p.sendMessage(text2);
     });
-    // TODO : rajouter un argument optionnel de portée. Il s'agirait d'une chaine de caractère correspondant à un niveau de chat.
+    // TODO : rajouter un argument optionnel de portée. Il s'agirait d'une
+    // chaine de caractère correspondant à un niveau de chat.
   }
 
   static class Skill extends AbstractCommand {
@@ -381,5 +389,33 @@ public class RollCommand extends AbstractCommand {
       return new String[] { "d" };
     }
 
+  }
+
+  static class None extends AbstractCommand {
+    public None(Essentials plugin) {
+      super(plugin);
+    }
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {      
+      src.sendMessage(Text.of(TextColors.YELLOW, "Jet de 3D6 : " + Sponge.getServiceManager().provide(RolePlayService.class).get().rollDice(3, 6)));
+      return CommandResult.success();
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+    //#f:0
+    return CommandSpec.builder()
+            .description(Text.of("Fait un jet sans attribut ni compétence."))
+            .permission("essentials.command.roll.none")
+            .executor(this)
+            .build();
+    //#f:1
+    }
+
+    @Override
+    public String[] getAliases() {
+      return new String[] { "n" };
+    }
   }
 }

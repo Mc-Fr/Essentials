@@ -181,6 +181,7 @@ public class RolePlayImp implements RolePlayService {
     return new DefenseRollResult(player, defense, modifier, roll, score, margin);
   }
 
+  @Override
   public int rollDice(int times, int faces) {
     int value = 0;
     for (int i = 0; i < times; i++) {
@@ -189,8 +190,7 @@ public class RolePlayImp implements RolePlayService {
     return value;
   }
 
-  @Override
-  public int rollDie(int faces) {
+  private int rollDie(int faces) {
     return this.rd.nextInt(faces - 1) + 1;
   }
 }

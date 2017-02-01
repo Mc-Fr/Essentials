@@ -1,8 +1,18 @@
 package net.mcfr.chat;
 
-import static org.spongepowered.api.text.format.TextColors.*;
-import static org.spongepowered.api.text.format.TextStyles.*;
+import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
+import static org.spongepowered.api.text.format.TextColors.DARK_PURPLE;
+import static org.spongepowered.api.text.format.TextColors.DARK_RED;
+import static org.spongepowered.api.text.format.TextColors.GOLD;
+import static org.spongepowered.api.text.format.TextColors.GRAY;
+import static org.spongepowered.api.text.format.TextColors.GREEN;
+import static org.spongepowered.api.text.format.TextColors.LIGHT_PURPLE;
+import static org.spongepowered.api.text.format.TextColors.RED;
+import static org.spongepowered.api.text.format.TextColors.WHITE;
+import static org.spongepowered.api.text.format.TextStyles.ITALIC;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.spongepowered.api.text.format.TextColor;
@@ -148,4 +158,11 @@ public enum ChatType {
     return "essentials.chat.%s." + name().toLowerCase();
   }
 
+  public static Map<String, ChatType> getRollChatTypes() {
+    Map<String, ChatType> result = new HashMap<>();
+    result.put("\"", STEALTHY_ACTION);
+    result.put("'", DISCREET_ACTION);
+    result.put("&", VISIBLE_ACTION);
+    return result;
+  }
 }
