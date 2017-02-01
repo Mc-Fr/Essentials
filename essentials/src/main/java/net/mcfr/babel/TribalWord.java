@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.mcfr.utils.McFrConnection;
 
 public class TribalWord {
@@ -95,7 +97,7 @@ public class TribalWord {
   }
   
   public static Optional<String> getTribalTranslation(String common) {
-    Optional<TribalWord> optWord = words.stream().filter(w -> w.getTranslation().equals(common)).findFirst();
+    Optional<TribalWord> optWord = words.stream().filter(w -> normalize(w.getTranslation()).equals(normalize(common))).findFirst();
     if (optWord.isPresent()) {
       return Optional.of(optWord.get().getWord());
     } else {
@@ -104,11 +106,15 @@ public class TribalWord {
   }
   
   public static Optional<String> getCommonTranslation(String tribal) {
-    Optional<TribalWord> optWord = words.stream().filter(w -> w.getWord().equals(tribal)).findFirst();
+    Optional<TribalWord> optWord = words.stream().filter(w -> normalize(w.getWord()).equals(normalize(tribal))).findFirst();
     if (optWord.isPresent()) {
       return Optional.of(optWord.get().getTranslation());
     } else {
       return Optional.empty();
     }
+  }
+  
+  public static String normalize(String input) {
+    return StringUtils.stripAccents(input).toLowerCase();
   }
 }

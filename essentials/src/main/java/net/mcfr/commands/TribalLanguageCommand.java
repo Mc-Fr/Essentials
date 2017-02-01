@@ -23,7 +23,7 @@ public class TribalLanguageCommand extends AbstractCommand {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-    src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner l'action que vous souhaitez effectuer : random, add, tribal, common"));
+    src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner l'action que vous souhaitez effectuer : random, add, tribal, common, list"));
     return CommandResult.empty();
   }
 
@@ -37,7 +37,8 @@ public class TribalLanguageCommand extends AbstractCommand {
         .children(getChildrenList(new RandomWords(getPlugin()), 
             new Add(getPlugin()), 
             new Tribal(getPlugin()), 
-            new Common(getPlugin())))
+            new Common(getPlugin()),
+            new List(getPlugin())))
         .build();
     // #f:1
   }
@@ -203,6 +204,45 @@ public class TribalLanguageCommand extends AbstractCommand {
     @Override
     public String[] getAliases() {
       return new String[] { "common" };
+    }
+  }
+
+  static class List extends AbstractCommand {
+    private String message;
+
+    public List(Essentials plugin) {
+      super(plugin);
+    }
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      if (args.hasAny("niveau")) {
+        this.message = "Mots de niveau " + args.<Integer>getOne("niveau").get() + " :";
+
+        TribalWord.getByLevel(args.<Integer>getOne("niveau").get()).forEach(w -> this.message += "\n- " + w.getTranslationString());
+
+        src.sendMessage(Text.of(TextColors.BLUE, this.message));
+      } else {
+        src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner les arguments : /tribal list <niveau>"));
+      }
+      return CommandResult.success();
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Affiche tous les mots d'un certain niveau."))
+          .permission("essentials.command.burrow.list")
+          .arguments(GenericArguments.integer(Text.of("niveau")))
+          .executor(this)
+          .build();
+      // #f:1
+    }
+
+    @Override
+    public String[] getAliases() {
+      return new String[] { "list" };
     }
   }
 }
