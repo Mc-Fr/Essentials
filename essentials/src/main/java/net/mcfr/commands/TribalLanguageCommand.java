@@ -77,7 +77,7 @@ public class TribalLanguageCommand extends AbstractCommand {
       // #f:0
       return CommandSpec.builder()
           .description(Text.of("Affiche pour le joueur une sélection aléatoire de mots d'un certain niveau."))
-          .permission("essentials.command.burrow.random")
+          .permission("essentials.command.tribal.random")
           .arguments(GenericArguments.player(Text.of("joueur")),
               GenericArguments.integer(Text.of("nombre de mots")),
               GenericArguments.integer(Text.of("niveau des mots")))
@@ -122,7 +122,7 @@ public class TribalLanguageCommand extends AbstractCommand {
       // #f:0
       return CommandSpec.builder()
           .description(Text.of("Ajoute un mot au dictionnaire tribal."))
-          .permission("essentials.command.burrow.add")
+          .permission("essentials.command.tribal.add")
           .arguments(GenericArguments.string(Text.of("mot tribal")),
               GenericArguments.string(Text.of("mot commun")),
               GenericArguments.integer(Text.of("niveau")))
@@ -159,7 +159,7 @@ public class TribalLanguageCommand extends AbstractCommand {
       // #f:0
       return CommandSpec.builder()
           .description(Text.of("Donne la traduction tribale du mot commun renseigné."))
-          .permission("essentials.command.burrow.tribal")
+          .permission("essentials.command.tribal.tribal")
           .arguments(GenericArguments.string(Text.of("mot")))
           .executor(this)
           .build();
@@ -194,7 +194,7 @@ public class TribalLanguageCommand extends AbstractCommand {
       // #f:0
       return CommandSpec.builder()
           .description(Text.of("Donne la traduction commune du mot tribal renseigné."))
-          .permission("essentials.command.burrow.common")
+          .permission("essentials.command.tribal.common")
           .arguments(GenericArguments.string(Text.of("mot")))
           .executor(this)
           .build();
@@ -233,7 +233,7 @@ public class TribalLanguageCommand extends AbstractCommand {
       // #f:0
       return CommandSpec.builder()
           .description(Text.of("Affiche tous les mots d'un certain niveau."))
-          .permission("essentials.command.burrow.list")
+          .permission("essentials.command.tribal.list")
           .arguments(GenericArguments.integer(Text.of("niveau")))
           .executor(this)
           .build();

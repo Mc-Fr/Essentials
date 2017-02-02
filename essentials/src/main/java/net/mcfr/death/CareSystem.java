@@ -63,7 +63,7 @@ public class CareSystem {
   public void onPlayerMove(MoveEntityEvent e, @First Player player) {
     Optional<CareCenter> centerOpt = getNearest(player.getLocation());
     if (McFrPlayer.getMcFrPlayer(player).isInCareCenterEffectArea() && !centerOpt.isPresent()) {
-      player.sendMessage(Text.of(TextColors.YELLOW, "Vous foulez des terres hostiles, prenez garde !"));
+      player.sendMessage(Text.of(TextColors.YELLOW, "Vous n'êtes plus protégé par aucun centre de soin, prenez garde."));
       McFrPlayer.getMcFrPlayer(player).setInCareCenterEffectArea(centerOpt.isPresent());
     } else if (!McFrPlayer.getMcFrPlayer(player).isInCareCenterEffectArea() && centerOpt.isPresent()) {
       player.sendMessage(Text.of(TextColors.YELLOW, "Un centre de soin est maintenant assez proche en cas de problème."));

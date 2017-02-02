@@ -27,6 +27,7 @@ import org.spongepowered.api.world.World;
 import net.mcfr.babel.Language;
 import net.mcfr.burrows.Burrow;
 import net.mcfr.chat.ChatType;
+import net.mcfr.expedition.ExpeditionSystem;
 import net.mcfr.roleplay.Attributes;
 import net.mcfr.roleplay.Skills;
 
@@ -59,6 +60,7 @@ public class McFrPlayer {
    * Représente tous les booléens présents dans la classe.
    * <table style="border-collapse: collapse">
    * <tr>
+   * <td style="border: 1px solid black">isAuthorizedToLeaveArea</td>
    * <td style="border: 1px solid black">hasCharacter</td>
    * <td style="border: 1px solid black">isInCareCenterEffectArea</td>
    * <td style="border: 1px solid black">seeBurrows</td>
@@ -70,19 +72,21 @@ public class McFrPlayer {
    * <td style="border: 1px solid black">mute</td>
    * </tr>
    * <tr>
-   * <td style="border: 1px solid black">0b1_0000_0000</td>
-   * <td style="border: 1px solid black">0b0_1000_0000</td>
-   * <td style="border: 1px solid black">0b0_0100_0000</td>
-   * <td style="border: 1px solid black">0b0_0010_0000</td>
-   * <td style="border: 1px solid black">0b0_0001_0000</td>
-   * <td style="border: 1px solid black">0b0_0000_1000</td>
-   * <td style="border: 1px solid black">0b0_0000_0100</td>
-   * <td style="border: 1px solid black">0b0_0000_0010</td>
-   * <td style="border: 1px solid black">0b0_0000_0001</td>
+   * <td style="border: 1px solid black">0b10_0000_0000</td>
+   * <td style="border: 1px solid black">0b01_0000_0000</td>
+   * <td style="border: 1px solid black">0b00_1000_0000</td>
+   * <td style="border: 1px solid black">0b00_0100_0000</td>
+   * <td style="border: 1px solid black">0b00_0010_0000</td>
+   * <td style="border: 1px solid black">0b00_0001_0000</td>
+   * <td style="border: 1px solid black">0b00_0000_1000</td>
+   * <td style="border: 1px solid black">0b00_0000_0100</td>
+   * <td style="border: 1px solid black">0b00_0000_0010</td>
+   * <td style="border: 1px solid black">0b00_0000_0001</td>
    * </tr>
    * </table>
    */
   private int booleans;
+  private ExpeditionSystem.States expeditionState;
   private Optional<Burrow> selectedBurrow;
   private String name;
   private Optional<String> description;
@@ -131,6 +135,7 @@ public class McFrPlayer {
     this.booleans = 0;
     this.name = player.getName();
     this.description = Optional.empty();
+    this.expeditionState = ExpeditionSystem.States.INAREA;
     this.defaultChat = ChatType.MEDIUM;
     this.sheetId = -1;
     this.skills = new HashMap<>();
@@ -144,20 +149,28 @@ public class McFrPlayer {
     return this.player;
   }
 
+  public ExpeditionSystem.States getExpeditionState() {
+    return this.expeditionState;
+  }
+  
+  public void setExpeditionState(ExpeditionSystem.States state) {
+    this.expeditionState = state;
+  }
+  
   public boolean isInCareCenterEffectArea() {
-    return (this.booleans & 0b0_1000_0000) == 0b0_1000_0000;
+    return (this.booleans & 0b00_1000_0000) == 0b00_1000_0000;
   }
 
   public boolean hasCharacter() {
-    return (this.booleans & 0b1_0000_0000) == 0b1_0000_0000;
+    return (this.booleans & 0b01_0000_0000) == 0b01_0000_0000;
   }
 
   public void toggleSeesBurrows() {
-    this.booleans ^= 0b0_0100_0000;
+    this.booleans ^= 0b00_0100_0000;
   }
 
   public boolean seesBurrows() {
-    return (this.booleans & 0b0_0100_0000) == 0b0_0100_0000;
+    return (this.booleans & 0b00_0100_0000) == 0b00_0100_0000;
   }
 
   public void selectBurrow(Burrow burrow) {
@@ -182,7 +195,7 @@ public class McFrPlayer {
 
   public void setInCareCenterEffectArea(boolean inCareCenterEffectArea) {
     if (!(inCareCenterEffectArea == isInCareCenterEffectArea())) {
-      this.booleans ^= 0b0_1000_0000;
+      this.booleans ^= 0b00_1000_0000;
     }
   }
 
@@ -191,53 +204,61 @@ public class McFrPlayer {
   }
 
   public boolean isMuted() {
-    return (this.booleans & 0b0_0000_0001) == 0b0_0000_0001;
+    return (this.booleans & 0b00_0000_0001) == 0b00_0000_0001;
   }
 
   public void toggleMute() {
-    this.booleans ^= 0b0_0000_0001;
+    this.booleans ^= 0b00_0000_0001;
   }
 
   public boolean isGod() {
-    return (this.booleans & 0b0_0000_0010) == 0b0_0000_0010;
+    return (this.booleans & 0b00_0000_0010) == 0b00_0000_0010;
   }
 
   public void toggleGod() {
-    this.booleans ^= 0b0_0000_0010;
+    this.booleans ^= 0b00_0000_0010;
   }
 
   public boolean spiesMp() {
-    return (this.booleans & 0b0_0000_0100) == 0b0_0000_0100;
+    return (this.booleans & 0b00_0000_0100) == 0b00_0000_0100;
   }
 
   public void toggleSpyMp() {
-    this.booleans ^= 0b0_0000_0100;
+    this.booleans ^= 0b00_0000_0100;
   }
 
   public boolean wantsMP() {
-    return (this.booleans & 0b0_0000_1000) == 0b0_0000_1000;
+    return (this.booleans & 0b00_0000_1000) == 0b00_0000_1000;
   }
 
   public void toggleWantMp() {
-    this.booleans ^= 0b0_0000_1000;
+    this.booleans ^= 0b00_0000_1000;
   }
 
   public boolean wantsTeam() {
-    return (this.booleans & 0b0_0001_0000) == 0b0_0001_0000;
+    return (this.booleans & 0b00_0001_0000) == 0b00_0001_0000;
   }
 
   public void toggleWantTeam() {
-    this.booleans ^= 0b0_0001_0000;
+    this.booleans ^= 0b00_0001_0000;
   }
 
   public boolean wantsRealName() {
-    return (this.booleans & 0b0_0010_0000) == 0b0_0010_0000;
+    return (this.booleans & 0b00_0010_0000) == 0b00_0010_0000;
   }
 
   public void toggleWantRealName() {
-    this.booleans ^= 0b0_0010_0000;
+    this.booleans ^= 0b00_0010_0000;
   }
-
+  
+  public boolean isAuthorizedToLeaveArea() {
+    return (this.booleans & 0b10_0000_0000) == 0b10_0000_0000;
+  }
+  
+  public void toggleAuthorizedToLeaveArea() {
+    this.booleans ^= 0b10_0000_0000;
+  }
+  
   public String getName() {
     return this.name;
   }

@@ -51,6 +51,7 @@ import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.commands.utils.Commands;
 import net.mcfr.death.CareSystem;
 import net.mcfr.entities.mobs.EntityBurrowed;
+import net.mcfr.expedition.ExpeditionSystem;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.DamageListener;
 import net.mcfr.roleplay.Attributes;
@@ -94,6 +95,7 @@ public class Essentials {
 
     Sponge.getEventManager().registerListeners(this, new DamageListener());
     Sponge.getEventManager().registerListeners(this, new CareSystem());
+    Sponge.getEventManager().registerListeners(this, new ExpeditionSystem());
     Sponge.getEventManager().registerListeners(this, new CommandListener());
 
     getLogger().info("McFrEssentials Plugin has loaded.");
