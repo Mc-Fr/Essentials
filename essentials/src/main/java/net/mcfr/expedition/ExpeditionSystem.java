@@ -69,10 +69,11 @@ public class ExpeditionSystem {
         case HURT1:
         case HURT2:
         case HURT3:
-          p.damage(Math.min(7.0F, p.health().get()), DamageSources.POISON);
+          p.damage(Math.min(7.0F, p.health().get()), DamageSources.VOID);
           break;
         case KILL:
-          p.damage(500.0F, DamageSources.POISON);
+          p.damage(500.0F, DamageSources.VOID);
+          p.damage(500.0F, DamageSources.VOID);
           player.killCharacter("Pris en embuscade par des indigènes, vous êtes abattu sur le champ.");
           break;
         default:

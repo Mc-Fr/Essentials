@@ -33,6 +33,7 @@ import net.mcfr.roleplay.Skills;
 
 public class McFrPlayer {
   private static List<McFrPlayer> players = new ArrayList<>();
+  private final static int EFFECT_DURATION = 800000;
   private final static PreparedStatement killCharacter, incrementDeaths, changeDescription, changeName, getPseudonym, getUserId, getCharacterSheetId,
       getCharacterSheet, getAttributes, getAdvantages, registerPlayer;
 
@@ -98,6 +99,7 @@ public class McFrPlayer {
   private HashMap<Attributes, Integer> attributes;
   private HashMap<String, Integer> traits;
   private Location<World> previousLocation;
+  private long lastBreathTime;
   private long readDescriptionTime;
   
   public static void addPlayer(McFrPlayer player) {
@@ -143,6 +145,8 @@ public class McFrPlayer {
     this.traits = new HashMap<>();
     this.previousLocation = null;
     this.selectedBurrow = Optional.empty();
+    this.lastBreathTime = 0;
+    this.readDescriptionTime = 0;
   }
 
   public Player getPlayer() {
@@ -413,31 +417,31 @@ public class McFrPlayer {
     PotionEffectData effects = this.player.getOrCreate(PotionEffectData.class).get();
 
     if (hasTrait("saut_ameliore")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.JUMP_BOOST).duration(50000).particles(false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.JUMP_BOOST).duration(EFFECT_DURATION).particles(false).build();
       effects.addElement(effect);
     }
     if (hasTrait("guerison_rapide_surnaturelle")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.REGENERATION).duration(50000).amplifier(1).particles(false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.REGENERATION).duration(EFFECT_DURATION).amplifier(1).particles(false).build();
       effects.addElement(effect);
     }
     if (hasTrait("armure_naturelle")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.RESISTANCE).duration(50000)
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.RESISTANCE).duration(EFFECT_DURATION)
           .amplifier(getTraitLevel("armure_naturelle")).particles(false).build();
       effects.addElement(effect);
     }
     if (getTraitLevel("vision_dans_la_nuit") > 3 || hasTrait("vision_dans_le_noir")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.NIGHT_VISION).duration(50000).particles(false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.NIGHT_VISION).duration(EFFECT_DURATION).particles(false).build();
       effects.addElement(effect);
     }
     if (hasTrait("boiteux_jambe_en_moins")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(50000).amplifier(2).particles(false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).amplifier(1).particles(false).build();
       effects.addElement(effect);
     } else if (hasTrait("boiteux_jambe_abimee")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(50000).amplifier(1).particles(false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).particles(false).build();
       effects.addElement(effect);
     }
     if (hasTrait("aveugle")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.BLINDNESS).duration(50000).particles(false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.BLINDNESS).duration(EFFECT_DURATION).particles(false).build();
       effects.addElement(effect);
     }
     this.player.offer(effects);
@@ -573,6 +577,14 @@ public class McFrPlayer {
   
   public void updateReadDescriptionTime() {
     this.readDescriptionTime = Calendar.getInstance().getTime().getTime();
+  }
+  
+  public long getLastBreathTime() {
+    return this.lastBreathTime;
+  }
+  
+  public void updateLastBreathTime() {
+    this.lastBreathTime = Calendar.getInstance().getTime().getTime();
   }
   
   @Override
