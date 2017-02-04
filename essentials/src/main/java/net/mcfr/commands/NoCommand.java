@@ -24,9 +24,6 @@ public class NoCommand extends AbstractCommand {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-    if (!(src instanceof Player)) {
-      src.sendMessage(ONLY_PLAYERS_COMMAND);
-    }
     return CommandResult.empty();
   }
 
