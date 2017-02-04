@@ -27,6 +27,7 @@ import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
+import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
@@ -54,6 +55,7 @@ import net.mcfr.chat.MessageData;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.commands.utils.Commands;
 import net.mcfr.death.CareSystem;
+import net.mcfr.entities.mobs.EntityBurrowed;
 import net.mcfr.expedition.ExpeditionSystem;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.DamageListener;
@@ -280,6 +282,11 @@ public class Essentials {
     }
 
     e.setCancelled(true);
+  }
+  
+  @Listener
+  public void onSpawnEntity(SpawnEntityEvent event) {
+    event.getEntities().stream().filter(e -> !(e instanceof EntityBurrowed)).forEach(e -> event.setCancelled(true));;
   }
 
   @Listener
