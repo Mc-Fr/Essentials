@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -27,7 +26,6 @@ import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
-import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
@@ -36,7 +34,6 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
-import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -61,10 +58,8 @@ import net.mcfr.death.CareSystem;
 import net.mcfr.expedition.ExpeditionSystem;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.DamageListener;
-import net.mcfr.roleplay.Attributes;
 import net.mcfr.roleplay.RolePlayImp;
 import net.mcfr.roleplay.RolePlayService;
-import net.mcfr.roleplay.Skills;
 import net.mcfr.utils.McFrConnection;
 import net.mcfr.utils.McFrPlayer;
 
@@ -208,7 +203,8 @@ public class Essentials {
     if (target instanceof Player) {
       if (Calendar.getInstance().getTime().getTime() - McFrPlayer.getMcFrPlayer(player).getReadDescriptionTime() > 100) {
         McFrPlayer.getMcFrPlayer(player).updateReadDescriptionTime();
-        player.sendMessage(Text.of(TextColors.DARK_GREEN, "* " + McFrPlayer.getMcFrPlayer((Player) e.getTargetEntity()).getDescription() + " *"));
+        McFrPlayer otherPlayer = McFrPlayer.getMcFrPlayer(((Player) e.getTargetEntity()));
+        player.sendMessage(Text.of(TextColors.DARK_GREEN, "* " + otherPlayer.getName() + " * " + otherPlayer.getDescription() + " *"));
       }
     }
   }
@@ -258,7 +254,7 @@ public class Essentials {
   /**
    * Déclenché quand un item est looté depuis un bloc cassé ou une entité tuée
    */
-  @Listener
+  /*@Listener
   public void onLootItem(DropItemEvent.Destruct e) {
     boolean mustLoot = true;
 
@@ -279,7 +275,7 @@ public class Essentials {
     }
 
     e.setCancelled(!mustLoot);
-  }
+  }*/
 
   @Listener
   public void onServerStart(GameStartedServerEvent event) throws IOException {

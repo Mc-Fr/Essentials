@@ -68,7 +68,7 @@ public enum ChatType {
 
   private ChatType(int distance, TextColor nearColor, TextColor farColor, TextStyle style, String charsRequired, String tooFarMessage,
       boolean isRealname, String messageFormat, boolean isTranslatable) {
-    this(distance, nearColor, farColor, style, charsRequired, Optional.of(tooFarMessage), isRealname, messageFormat, false);
+    this(distance, nearColor, farColor, style, charsRequired, Optional.of(tooFarMessage), isRealname, messageFormat, isTranslatable);
   }
 
   private ChatType(int distance, TextColor nearColor, TextColor farColor, TextStyle style, String charsRequired, boolean isRealname,

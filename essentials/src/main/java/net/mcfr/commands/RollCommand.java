@@ -97,15 +97,15 @@ public class RollCommand extends AbstractCommand {
         break;
       }
 
-      line1 = String.format("%s attaque %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""), McFrPlayer.getMcFrPlayer(player).getName(),
-          weaponString, result.getScore(), result.getModifier());
+      line1 = String.format("%s attaque %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
+          weaponString, result.getScore());
     }
       break;
     case ATTRIBUTE: {
       AttributeRollResult result = (AttributeRollResult) res;
 
-      line1 = String.format("%s fait un jet de %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""),
-          McFrPlayer.getMcFrPlayer(player).getName(), result.getAttributeName(), result.getScore(), result.getMargin());
+      line1 = String.format("%s fait un jet de %s, score de %d" + result.getModifierString(),
+          McFrPlayer.getMcFrPlayer(player).getName(), result.getAttributeName(), result.getScore());
     }
       break;
     case DEFENSE: {
@@ -124,22 +124,22 @@ public class RollCommand extends AbstractCommand {
         break;
       }
 
-      line1 = String.format("%s tente %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""), McFrPlayer.getMcFrPlayer(player).getName(),
-          defenseString, result.getScore(), result.getMargin());
+      line1 = String.format("%s tente %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
+          defenseString, result.getScore());
     }
       break;
     case PERCEPTION: {
       PerceptionRollResult result = (PerceptionRollResult) res;
 
-      line1 = String.format("%s fait un jet de %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""),
-          McFrPlayer.getMcFrPlayer(player).getName(), result.getSense(), result.getScore(), result.getMargin());
+      line1 = String.format("%s fait un jet de %s, score de %d" + result.getModifierString(),
+          McFrPlayer.getMcFrPlayer(player).getName(), result.getSense(), result.getScore());
     }
       break;
     case RESISTANCE: {
       ResistanceRollResult result = (ResistanceRollResult) res;
 
-      line1 = String.format(" %s fait un jet d'encaissement, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""),
-          McFrPlayer.getMcFrPlayer(player).getName(), result.getScore(), result.getMargin());
+      line1 = String.format(" %s fait un jet d'encaissement, score de %d" + result.getModifierString(),
+          McFrPlayer.getMcFrPlayer(player).getName(), result.getScore());
     }
       break;
     case SKILL: {
@@ -154,8 +154,8 @@ public class RollCommand extends AbstractCommand {
         skillDisplayName = "de " + skillDisplayName;
       }
 
-      line1 = String.format("%s fait un jet %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""), McFrPlayer.getMcFrPlayer(player).getName(),
-          skillDisplayName, result.getScore(), result.getMargin());
+      line1 = String.format("%s fait un jet %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
+          skillDisplayName, result.getScore());
     }
       break;
     }

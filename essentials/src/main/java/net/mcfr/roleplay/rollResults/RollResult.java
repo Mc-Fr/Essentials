@@ -32,6 +32,16 @@ public class RollResult {
 	public int getModifier() {
 		return this.modifier;
 	}
+	
+	public String getModifierString() {
+	  if (this.modifier > 0) {
+	    return "(+" + this.modifier + ")"; 
+	  } else if (this.modifier < 0) {
+	    return "(" + this.modifier + ")";
+	  } else {
+	    return "";
+	  }
+	}
 
 	public int getScore() {
 		return this.score;
