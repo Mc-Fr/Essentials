@@ -62,7 +62,7 @@ public class ExpeditionSystem {
       States prevState = player.getExpeditionState();
       States nextState = getNextState(p.getLocation());
 
-      if (!player.isAuthorizedToLeaveArea() && !p.hasPermission("essentials.leavearea") && p.getWorld().equals(Sponge.getServer().getWorld("world"))) {
+      if (!player.isAuthorizedToLeaveArea() && !p.hasPermission("essentials.leavearea") && p.getWorld().equals(Sponge.getServer().getWorld("world").get())) {
         if (nextState.value > prevState.value) {
           switch (nextState) {
           case ADVERT:

@@ -131,7 +131,7 @@ public class BurrowPopulation {
 
     Entity entity = world.createEntity(this.entityType, spawnPosition);
     Cause cause = Cause.source(EntitySpawnCause.builder()
-        .entity(entity).type(SpawnTypes.BREEDING).build()).build();
+        .entity(entity).type(SpawnTypes.PLUGIN).build()).build();
     
     if (!gender.equals(Genders.RANDOM)) {
       ((EntityGendered) entity).setGender(gender);
