@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
@@ -29,6 +28,7 @@ import net.mcfr.utils.McFrPlayer;
 public class ExpeditionSystem {
   private static final int RADIUS_DELTA = 10;
   private static List<AuthorizedArea> areas;
+  private static States current;
 
   private static List<AuthorizedArea> getAreas() {
     if (areas == null) {
@@ -62,7 +62,7 @@ public class ExpeditionSystem {
       States prevState = player.getExpeditionState();
       States nextState = getNextState(p.getLocation());
 
-      if (!player.isAuthorizedToLeaveArea() && !p.hasPermission("essentials.leavearea")) {
+      if (!player.isAuthorizedToLeaveArea() && !p.hasPermission("essentials.leavearea") && p.getWorld().equals(Sponge.getServer().getWorld("world"))) {
         if (nextState.value > prevState.value) {
           switch (nextState) {
           case ADVERT:
@@ -92,25 +92,30 @@ public class ExpeditionSystem {
   }
 
   public States getNextState(Location<World> loc) {
-    Optional<AuthorizedArea> optArea = areas.stream().min((o1, o2) -> Double.compare(o1.distance(loc), o2.distance(loc)));
-    if (optArea.isPresent()) {
-      double distance = optArea.get().distance(loc);
-      int radius = optArea.get().radius;
-
+    current = States.KILL;
+    
+    areas.forEach(a -> {
+      double distance = a.distance(loc);
+      int radius = a.radius;
+      
       if (distance < radius) {
-        return States.INAREA;
+        current = getWeakest(current, States.INAREA);
       } else if (distance < radius + RADIUS_DELTA) {
-        return States.ADVERT;
+        current = getWeakest(current, States.ADVERT);
       } else if (distance < radius + 2 * RADIUS_DELTA) {
-        return States.HURT1;
+        current = getWeakest(current, States.HURT1);
       } else if (distance < radius + 3 * RADIUS_DELTA) {
-        return States.HURT2;
+        current = getWeakest(current, States.HURT2);
       } else if (distance < radius + 4 * RADIUS_DELTA) {
-        return States.HURT3;
+        current = getWeakest(current, States.HURT3);
       }
-    }
+    });
 
-    return States.KILL;
+    return current;
+  }
+  
+  private States getWeakest(States current, States next) {
+    return (current.value > next.value ? next : current);
   }
 
   public static class AuthorizedArea {

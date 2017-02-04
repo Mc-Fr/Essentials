@@ -51,10 +51,13 @@ public class CareSystem {
       centers.forEach(c -> {
         JsonObject center = c.getAsJsonObject();
         String name = center.get("name").getAsString();
+        World world = Sponge.getServer().getWorld(center.get("world").getAsString()).orElse(null);
         int x = center.get("x").getAsInt();
         int y = center.get("y").getAsInt();
         int z = center.get("z").getAsInt();
-        getCenters().add(new CareCenter(name, x, y, z));
+        if (world != null) {
+          getCenters().add(new CareCenter(name, world, x, y, z));
+        }
       });
     }
   }
@@ -123,7 +126,7 @@ public class CareSystem {
   }
 
   public Optional<CareCenter> getNearest(Location<World> loc) {
-    return centers.stream().filter(c -> c.distance(loc) < CARE_CENTER_RADIUS_EFFECT_AREA)
+    return centers.stream().filter(c -> c.getLocation().getExtent().equals(loc.getExtent())).filter(c -> c.distance(loc) < CARE_CENTER_RADIUS_EFFECT_AREA)
         .min((o1, o2) -> Double.compare(o1.distance(loc), o2.distance(loc)));
   }
 
@@ -147,9 +150,9 @@ public class CareSystem {
     private String name;
     private Location<World> location;
 
-    public CareCenter(String name, int x, int y, int z) {
+    public CareCenter(String name, World world, int x, int y, int z) {
       this.name = name;
-      this.location = new Location<>(Sponge.getServer().getWorld("world").get(), x, y, z);
+      this.location = new Location<>(world, x, y, z);
     }
 
     public double distance(Location<World> loc) {
