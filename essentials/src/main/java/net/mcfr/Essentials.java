@@ -22,7 +22,6 @@ import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -185,7 +184,7 @@ public class Essentials {
       if (damage >= health) {
         long lastBreathTime = Calendar.getInstance().getTime().getTime() - McFrPlayer.getMcFrPlayer(player).getLastBreathTime();
 
-        if (lastBreathTime > LAST_BREATH_DELAY) {
+        if (lastBreathTime > this.LAST_BREATH_DELAY) {
           player.damage(health - 0.5D, DamageSources.GENERIC);
           e.setCancelled(true);
           McFrPlayer.getMcFrPlayer(player).updateLastBreathTime();
@@ -203,7 +202,7 @@ public class Essentials {
 
           player.sendMessage(Text.of(TextColors.DARK_RED, "Vous arrivez à votre dernier souffle. Encore un peu et vous mourrez."));
 
-        } else if (lastBreathTime < LAST_BREATH_INVICIBILITY) {
+        } else if (lastBreathTime < this.LAST_BREATH_INVICIBILITY) {
           player.damage(health - 0.5D, DamageSources.GENERIC);
           e.setCancelled(true);
         }
@@ -215,13 +214,6 @@ public class Essentials {
   @Listener
   public void onPlayerDisconnect(ClientConnectionEvent.Disconnect e) {
     McFrPlayer.removePlayer(e.getTargetEntity());
-  }
-
-  @Listener
-  public void onBlockChange(ChangeBlockEvent.Place e) {
-    if (!e.getCause().first(Player.class).isPresent()) {
-      e.setCancelled(true);
-    }
   }
 
   /**
@@ -268,25 +260,28 @@ public class Essentials {
             .interval(interval, TimeUnit.SECONDS).submit(this);
       });
     }
-    
+
     Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load"))
-    .delay(4, TimeUnit.SECONDS).submit(this);
+        .delay(4, TimeUnit.SECONDS).submit(this);
     TribalWord.loadFromDatabase();
   }
 
   @Listener
   public void onMessageChannelEvent(MessageChannelEvent.Chat e, @First CommandSource sender) {
-    MessageData data = new MessageData((Player) sender, e.getRawMessage().toPlain());
-    if (data.checkConditions()) {
-      data.send();
-    }
+    if (sender instanceof Player) {
+      MessageData data = new MessageData((Player) sender, e.getRawMessage().toPlain());
+      if (data.checkConditions()) {
+        data.send();
+      }
 
-    e.setCancelled(true);
+      e.setCancelled(true);
+    }
   }
-  
+
   @Listener
   public void onSpawnEntity(SpawnEntityEvent event) {
-    event.getEntities().stream().filter(e -> !(e instanceof EntityBurrowed)).forEach(e -> event.setCancelled(true));;
+    event.getEntities().stream().filter(e -> !(e instanceof EntityBurrowed)).forEach(e -> event.setCancelled(true));
+    ;
   }
 
   @Listener
