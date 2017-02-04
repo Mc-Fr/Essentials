@@ -184,7 +184,7 @@ public class Essentials {
         long lastBreathTime = Calendar.getInstance().getTime().getTime() - McFrPlayer.getMcFrPlayer(player).getLastBreathTime();
 
         if (lastBreathTime > LAST_BREATH_DELAY) {
-          player.damage(health - 0.5D, DamageSources.VOID);
+          player.damage(health - 0.5D, DamageSources.GENERIC);
           e.setCancelled(true);
           McFrPlayer.getMcFrPlayer(player).updateLastBreathTime();
 
@@ -202,7 +202,7 @@ public class Essentials {
           player.sendMessage(Text.of(TextColors.DARK_RED, "Vous arrivez à votre dernier souffle. Encore un peu et vous mourrez."));
 
         } else if (lastBreathTime < LAST_BREATH_INVICIBILITY) {
-          player.damage(health - 0.5D, DamageSources.VOID);
+          player.damage(health - 0.5D, DamageSources.GENERIC);
           e.setCancelled(true);
         }
       }
