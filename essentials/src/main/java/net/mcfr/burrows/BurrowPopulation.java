@@ -1,11 +1,10 @@
 package net.mcfr.burrows;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.UUID;
+import java.util.stream.Stream;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
@@ -34,35 +33,59 @@ public class BurrowPopulation {
   private int females;
   private int prevMales;
   private int prevFemales;
-  private List<UUID> maleEntityIds;
-  private List<UUID> femaleEntityIds;
   private EntityType entityType;
   private int burrowId;
 
-  public BurrowPopulation(Location<World> location, int burrowId, int max, int males, int females, EntityType entityType) {
+  public BurrowPopulation(Location<World> location, int burrowId, int max, EntityType entityType) {    
     this.location = location;
     this.burrowId = burrowId;
     
     this.max = Math.min(max, MAX_POPULATION);
-    this.males = Math.min(males, this.max);
-    this.females = Math.min(females, this.max - this.males);
-
-    this.prevMales = this.males;
-    this.prevFemales = this.females;
-
     this.entityType = entityType;
-    this.maleEntityIds = new LinkedList<>();
-    this.femaleEntityIds = new LinkedList<>();
+    
+    count();
+    actualize();
   }
   
-  public void removeEntity(UUID id) {
-    this.maleEntityIds.remove(id);
-    this.femaleEntityIds.remove(id);
+  public void spawnNewEntities(int males, int females) {
+    this.males = Math.min(males, this.max);
+    this.females = Math.min(females, this.max - this.males);
+    
+    spawnAllEntities();
   }
   
   public void count() {
-    this.males = this.maleEntityIds.size();
-    this.females = this.femaleEntityIds.size();
+    this.males = 0;
+    this.females = 0;
+    
+    getEntities().forEach(e -> {
+      if (((EntityGendered) e).getGender() == Genders.MALE) {
+        this.males ++;
+      } else {
+        this.females ++;
+      }
+    });
+  }
+  
+  public Stream<Entity> getEntities() {
+    BurrowListener.loadAllOccupiedChunks(this);
+    
+    Stream<Entity> stream = Stream.empty();
+    Optional<World> optWorld = Sponge.getServer().getWorld(location.getExtent().getName());
+    
+    if (optWorld.isPresent()) {
+      stream = optWorld.get().getEntities(e -> e instanceof EntityBurrowed).stream().filter(e -> ((EntityBurrowed)e).getBurrow() == this.burrowId);
+    }
+    
+    return stream;
+  }
+  
+  public int getId() {
+    return this.burrowId;
+  }
+  
+  public World getWorld() {
+    return this.location.getExtent();
   }
 
   public void actualize() {
@@ -77,8 +100,8 @@ public class BurrowPopulation {
   public void tryBirth() {
     if (birthAvailable()) {
       spawnEntity(Genders.RANDOM);
-      this.count();
-      this.actualize();
+      count();
+      actualize();
     }
   }
 
@@ -96,15 +119,13 @@ public class BurrowPopulation {
   }
 
   public void reset() {
-    int males = this.males;
-    int females = this.females;
-    this.killAllEntities();
-    this.males = males;
-    this.females = females;
-    this.spawnAllEntities();
+    getEntities().forEach(e -> {
+      e.setLocationSafely(this.location);
+      ((EntityBurrowed)e).setBurrow(this.burrowId, this.location.getBlockX(), this.location.getBlockY(), this.location.getBlockZ());
+    });
   }
 
-  private Genders spawnEntity(Genders gender) {
+  private void spawnEntity(Genders gender) {
     World world = this.location.getExtent();
     Vector3i spawnPosition = this.getPreparedPosition();
 
@@ -119,14 +140,6 @@ public class BurrowPopulation {
     ((EntityBurrowed) entity).setBurrow(this.burrowId, this.location.getBlockX(), this.location.getBlockY(), this.location.getBlockZ());
 
     world.spawnEntity(entity, cause);
-    
-    if (((EntityGendered) entity).getGender() == Genders.MALE) {
-      this.maleEntityIds.add(entity.getUniqueId());
-      return Genders.MALE;
-    } else {
-      this.femaleEntityIds.add(entity.getUniqueId());
-      return Genders.FEMALE;
-    }
   }
 
   private Vector3i getPreparedPosition() {
@@ -163,25 +176,13 @@ public class BurrowPopulation {
   }
 
   public void killAllEntities() {
-    for (UUID i : this.maleEntityIds) {
-      Optional<Entity> optEntity = this.location.getExtent().getEntity(i);
-      if (optEntity.isPresent()) {
-        optEntity.get().remove();
-      }
-    }
-    for (UUID i : this.femaleEntityIds) {
-      Optional<Entity> optEntity = this.location.getExtent().getEntity(i);
-      if (optEntity.isPresent()) {
-        optEntity.get().remove();
-      }
-    }
-    this.maleEntityIds.clear();
-    this.femaleEntityIds.clear();
+    getEntities().forEach(e -> ((EntityBurrowed)e).setToRemove(true));
     this.males = 0;
     this.females = 0;
   }
 
   public void setMales(int males) {
+    count();
     int females = this.females;
     killAllEntities();
     this.females = females;
@@ -190,6 +191,7 @@ public class BurrowPopulation {
   }
 
   public void setFemales(int females) {
+    count();
     int males = this.males;
     killAllEntities();
     this.males = males;
@@ -198,13 +200,15 @@ public class BurrowPopulation {
   }
 
   public void setMax(int max) {
+    count();
     this.max = Integer.min(max, MAX_POPULATION);
     float population = this.males + this.females;
 
     if (population > this.max) {
+      killAllEntities();
       this.males = (int) Math.floor(1.0D * this.max / 2.0D);
       this.females = this.max - this.males;
-      reset();
+      spawnAllEntities();
     }
   }
 
@@ -213,10 +217,12 @@ public class BurrowPopulation {
   }
 
   public int getMales() {
+    count();
     return this.males;
   }
 
   public int getFemales() {
+    count();
     return this.females;
   }
 

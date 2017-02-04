@@ -57,36 +57,38 @@ public class ExpeditionSystem {
 
   @Listener
   public void onPlayerMove(MoveEntityEvent e, @First Player p) {
-    McFrPlayer player = McFrPlayer.getMcFrPlayer(p);
-    States prevState = player.getExpeditionState();
-    States nextState = getNextState(p.getLocation());
+    if (p != null) {
+      McFrPlayer player = McFrPlayer.getMcFrPlayer(p);
+      States prevState = player.getExpeditionState();
+      States nextState = getNextState(p.getLocation());
 
-    if (!player.isAuthorizedToLeaveArea() && !p.hasPermission("essentials.leavearea")) {
-      if (nextState.value > prevState.value) {
-        switch (nextState) {
-        case ADVERT:
-          break;
-        case HURT1:
-        case HURT2:
-        case HURT3:
-          p.damage(Math.min(7.0F, p.health().get()), DamageSources.VOID);
-          break;
-        case KILL:
-          p.damage(500.0F, DamageSources.VOID);
-          p.damage(500.0F, DamageSources.VOID);
-          player.killCharacter("Pris en embuscade par des indigènes, vous êtes abattu sur le champ.");
-          break;
-        default:
-          break;
+      if (!player.isAuthorizedToLeaveArea() && !p.hasPermission("essentials.leavearea")) {
+        if (nextState.value > prevState.value) {
+          switch (nextState) {
+          case ADVERT:
+            break;
+          case HURT1:
+          case HURT2:
+          case HURT3:
+            p.damage(Math.min(7.0F, p.health().get()), DamageSources.VOID);
+            break;
+          case KILL:
+            p.damage(500.0F, DamageSources.VOID);
+            p.damage(500.0F, DamageSources.VOID);
+            player.killCharacter("Pris en embuscade par des indigènes, vous êtes abattu sur le champ.");
+            break;
+          default:
+            break;
+          }
+
+          p.sendMessage(nextState.dangerMessage);
+        } else if (nextState.value < prevState.value) {
+          p.sendMessage(nextState.safeMessage);
         }
-
-        p.sendMessage(nextState.dangerMessage);
-      } else if (nextState.value < prevState.value) {
-        p.sendMessage(nextState.safeMessage);
       }
+
+      player.setExpeditionState(nextState);
     }
-    
-    player.setExpeditionState(nextState);
   }
 
   public States getNextState(Location<World> loc) {

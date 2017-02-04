@@ -22,12 +22,10 @@ import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.Order;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
-import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
@@ -51,11 +49,11 @@ import com.google.inject.Inject;
 
 import net.mcfr.babel.TribalWord;
 import net.mcfr.burrows.Burrow;
+import net.mcfr.burrows.BurrowListener;
 import net.mcfr.chat.MessageData;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.commands.utils.Commands;
 import net.mcfr.death.CareSystem;
-import net.mcfr.entities.mobs.EntityBurrowed;
 import net.mcfr.expedition.ExpeditionSystem;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.DamageListener;
@@ -104,6 +102,7 @@ public class Essentials {
     Sponge.getEventManager().registerListeners(this, new CareSystem());
     Sponge.getEventManager().registerListeners(this, new ExpeditionSystem());
     Sponge.getEventManager().registerListeners(this, new CommandListener());
+    Sponge.getEventManager().registerListeners(this, new BurrowListener());
 
     getLogger().info("McFrEssentials Plugin has loaded.");
   }
@@ -183,12 +182,12 @@ public class Essentials {
 
       if (damage >= health) {
         long lastBreathTime = Calendar.getInstance().getTime().getTime() - McFrPlayer.getMcFrPlayer(player).getLastBreathTime();
-        
+
         if (lastBreathTime > LAST_BREATH_DELAY) {
-          player.damage(health-0.5D, DamageSources.VOID);
+          player.damage(health - 0.5D, DamageSources.VOID);
           e.setCancelled(true);
           McFrPlayer.getMcFrPlayer(player).updateLastBreathTime();
-          
+
           // #f:0
           PotionEffectData effects = player.getOrCreate(PotionEffectData.class).get();
           effects.addElement(PotionEffect.builder()
@@ -199,11 +198,11 @@ public class Essentials {
               .build());
           player.offer(effects);
           // #f:1
-          
+
           player.sendMessage(Text.of(TextColors.DARK_RED, "Vous arrivez à votre dernier souffle. Encore un peu et vous mourrez."));
-          
+
         } else if (lastBreathTime < LAST_BREATH_INVICIBILITY) {
-          player.damage(health-0.5D, DamageSources.VOID);
+          player.damage(health - 0.5D, DamageSources.VOID);
           e.setCancelled(true);
         }
       }
@@ -249,7 +248,7 @@ public class Essentials {
     e.setCancelled(!mustLoot);
   }
 
-  @Listener(order = Order.POST)
+  @Listener
   public void onServerStart(GameStartedServerEvent event) throws IOException {
     File commandsFile = new File("config/esssentials-config/commands.json");
     if (commandsFile.exists()) {
@@ -267,9 +266,9 @@ public class Essentials {
             .interval(interval, TimeUnit.SECONDS).submit(this);
       });
     }
-
+    
     Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load"))
-        .delay(3, TimeUnit.SECONDS).submit(this);
+    .delay(4, TimeUnit.SECONDS).submit(this);
     TribalWord.loadFromDatabase();
   }
 
@@ -284,15 +283,9 @@ public class Essentials {
   }
 
   @Listener
-  public void onEntityDestruct(DestructEntityEvent event) {
-    if (event.getTargetEntity() instanceof EntityBurrowed) {
-      Burrow.removeFromBurrow(event.getTargetEntity().getUniqueId());
-    }
-  }
-
-  @Listener
   public void onServerStop(GameStoppingServerEvent event) {
-    Burrow.saveAndClose();
+    Burrow.save();
+    BurrowListener.saveInDatabase();
   }
 
   public void toggleServerLock() {

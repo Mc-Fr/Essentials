@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.block.BlockState;
@@ -40,10 +39,9 @@ public class Burrow {
   static {
     McFrConnection conn = McFrConnection.getServerConnection();
     insertQuery = conn.prepare(
-        "INSERT INTO `Burrow`(`id`, `name`, `world`, `timer`, `maxPopulation`, `malePopulation`, `femalePopulation`, `entityType`, `lastEventTime`, `x`, `y`, `z`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        "INSERT INTO `Burrow`(`id`, `name`, `world`, `timer`, `maxPopulation`, `entityType`, `lastEventTime`, `x`, `y`, `z`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     deleteQuery = conn.prepare("UPDATE Burrow SET dead = 1 WHERE id = ?");
-    updateQuery = conn.prepare(
-        "UPDATE Burrow SET name = ?, timer = ?, maxPopulation = ?, malePopulation = ?, femalePopulation = ?, lastEventTime = ?, x = ?, y = ?, z = ? WHERE id = ?");
+    updateQuery = conn.prepare("UPDATE Burrow SET name = ?, timer = ?, maxPopulation = ?, lastEventTime = ?, x = ?, y = ?, z = ? WHERE id = ?");
   }
   /**
    * Liste de tous les terriers enregistrés
@@ -82,14 +80,19 @@ public class Burrow {
 
   private Burrow(int id, Optional<String> name, Location<World> location, long delay, int maxPopulation, int initMalePopulation,
       int initFemalePopulation, EntityType entityType) {
+    this(id, name, location, delay, Calendar.getInstance().getTime().getTime(), maxPopulation, entityType);
+    
+    this.population.spawnNewEntities(initMalePopulation, initFemalePopulation);
+  }
+  
+  private Burrow(int id, Optional<String> name, Location<World> location, long delay, long lastEventTime, int maxPopulation, EntityType entityType) {
     this.id = id;
     this.name = name.orElse("Terrier " + id);
     this.location = location;
     this.delay = delay * M_TO_MS;
-    this.lastEventTime = Calendar.getInstance().getTime().getTime();
-    this.population = new BurrowPopulation(this.location, this.id, maxPopulation, initMalePopulation, initFemalePopulation, entityType);
-
-    this.population.spawnAllEntities();
+    this.lastEventTime = lastEventTime;
+    this.population = new BurrowPopulation(this.location, this.id, maxPopulation, entityType);
+    
     setVisibleForAll();
   }
 
@@ -122,13 +125,12 @@ public class Burrow {
       insertQuery.setString(3, this.location.getExtent().getName());
       insertQuery.setLong(4, this.delay);
       insertQuery.setInt(5, this.population.getMax());
-      insertQuery.setInt(6, this.population.getMales());
-      insertQuery.setInt(7, this.population.getFemales());
-      insertQuery.setString(8, this.population.getEntityName());
-      insertQuery.setLong(9, this.lastEventTime);
-      insertQuery.setDouble(10, this.location.getX());
-      insertQuery.setDouble(11, this.location.getY());
-      insertQuery.setDouble(12, this.location.getZ());
+      insertQuery.setString(6, this.population.getEntityName());
+      insertQuery.setLong(7, this.lastEventTime);
+      insertQuery.setDouble(8, this.location.getX());
+      insertQuery.setDouble(9, this.location.getY());
+      insertQuery.setDouble(10, this.location.getZ());
+
       insertQuery.execute();
     } catch (SQLException e) {
       e.printStackTrace();
@@ -149,22 +151,16 @@ public class Burrow {
       updateQuery.setString(1, this.name);
       updateQuery.setLong(2, this.delay);
       updateQuery.setInt(3, this.population.getMax());
-      updateQuery.setInt(4, this.population.getMales());
-      updateQuery.setInt(5, this.population.getFemales());
-      updateQuery.setLong(6, this.lastEventTime);
-      updateQuery.setDouble(7, this.location.getX());
-      updateQuery.setDouble(8, this.location.getY());
-      updateQuery.setDouble(9, this.location.getZ());
-      updateQuery.setInt(10, this.id);
+      updateQuery.setLong(4, this.lastEventTime);
+      updateQuery.setDouble(5, this.location.getX());
+      updateQuery.setDouble(6, this.location.getY());
+      updateQuery.setDouble(7, this.location.getZ());
+      updateQuery.setInt(8, this.id);
+
       updateQuery.execute();
     } catch (SQLException e) {
       e.printStackTrace();
     }
-  }
-
-  private void saveAndCloseBurrow() {
-    saveInDatabase();
-    this.population.killAllEntities();
   }
 
   public void reset() {
@@ -208,17 +204,15 @@ public class Burrow {
 
   public void setName(String name) {
     this.name = name;
-    registerInDatabase();
+    saveInDatabase();
   }
 
   public void setMalePopulation(int newMalePopulation) {
     this.population.setMales(newMalePopulation);
-    saveInDatabase();
   }
 
   public void setFemalePopulation(int newFemalePopulation) {
     this.population.setFemales(newFemalePopulation);
-    saveInDatabase();
   }
 
   /**
@@ -281,16 +275,14 @@ public class Burrow {
   private void setInvisibleForAll() {
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).seesBurrows()).forEach(p -> setInvisible(p));
   }
-
+  
   public static Optional<Burrow> createBurrow(int id, Optional<String> name, Location<World> location, long delay, int maxPopulation,
-      int initMalePopulation, int initFemalePopulation, Optional<EntityType> entityType, boolean alreadyInDatabase) {
-
+      int initMalePopulation, int initFemalePopulation, Optional<EntityType> entityType) {
+    
     if (entityType.isPresent()) {
       Burrow newBurrow = new Burrow(id, name, location, delay, maxPopulation, initMalePopulation, initFemalePopulation, entityType.get());
       burrows.add(newBurrow);
-      if (!alreadyInDatabase) {
-        newBurrow.registerInDatabase();
-      }
+      newBurrow.registerInDatabase();
       return Optional.of(newBurrow);
     }
     return Optional.empty();
@@ -300,11 +292,14 @@ public class Burrow {
       int initFemalePopulation, Class<? extends EntityGendered> entityClass) {
     Optional<EntityType> entityType = Sponge.getGame().getRegistry().getAllOf(EntityType.class).stream()
         .filter(e -> e.getEntityClass().equals(entityClass)).findAny();
-    return createBurrow(getUnusedId(), name, location, delay, maxPopulation, initMalePopulation, initFemalePopulation, entityType, false);
+    return createBurrow(getUnusedId(), name, location, delay, maxPopulation, initMalePopulation, initFemalePopulation, entityType);
   }
-
-  public static void removeFromBurrow(UUID id) {
-    burrows.forEach(b -> b.population.removeEntity(id));
+  
+  public static void loadBurrow(int id, Optional<String> name, Location<World> location, long delay, long lastEventTime, int maxPopulation, Optional<EntityType> entityType) {
+    if (entityType.isPresent()) {
+      Burrow loadedBurrow = new Burrow(id, name, location, delay, lastEventTime, maxPopulation, entityType.get());
+      burrows.add(loadedBurrow);
+    }
   }
 
   public static void removeBurrow(Burrow burrow) {
@@ -329,6 +324,10 @@ public class Burrow {
 
   public static Optional<Burrow> getBurrowByName(String name) {
     return burrows.stream().filter(b -> b.getName().equals(name)).findFirst();
+  }
+  
+  public static Optional<Burrow> getBurrowById(int id) {
+    return burrows.stream().filter(b -> b.getId() == id).findFirst();
   }
 
   public static List<Burrow> getAll() {
@@ -366,7 +365,7 @@ public class Burrow {
 
   public static String loadFromDatabase() {
     try {
-      ResultSet burrowData = McFrConnection.getServerConnection().executeQuery("SELECT * FROM Burrow WHERE dead = 0");
+      ResultSet burrowData = McFrConnection.getServerConnection().executeQuery("SELECT id, name, world, timer, maxPopulation, entityType, lastEventTime, x, y, z FROM Burrow WHERE dead = 0");
       Location<World> location;
       String worldName;
       String entityTypeName;
@@ -377,18 +376,18 @@ public class Burrow {
         int id = burrowData.getInt(1);
         if (burrows.stream().filter(b -> b.getId() == id).count() == 0) {
           worldName = burrowData.getString(3);
-          location = new Location<>(Sponge.getServer().getWorld(worldName).get(), burrowData.getDouble(10), burrowData.getDouble(11),
-              burrowData.getDouble(12));
+          location = new Location<>(Sponge.getServer().getWorld(worldName).get(), burrowData.getDouble(8), burrowData.getDouble(9),
+              burrowData.getDouble(10));
 
-          entityTypeName = burrowData.getString(8);
+          entityTypeName = burrowData.getString(6);
           for (EntityType eT : Sponge.getGame().getRegistry().getAllOf(EntityType.class)) {
             if (eT.getName().equals(entityTypeName)) {
               entityType = eT;
             }
           }
 
-          createBurrow(id, Optional.of(burrowData.getString(2)), location, burrowData.getLong(4) / M_TO_MS, burrowData.getInt(5),
-              burrowData.getInt(6), burrowData.getInt(7), Optional.of(entityType), true);
+          loadBurrow(id, Optional.of(burrowData.getString(2)), location, burrowData.getLong(4) / M_TO_MS, burrowData.getLong(7), burrowData.getInt(5),
+              Optional.of(entityType));
           count++;
         }
       }
@@ -400,7 +399,7 @@ public class Burrow {
     }
   }
 
-  public static void saveAndClose() {
-    burrows.forEach(Burrow::saveAndCloseBurrow);
+  public static void save() {
+    burrows.forEach(Burrow::saveInDatabase);
   }
 }
