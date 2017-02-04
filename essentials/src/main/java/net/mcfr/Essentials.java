@@ -68,7 +68,7 @@ public class Essentials {
   private final long LAST_BREATH_INVICIBILITY = 2000;
   private final long LAST_BREATH_DELAY = 15000;
   private static List<EntityType> forbiddenEntities = new ArrayList<>();
-  
+
   static {
     forbiddenEntities.add(EntityTypes.BAT);
     forbiddenEntities.add(EntityTypes.BLAZE);
@@ -315,7 +315,7 @@ public class Essentials {
 
   @Listener
   public void onSpawnEntity(SpawnEntityEvent event) {
-    event.getEntities().stream().filter(e -> forbiddenEntities.contains(e.getType())).forEach(e -> event.setCancelled(true));
+    event.setCancelled(event.getEntities().stream().filter(e -> forbiddenEntities.contains(e.getType())).count() != 0);
   }
 
   @Listener
