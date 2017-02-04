@@ -70,5 +70,4 @@ public class ReplyCommand extends AbstractCommand {
   public String[] getAliases() {
     return new String[] { "reply", "r" };
   }
-
 }

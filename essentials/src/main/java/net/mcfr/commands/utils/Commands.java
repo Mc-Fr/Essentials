@@ -9,6 +9,7 @@ import net.mcfr.commands.FlyCommand;
 import net.mcfr.commands.GmCommand;
 import net.mcfr.commands.GodCommand;
 import net.mcfr.commands.HealCommand;
+import net.mcfr.commands.HrpCommand;
 import net.mcfr.commands.ItemCommand;
 import net.mcfr.commands.MpCommand;
 import net.mcfr.commands.MuteCommand;
@@ -36,6 +37,7 @@ public enum Commands {
   GM(GmCommand.class),
   GOD(GodCommand.class),
   HEAL(HealCommand.class),
+  HRP(HrpCommand.class),
   ITEM(ItemCommand.class),
   MP(MpCommand.class),
   MUTE(MuteCommand.class),

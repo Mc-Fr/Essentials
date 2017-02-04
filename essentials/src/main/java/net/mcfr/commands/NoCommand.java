@@ -24,6 +24,7 @@ public class NoCommand extends AbstractCommand {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    src.sendMessage(Text.of(TextColors.RED, "Utilisation : /no [mp | team]"));
     return CommandResult.empty();
   }
 

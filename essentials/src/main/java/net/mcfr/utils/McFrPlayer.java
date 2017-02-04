@@ -100,7 +100,7 @@ public class McFrPlayer {
   private Location<World> previousLocation;
   private long lastBreathTime;
   private long readDescriptionTime;
-  
+
   public static void addPlayer(McFrPlayer player) {
     players.add(player);
   }
@@ -133,7 +133,7 @@ public class McFrPlayer {
   public McFrPlayer(Player player) {
     Objects.requireNonNull(player);
     this.player = player;
-    this.booleans = 0;
+    this.booleans = 0b00_0001_1000;
     this.name = player.getName();
     this.description = Optional.empty();
     this.expeditionState = ExpeditionSystem.States.INAREA;
@@ -155,11 +155,11 @@ public class McFrPlayer {
   public ExpeditionSystem.States getExpeditionState() {
     return this.expeditionState;
   }
-  
+
   public void setExpeditionState(ExpeditionSystem.States state) {
     this.expeditionState = state;
   }
-  
+
   public boolean isInCareCenterEffectArea() {
     return (this.booleans & 0b00_1000_0000) == 0b00_1000_0000;
   }
@@ -184,7 +184,7 @@ public class McFrPlayer {
     }
   }
 
-  public void unselectBurrow() {    
+  public void unselectBurrow() {
     Optional<Burrow> burrow = this.selectedBurrow;
     this.selectedBurrow = Optional.empty();
     if (burrow.isPresent() && seesBurrows()) {
@@ -253,15 +253,15 @@ public class McFrPlayer {
   public void toggleWantRealName() {
     this.booleans ^= 0b00_0010_0000;
   }
-  
+
   public boolean isAuthorizedToLeaveArea() {
     return (this.booleans & 0b10_0000_0000) == 0b10_0000_0000;
   }
-  
+
   public void toggleAuthorizedToLeaveArea() {
     this.booleans ^= 0b10_0000_0000;
   }
-  
+
   public String getName() {
     return this.name;
   }
@@ -334,7 +334,7 @@ public class McFrPlayer {
         this.name = this.player.getName();
         this.description = Optional.of("Un nouveau colon");
         this.deaths = 0;
-        
+
         registerPlayer.setString(1, this.player.getUniqueId().toString());
         registerPlayer.setString(2, this.name);
         registerPlayer.setString(3, this.name);
@@ -420,7 +420,8 @@ public class McFrPlayer {
       effects.addElement(effect);
     }
     if (hasTrait("guerison_rapide_surnaturelle")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.REGENERATION).duration(EFFECT_DURATION).amplifier(1).particles(false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.REGENERATION).duration(EFFECT_DURATION).amplifier(1).particles(false)
+          .build();
       effects.addElement(effect);
     }
     if (hasTrait("armure_naturelle")) {
@@ -433,7 +434,8 @@ public class McFrPlayer {
       effects.addElement(effect);
     }
     if (hasTrait("boiteux_jambe_en_moins")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).amplifier(1).particles(false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).amplifier(1).particles(false)
+          .build();
       effects.addElement(effect);
     } else if (hasTrait("boiteux_jambe_abimee")) {
       PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).particles(false).build();
@@ -472,18 +474,18 @@ public class McFrPlayer {
     } else {
       scores.add(-3 + skill.getDifficulty());
     }
-    
+
     for (Map.Entry<Skills, Integer> dependency : skill.getDependencies().entrySet()) {
       Skills depSkill = dependency.getKey();
       int depScore = dependency.getValue();
-      
+
       if (this.skills.containsKey(depSkill)) {
         scores.add(this.skills.get(depSkill) + depSkill.getDifficulty() + depScore);
       } else {
         scores.add(-3 + depSkill.getDifficulty() + depScore);
       }
     }
-    
+
     return scores.stream().max((s1, s2) -> Integer.compare(s1, s2)).get();
   }
 
@@ -568,23 +570,23 @@ public class McFrPlayer {
 
     return lightLevel;
   }
-  
+
   public long getReadDescriptionTime() {
     return this.readDescriptionTime;
   }
-  
+
   public void updateReadDescriptionTime() {
     this.readDescriptionTime = Calendar.getInstance().getTime().getTime();
   }
-  
+
   public long getLastBreathTime() {
     return this.lastBreathTime;
   }
-  
+
   public void updateLastBreathTime() {
     this.lastBreathTime = Calendar.getInstance().getTime().getTime();
   }
-  
+
   @Override
   public int hashCode() {
     return 31 + (this.player == null ? 0 : this.player.hashCode());

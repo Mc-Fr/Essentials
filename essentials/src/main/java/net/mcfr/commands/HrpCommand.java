@@ -1,5 +1,6 @@
 package net.mcfr.commands;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -7,8 +8,6 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.item.ItemTypes;
-import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 
 import net.mcfr.Essentials;
@@ -29,8 +28,8 @@ public class HrpCommand extends AbstractCommand {
       if (args.hasAny("quantité")) {
         quantity = Math.min(args.<Integer>getOne("quantité").get(), 16);
       }
-      ItemStack nrpSign = ItemStack.builder().itemType(ItemTypes.SIGN).quantity(quantity).build();
-      p.getInventory().offer(nrpSign);
+
+      Sponge.getCommandManager().process(src, "give " + p.getName() + " mcfr_b_i:orp_sign " + quantity);
     } else {
       src.sendMessage(ONLY_PLAYERS_COMMAND);
     }

@@ -24,7 +24,7 @@ public class SpawnCommand extends AbstractCommand {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (src instanceof Player) {
-      Location<World> loc = ((Player) src).getLocation();
+      Location<World> loc = ((Player) src).getWorld().getSpawnLocation();
       Sponge.getCommandManager().process(src, String.format("tp %s %d %d %d", src.getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
       src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez été téléporté au spawn."));
     } else {
