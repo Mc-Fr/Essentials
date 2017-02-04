@@ -18,7 +18,6 @@ import org.spongepowered.api.data.property.block.LightEmissionProperty;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.service.whitelist.WhitelistService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
@@ -456,7 +455,6 @@ public class McFrPlayer {
    */
   public void killCharacter(String reason) {
     addTrait("mort", 1);
-    Sponge.getServiceManager().provide(WhitelistService.class).get().removeProfile(this.player.getProfile());
     this.player.kick(Text.of("Vous êtes mort." + (reason.equals("") ? "" : " (" + reason + ")")));
   }
 

@@ -7,7 +7,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +22,8 @@ import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.Entity;
+import org.spongepowered.api.entity.EntityType;
+import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
@@ -55,7 +59,6 @@ import net.mcfr.chat.MessageData;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.commands.utils.Commands;
 import net.mcfr.death.CareSystem;
-import net.mcfr.entities.mobs.EntityBurrowed;
 import net.mcfr.expedition.ExpeditionSystem;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.DamageListener;
@@ -70,6 +73,42 @@ import net.mcfr.utils.McFrPlayer;
 public class Essentials {
   private final long LAST_BREATH_INVICIBILITY = 2000;
   private final long LAST_BREATH_DELAY = 15000;
+  private static List<EntityType> forbiddenEntities = new ArrayList<>();
+  
+  static {
+    forbiddenEntities.add(EntityTypes.BAT);
+    forbiddenEntities.add(EntityTypes.BLAZE);
+    forbiddenEntities.add(EntityTypes.CAVE_SPIDER);
+    forbiddenEntities.add(EntityTypes.CHICKEN);
+    forbiddenEntities.add(EntityTypes.COW);
+    forbiddenEntities.add(EntityTypes.CREEPER);
+    forbiddenEntities.add(EntityTypes.ENDER_DRAGON);
+    forbiddenEntities.add(EntityTypes.ENDERMAN);
+    forbiddenEntities.add(EntityTypes.GHAST);
+    forbiddenEntities.add(EntityTypes.GIANT);
+    forbiddenEntities.add(EntityTypes.GUARDIAN);
+    forbiddenEntities.add(EntityTypes.IRON_GOLEM);
+    forbiddenEntities.add(EntityTypes.MAGMA_CUBE);
+    forbiddenEntities.add(EntityTypes.MUSHROOM_COW);
+    forbiddenEntities.add(EntityTypes.OCELOT);
+    forbiddenEntities.add(EntityTypes.PIG);
+    forbiddenEntities.add(EntityTypes.PIG_ZOMBIE);
+    forbiddenEntities.add(EntityTypes.POLAR_BEAR);
+    forbiddenEntities.add(EntityTypes.RABBIT);
+    forbiddenEntities.add(EntityTypes.SHEEP);
+    forbiddenEntities.add(EntityTypes.SILVERFISH);
+    forbiddenEntities.add(EntityTypes.SKELETON);
+    forbiddenEntities.add(EntityTypes.SLIME);
+    forbiddenEntities.add(EntityTypes.SNOWMAN);
+    forbiddenEntities.add(EntityTypes.SPIDER);
+    forbiddenEntities.add(EntityTypes.SQUID);
+    forbiddenEntities.add(EntityTypes.VILLAGER);
+    forbiddenEntities.add(EntityTypes.WITCH);
+    forbiddenEntities.add(EntityTypes.WITHER);
+    forbiddenEntities.add(EntityTypes.WITHER_SKULL);
+    forbiddenEntities.add(EntityTypes.WOLF);
+    forbiddenEntities.add(EntityTypes.ZOMBIE);
+  }
 
   private boolean serverLock;
 
@@ -286,7 +325,7 @@ public class Essentials {
   
   @Listener
   public void onSpawnEntity(SpawnEntityEvent event) {
-    event.getEntities().stream().filter(e -> !(e instanceof EntityBurrowed)).forEach(e -> event.setCancelled(true));;
+    event.getEntities().stream().filter(e -> forbiddenEntities.contains(e.getType())).forEach(e -> event.setCancelled(true));
   }
 
   @Listener
