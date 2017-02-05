@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
+import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
@@ -34,6 +36,7 @@ import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
+import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.plugin.Dependency;
@@ -60,6 +63,7 @@ import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.DamageListener;
 import net.mcfr.roleplay.RolePlayImp;
 import net.mcfr.roleplay.RolePlayService;
+import net.mcfr.roleplay.Skills;
 import net.mcfr.utils.McFrConnection;
 import net.mcfr.utils.McFrPlayer;
 
@@ -81,6 +85,7 @@ public class Essentials {
     forbiddenEntities.add(EntityTypes.GHAST);
     forbiddenEntities.add(EntityTypes.GIANT);
     forbiddenEntities.add(EntityTypes.GUARDIAN);
+    forbiddenEntities.add(EntityTypes.HORSE);
     forbiddenEntities.add(EntityTypes.IRON_GOLEM);
     forbiddenEntities.add(EntityTypes.MAGMA_CUBE);
     forbiddenEntities.add(EntityTypes.MUSHROOM_COW);
@@ -105,6 +110,7 @@ public class Essentials {
   }
 
   private boolean serverLock;
+  private CareSystem careSystem;
 
   @Inject
   private Game game;
@@ -133,8 +139,10 @@ public class Essentials {
       }
     }
 
+    this.careSystem = new CareSystem();
+    
     Sponge.getEventManager().registerListeners(this, new DamageListener());
-    Sponge.getEventManager().registerListeners(this, new CareSystem());
+    Sponge.getEventManager().registerListeners(this, this.careSystem);
     Sponge.getEventManager().registerListeners(this, new ExpeditionSystem());
     Sponge.getEventManager().registerListeners(this, new CommandListener());
     Sponge.getEventManager().registerListeners(this, new BurrowListener());
@@ -195,6 +203,11 @@ public class Essentials {
     McFrPlayer player = new McFrPlayer(e.getTargetEntity());
     McFrPlayer.addPlayer(player);
     player.loadFromDataBase();
+    if (this.careSystem.isPlayerInSafeArea(player)) {
+      player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes dans une zone sécurisée."));
+    } else {
+      player.getPlayer().sendMessage(Text.of(TextColors.GOLD, "Attention, vous êtes encore dans une zone non sécurisée !"));
+    }
   }
 
   @Listener
@@ -254,28 +267,30 @@ public class Essentials {
   /**
    * Déclenché quand un item est looté depuis un bloc cassé ou une entité tuée
    */
-  /*@Listener
+  @Listener
   public void onLootItem(DropItemEvent.Destruct e) {
     boolean mustLoot = true;
-
+    
     Optional<EntityDamageSource> optDamageSource = e.getCause().first(EntityDamageSource.class);
 
     if (optDamageSource.isPresent()) {
       mustLoot = false;
       Entity source = optDamageSource.get().getSource();
-
+      
       if (source instanceof Player) {
         McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) source);
-        int skillLevel = player.getAttributePoints(Attributes.DEXTERITE) + player.getSkillLevel(Skills.getSkillByName("chasse"));
-
-        if (skillLevel > 12) {
+        int skillLevel = player.getSkillLevel(Skills.getSkillByName("chasse"));
+        
+        if (skillLevel >= 12) {
           mustLoot = true;
         }
       }
     }
-
-    e.setCancelled(!mustLoot);
-  }*/
+    
+    if (!mustLoot) {
+      e.setCancelled(true);
+    }
+  }
 
   @Listener
   public void onServerStart(GameStartedServerEvent event) throws IOException {

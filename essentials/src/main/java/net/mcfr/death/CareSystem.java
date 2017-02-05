@@ -187,4 +187,8 @@ public class CareSystem {
       return this.name + " (" + this.location.getBlockX() + ", " + this.location.getBlockY() + ", " + this.location.getBlockZ() + ")";
     }
   }
+
+  public boolean isPlayerInSafeArea(McFrPlayer player) {
+    return getNearest(player.getPlayer().getLocation()).isPresent();
+  }
 }

@@ -35,9 +35,9 @@ public class RollResult {
 	
 	public String getModifierString() {
 	  if (this.modifier > 0) {
-	    return "(+" + this.modifier + ")"; 
+	    return " (+" + this.modifier + ")"; 
 	  } else if (this.modifier < 0) {
-	    return "(" + this.modifier + ")";
+	    return " (" + this.modifier + ")";
 	  } else {
 	    return "";
 	  }
