@@ -31,6 +31,7 @@ public class ItemCommand extends AbstractCommand {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+    src.sendMessage(Text.of(TextColors.RED, "Utilisation : /item [name | desc] <texte>"));
     return CommandResult.empty();
   }
 

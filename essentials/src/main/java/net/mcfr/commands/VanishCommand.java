@@ -28,6 +28,8 @@ public class VanishCommand extends AbstractCommand {
     Player player = (Player) src;
     boolean wasVisible = player.get(Keys.INVISIBLE).orElse(false);
     player.offer(Keys.INVISIBLE, !wasVisible);
+    player.offer(Keys.VANISH_IGNORES_COLLISION, !wasVisible);
+    player.offer(Keys.VANISH_PREVENTS_TARGETING, !wasVisible);
 
     player.sendMessage(Text.of(TextColors.YELLOW, "Vous êtes maintenant " + (wasVisible ? "" : "in") + "visible"));
     return CommandResult.success();

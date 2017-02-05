@@ -32,7 +32,7 @@ public class MpCommand extends AbstractCommand {
         return CommandResult.success();
       }
 
-      if (McFrPlayer.getMcFrPlayer(recipient).wantsMP()) {
+      if (!McFrPlayer.getMcFrPlayer(recipient).wantsMP()) {
         player.sendMessage(Text.of(TextColors.YELLOW, "Votre correspondant ignore les mps."));
         return CommandResult.success();
       }
