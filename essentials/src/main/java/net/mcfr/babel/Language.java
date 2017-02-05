@@ -102,7 +102,7 @@ public class Language {
     int symbolsSize = this.symbols.size();
     int wordLength = word.length();
 
-    if (languageLevel == 0 || languageLevel == 1 && (wordLength < 4 || wordLength > 7) || languageLevel == 2 && wordLength > 8) {
+    if (languageLevel == 0 || languageLevel == 1 && (wordLength < 3 || wordLength > 8) || languageLevel == 2 && wordLength > 10) {
       for (int i = 0; i < wordLength; i++) {
         result += this.symbols.get(rand.nextInt(symbolsSize));
       }
