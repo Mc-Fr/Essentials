@@ -1,15 +1,7 @@
 package net.mcfr.chat;
 
-import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
-import static org.spongepowered.api.text.format.TextColors.DARK_PURPLE;
-import static org.spongepowered.api.text.format.TextColors.DARK_RED;
-import static org.spongepowered.api.text.format.TextColors.GOLD;
-import static org.spongepowered.api.text.format.TextColors.GRAY;
-import static org.spongepowered.api.text.format.TextColors.GREEN;
-import static org.spongepowered.api.text.format.TextColors.LIGHT_PURPLE;
-import static org.spongepowered.api.text.format.TextColors.RED;
-import static org.spongepowered.api.text.format.TextColors.WHITE;
-import static org.spongepowered.api.text.format.TextStyles.ITALIC;
+import static org.spongepowered.api.text.format.TextColors.*;
+import static org.spongepowered.api.text.format.TextStyles.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +19,9 @@ public enum ChatType {
   LOUD_SPEAK(45, GOLD, GOLD, TextStyles.NONE, "&", "Quelqu'un parle fort au loin.", false, "%1$s : %3$s", true),
   SHOUT(60, RED, DARK_RED, TextStyles.NONE, "!", "Quelqu'un crie au loin.", false, "%1$s : %3$s", true),
 
-  STEALTHY_ACTION(6, GREEN, DARK_GREEN, ITALIC, "*\"", false, "*%1$s %3$s"),
-  DISCREET_ACTION(12, GREEN, DARK_GREEN, ITALIC, "*'", false, "*%1$s %3$s"),
-  ACTION(25, GREEN, DARK_GREEN, TextStyles.NONE, "*", false, "*%1$s %3$s"),
+  STEALTHY_ACTION(6, GREEN, DARK_GREEN, ITALIC, "*\"", false, "* %1$s %3$s"),
+  DISCREET_ACTION(12, GREEN, DARK_GREEN, ITALIC, "*'", false, "* %1$s %3$s"),
+  ACTION(25, GREEN, DARK_GREEN, TextStyles.NONE, "*", false, "* %1$s %3$s"),
   VISIBLE_ACTION(40, GREEN, DARK_GREEN, TextStyles.NONE, "*&", false, "*%1$s %3$s"),
 
   ORP_WHISPER(4, GRAY, "('", false, "'(%1$s : %3$s)"),
