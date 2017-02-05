@@ -29,7 +29,7 @@ public class HrpCommand extends AbstractCommand {
         quantity = Math.min(args.<Integer>getOne("quantité").get(), 16);
       }
 
-      Sponge.getCommandManager().process(src, "give " + p.getName() + " mcfr_b_i:orp_sign " + quantity);
+      Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "give " + p.getName() + " mcfr_b_i:orp_sign " + quantity);
     } else {
       src.sendMessage(ONLY_PLAYERS_COMMAND);
     }

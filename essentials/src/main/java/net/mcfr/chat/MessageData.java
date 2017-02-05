@@ -11,7 +11,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 
-import net.mcfr.babel.Language;
 import net.mcfr.utils.McFrPlayer;
 
 public class MessageData {
@@ -51,11 +50,11 @@ public class MessageData {
     this.message = text;
     this.chatType = ChatType.getChatType(getMessage(), McFrPlayer.getMcFrPlayer(sender).getDefaultChat());
     this.message = getMessage().substring(getChatType().getCharsRequired().length());
-    if (getChatType().isTranslatable() && !getChatType().isRealname() && McFrPlayer.getMcFrPlayer(sender).hasCharacter()) {
-      McFrPlayer player = McFrPlayer.getMcFrPlayer(sender);
-      Language lang = player.getLanguage();
-      this.message = lang.transformMessage(getMessage(), player.getLanguageLevel(lang));
-    }
+    //    if (getChatType().isTranslatable() && !getChatType().isRealname() && McFrPlayer.getMcFrPlayer(sender).hasCharacter()) {
+    //      McFrPlayer player = McFrPlayer.getMcFrPlayer(sender);
+    //      Language lang = player.getLanguage();
+    //      this.message = lang.transformMessage(getMessage(), player.getLanguageLevel(lang));
+    //    }
     this.recipients = getListeningPlayers();
   }
 
@@ -119,16 +118,16 @@ public class MessageData {
   }
 
   public void send() {
-    if (getChatType().isTranslatable()) {
-      Language lang = McFrPlayer.getMcFrPlayer(this.sender).getLanguage();
-      String[] translatedMessages = new String[4];
-      for (int i = 0; i < 4; i++) {
-        translatedMessages[i] = lang.transformMessage(getMessage(), i);
-      }
-      getRecipients().forEach(p -> p.sendMessage(toText(p, translatedMessages[McFrPlayer.getMcFrPlayer(p).getLanguageLevel(lang)])));
-    } else {
-      getRecipients().forEach(p -> p.sendMessage(toText(p)));
-    }
+    //    if (getChatType().isTranslatable()) {
+    //      Language lang = McFrPlayer.getMcFrPlayer(this.sender).getLanguage();
+    //      String[] translatedMessages = new String[4];
+    //      for (int i = 0; i < 4; i++) {
+    //        translatedMessages[i] = lang.transformMessage(getMessage(), i);
+    //      }
+    //      getRecipients().forEach(p -> p.sendMessage(toText(p, translatedMessages[McFrPlayer.getMcFrPlayer(p).getLanguageLevel(lang)])));
+    //    } else {
+    getRecipients().forEach(p -> p.sendMessage(toText(p)));
+    //    }
   }
 
   public boolean checkConditions() {

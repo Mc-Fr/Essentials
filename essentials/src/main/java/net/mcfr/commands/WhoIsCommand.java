@@ -23,20 +23,26 @@ public class WhoIsCommand extends AbstractCommand {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     Player player = null;
+    boolean selfTarget = false;
     if (args.hasAny("joueur")) {
       player = args.<Player>getOne("joueur").get();
     } else {
       if (src instanceof Player) {
         player = (Player) src;
+        selfTarget = true;
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
         return CommandResult.success();
       }
     }
-
-    String name = McFrPlayer.getMcFrPlayer(player).getName();
+    McFrPlayer mcfrPlayer = McFrPlayer.getMcFrPlayer(player);
+    String name = mcfrPlayer.getName();
     src.sendMessage(Text.of(TextColors.DARK_GREEN, player.getName() + " -> " + name));
-    src.sendMessage(Text.of(TextColors.DARK_GREEN, " - Desc : " + McFrPlayer.getMcFrPlayer(player).getDescription()));
+    if (selfTarget) {
+      src.sendMessage(Text.of(TextColors.DARK_GREEN, " - Desc : " + McFrPlayer.getMcFrPlayer(player).getDescription()));
+      src.sendMessage(
+          Text.of(TextColors.DARK_GREEN, " - Vous " + (mcfrPlayer.isInCareCenterEffectArea() ? "êtes" : "n'êtes pas") + " en zone sûre."));
+    }
 
     return CommandResult.success();
   }

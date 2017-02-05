@@ -140,7 +140,7 @@ public class Essentials {
     }
 
     this.careSystem = new CareSystem();
-    
+
     Sponge.getEventManager().registerListeners(this, new DamageListener());
     Sponge.getEventManager().registerListeners(this, this.careSystem);
     Sponge.getEventManager().registerListeners(this, new ExpeditionSystem());
@@ -216,7 +216,7 @@ public class Essentials {
     if (target instanceof Player) {
       if (Calendar.getInstance().getTime().getTime() - McFrPlayer.getMcFrPlayer(player).getReadDescriptionTime() > 100) {
         McFrPlayer.getMcFrPlayer(player).updateReadDescriptionTime();
-        McFrPlayer otherPlayer = McFrPlayer.getMcFrPlayer(((Player) e.getTargetEntity()));
+        McFrPlayer otherPlayer = McFrPlayer.getMcFrPlayer((Player) e.getTargetEntity());
         player.sendMessage(Text.of(TextColors.DARK_GREEN, "* " + otherPlayer.getName() + " * " + otherPlayer.getDescription() + " *"));
       }
     }
@@ -270,23 +270,23 @@ public class Essentials {
   @Listener
   public void onLootItem(DropItemEvent.Destruct e) {
     boolean mustLoot = true;
-    
+
     Optional<EntityDamageSource> optDamageSource = e.getCause().first(EntityDamageSource.class);
 
     if (optDamageSource.isPresent()) {
       mustLoot = false;
       Entity source = optDamageSource.get().getSource();
-      
+
       if (source instanceof Player) {
         McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) source);
         int skillLevel = player.getSkillLevel(Skills.getSkillByName("chasse"));
-        
+
         if (skillLevel >= 12) {
           mustLoot = true;
         }
       }
     }
-    
+
     if (!mustLoot) {
       e.setCancelled(true);
     }
