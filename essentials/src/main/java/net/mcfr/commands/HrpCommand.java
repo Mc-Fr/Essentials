@@ -52,5 +52,4 @@ public class HrpCommand extends AbstractCommand {
   public String[] getAliases() {
     return new String[] { "hrp" };
   }
-
 }

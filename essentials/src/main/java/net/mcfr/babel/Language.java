@@ -99,12 +99,11 @@ public class Language {
 
   private String transformWord(String word, int languageLevel) {
     String result = "";
-    int symbolsSize = this.symbols.size();
     int wordLength = word.length();
 
     if (languageLevel == 0 || languageLevel == 1 && (wordLength < 3 || wordLength > 8) || languageLevel == 2 && wordLength > 10) {
       for (int i = 0; i < wordLength; i++) {
-        result += this.symbols.get(rand.nextInt(symbolsSize));
+        result += this.symbols.get(rand.nextInt(this.symbols.size()));
       }
       return result;
     } else

@@ -62,25 +62,13 @@ public class CareSystem {
     }
   }
 
-  /*@Listener
-  public void onPlayerMove(MoveEntityEvent e, @First Player player) {
-    Optional<CareCenter> centerOpt = getNearest(player.getLocation());
-    if (McFrPlayer.getMcFrPlayer(player).isInCareCenterEffectArea() && !centerOpt.isPresent()) {
-      player.sendMessage(Text.of(TextColors.YELLOW, "Vous n'êtes plus protégé par aucun centre de soin, prenez garde."));
-      McFrPlayer.getMcFrPlayer(player).setInCareCenterEffectArea(centerOpt.isPresent());
-    } else if (!McFrPlayer.getMcFrPlayer(player).isInCareCenterEffectArea() && centerOpt.isPresent()) {
-      player.sendMessage(Text.of(TextColors.YELLOW, "Un centre de soin est maintenant assez proche en cas de problème."));
-      McFrPlayer.getMcFrPlayer(player).setInCareCenterEffectArea(centerOpt.isPresent());
-    }
-  }*/
-  
   @Listener
   public void onPlayerMove(MoveEntityEvent e) {
     if (e.getTargetEntity() instanceof Player) {
       Player player = (Player) e.getTargetEntity();
       Optional<CareCenter> centerOpt = getNearest(player.getLocation());
       if (McFrPlayer.getMcFrPlayer(player).isInCareCenterEffectArea() && !centerOpt.isPresent()) {
-        player.sendMessage(Text.of(TextColors.YELLOW, "Vous n'êtes plus protégé par aucun centre de soin, prenez garde."));
+        player.sendMessage(Text.of(TextColors.YELLOW, "Le centre de soin est loin à présent, mieux vaut faire attention."));
         McFrPlayer.getMcFrPlayer(player).setInCareCenterEffectArea(centerOpt.isPresent());
       } else if (!McFrPlayer.getMcFrPlayer(player).isInCareCenterEffectArea() && centerOpt.isPresent()) {
         player.sendMessage(Text.of(TextColors.YELLOW, "Un centre de soin est maintenant assez proche en cas de problème."));
@@ -141,8 +129,8 @@ public class CareSystem {
   }
 
   public Optional<CareCenter> getNearest(Location<World> loc) {
-    return centers.stream().filter(c -> c.getLocation().getExtent().equals(loc.getExtent())).filter(c -> c.distance(loc) < CARE_CENTER_RADIUS_EFFECT_AREA)
-        .min((o1, o2) -> Double.compare(o1.distance(loc), o2.distance(loc)));
+    return centers.stream().filter(c -> c.getLocation().getExtent().equals(loc.getExtent()))
+        .filter(c -> c.distance(loc) < CARE_CENTER_RADIUS_EFFECT_AREA).min((o1, o2) -> Double.compare(o1.distance(loc), o2.distance(loc)));
   }
 
   private int computeModifier(McFrPlayer player) {
