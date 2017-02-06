@@ -123,10 +123,10 @@ public class Language {
     case 0:
       return 1.0F;
     case 1:
-      value = -0.5F * wordLength + 3;
+      value = -0.6F * wordLength + 4;
       break;
     case 2:
-      value = -0.7F * wordLength + 7;
+      value = -0.6F * wordLength + 8;
       break;
     default:
       return 0.0F;
