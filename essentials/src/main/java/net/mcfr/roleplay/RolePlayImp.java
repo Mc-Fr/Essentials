@@ -102,10 +102,6 @@ public class RolePlayImp implements RolePlayService {
       score -= McFrPlayer.getMcFrPlayer(player).hasTrait("mauvaise_vue_sans_lunettes") ? 4 : 0;
       score -= McFrPlayer.getMcFrPlayer(player).hasTrait("pas_de_vision_de_profondeur") ? 2 : 0;
       score -= McFrPlayer.getMcFrPlayer(player).hasTrait("un_seul_oeil") ? 5 : 0;
-
-      int lightMalus = McFrPlayer.getMcFrPlayer(player).getLightMalus();
-      lightMalus += McFrPlayer.getMcFrPlayer(player).getTraitLevel("vision_dans_la_nuit");
-      modifier += lightMalus < 0 ? lightMalus : 0;
       break;
     case OUIE:
       score += McFrPlayer.getMcFrPlayer(player).getTraitLevel("ouie_accentuee");

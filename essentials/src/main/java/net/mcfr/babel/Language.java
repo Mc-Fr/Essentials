@@ -58,7 +58,10 @@ public class Language {
           symbols.add(symbolsData.getString(1).charAt(0));
         }
         if (symbols.size() == 0) {
-          symbols.add('#');
+          symbols.add('ϑ');
+          symbols.add('ε');
+          symbols.add('ρ');
+          symbols.add('σ');
         }
 
         languages.put(langData.getString(3), new Language(langData.getString(1), langData.getString(2), langData.getString(3), symbols));
@@ -100,13 +103,35 @@ public class Language {
   private String transformWord(String word, int languageLevel) {
     String result = "";
     int wordLength = word.length();
-
-    if (languageLevel == 0 || languageLevel == 1 && (wordLength < 3 || wordLength > 8) || languageLevel == 2 && wordLength > 10) {
-      for (int i = 0; i < wordLength; i++) {
+    float jamming = computeJamming(languageLevel, wordLength);
+    
+    for(char c : word.toCharArray()) {
+      if (rand.nextFloat() < jamming) {
         result += this.symbols.get(rand.nextInt(this.symbols.size()));
+      } else {
+        result += c;
       }
-      return result;
-    } else
-      return word;
+    }
+    
+    return result;
+  }
+
+  public float computeJamming(int languageLevel, int wordLength) {
+    double value;
+    
+    switch(languageLevel) {
+    case 0:
+      return 1.0F;
+    case 1:
+      value = -0.5F * wordLength + 3;
+      break;
+    case 2:
+      value = -0.7F * wordLength + 7;
+      break;
+    default:
+      return 0.0F;
+    }
+    
+    return (float) (1.0F/(1.0F + Math.exp(value)));
   }
 }
