@@ -1,5 +1,6 @@
 package net.mcfr.commands.utils;
 
+import net.mcfr.commands.BabelCommand;
 import net.mcfr.commands.BackCommand;
 import net.mcfr.commands.BurrowCommand;
 import net.mcfr.commands.DescCommand;
@@ -28,7 +29,7 @@ import net.mcfr.commands.VanishCommand;
 import net.mcfr.commands.WhoIsCommand;
 
 public enum Commands {
-  //  BABEL(BabelCommand.class),
+  BABEL(BabelCommand.class),
   BACK(BackCommand.class),
   BURROW(BurrowCommand.class),
   DESC(DescCommand.class),
