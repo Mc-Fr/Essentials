@@ -126,12 +126,12 @@ public class Language {
       value = -0.6F * wordLength + 4;
       break;
     case 2:
-      value = -0.6F * wordLength + 8;
+      value = -0.8F * wordLength + 8.5F;
       break;
     default:
       return 0.0F;
     }
     
-    return (float) (1.0F/(1.0F + Math.exp(value)));
+    return  0.9F * (1.0F/(1.0F + (float) Math.exp(value))) + 0.1F;
   }
 }
