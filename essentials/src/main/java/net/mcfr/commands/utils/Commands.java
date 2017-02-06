@@ -14,6 +14,7 @@ import net.mcfr.commands.MpCommand;
 import net.mcfr.commands.MuteCommand;
 import net.mcfr.commands.NameCommand;
 import net.mcfr.commands.NoCommand;
+import net.mcfr.commands.RealnameCommand;
 import net.mcfr.commands.RefreshCommand;
 import net.mcfr.commands.ReplyCommand;
 import net.mcfr.commands.RollCommand;
@@ -42,6 +43,7 @@ public enum Commands {
   MUTE(MuteCommand.class),
   NAME(NameCommand.class),
   NO(NoCommand.class),
+  REALNAME(RealnameCommand.class),
   REFRESH(RefreshCommand.class),
   REPLY(ReplyCommand.class),
   ROLL(RollCommand.class),

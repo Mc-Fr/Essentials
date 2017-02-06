@@ -109,6 +109,10 @@ public class McFrPlayer {
     players.remove(new McFrPlayer(player));
   }
 
+  public static List<McFrPlayer> getMcFrPlayers() {
+    return new ArrayList<>(players);
+  }
+
   public static McFrPlayer getMcFrPlayer(String name) {
     return getMcFrPlayer(Sponge.getServer().getPlayer(name).get());
   }
@@ -470,9 +474,9 @@ public class McFrPlayer {
   public int getSkillLevel(Skills skill) {
     List<Integer> scores = new ArrayList<>();
     if (this.skills.containsKey(skill)) {
-      scores.add(this.getAttributePoints(skill.getAttribute()) + this.skills.get(skill));
+      scores.add(getAttributePoints(skill.getAttribute()) + this.skills.get(skill));
     } else {
-      scores.add(this.getAttributePoints(skill.getAttribute()) - 3 + skill.getDifficulty());
+      scores.add(getAttributePoints(skill.getAttribute()) - 3 + skill.getDifficulty());
     }
 
     for (Map.Entry<Skills, Integer> dependency : skill.getDependencies().entrySet()) {
@@ -480,9 +484,9 @@ public class McFrPlayer {
       int depScore = dependency.getValue();
 
       if (this.skills.containsKey(depSkill)) {
-        scores.add(this.getAttributePoints(depSkill.getAttribute()) + this.skills.get(depSkill) + depScore);
+        scores.add(getAttributePoints(depSkill.getAttribute()) + this.skills.get(depSkill) + depScore);
       } else {
-        scores.add(this.getAttributePoints(depSkill.getAttribute()) - 3 + depSkill.getDifficulty() + depScore);
+        scores.add(getAttributePoints(depSkill.getAttribute()) - 3 + depSkill.getDifficulty() + depScore);
       }
     }
 
