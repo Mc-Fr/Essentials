@@ -22,7 +22,7 @@ public enum ChatType {
   STEALTHY_ACTION(6, GREEN, DARK_GREEN, ITALIC, "*\"", false, "* %1$s %3$s"),
   DISCREET_ACTION(12, GREEN, DARK_GREEN, ITALIC, "*'", false, "* %1$s %3$s"),
   ACTION(25, GREEN, DARK_GREEN, TextStyles.NONE, "*", false, "* %1$s %3$s"),
-  VISIBLE_ACTION(40, GREEN, DARK_GREEN, TextStyles.NONE, "*&", false, "*%1$s %3$s"),
+  VISIBLE_ACTION(40, GREEN, DARK_GREEN, TextStyles.NONE, "*&", false, "* %1$s %3$s"),
 
   ORP_WHISPER(4, GRAY, "('", false, "'(%1$s : %3$s)"),
   ORP(25, GRAY, "(", false, "(%1$s : %3$s)"),

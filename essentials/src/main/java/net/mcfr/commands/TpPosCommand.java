@@ -2,6 +2,7 @@ package net.mcfr.commands;
 
 import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -12,6 +13,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
@@ -25,7 +27,7 @@ public class TpPosCommand extends AbstractCommand {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     Location<World> loc = args.<Location<World>>getOne("position").get();
-    Optional<World> worldOpt = args.<World>getOne("world");
+    Optional<WorldProperties> worldOpt = args.<WorldProperties>getOne("monde");
     Optional<Player> optP = args.<Player>getOne("joueur");
     Player p = (Player) src;
     if (src instanceof Player) {
@@ -33,7 +35,7 @@ public class TpPosCommand extends AbstractCommand {
         p = optP.get();
       }
       if (worldOpt.isPresent()) {
-        loc.setExtent(worldOpt.get());
+        loc.setExtent(Sponge.getServer().getWorld(worldOpt.get().getWorldName()).get());
       }
     } else {
       if (!optP.isPresent() && !worldOpt.isPresent()) {
@@ -41,7 +43,7 @@ public class TpPosCommand extends AbstractCommand {
         return CommandResult.empty();
       }
       p = optP.get();
-      loc.setExtent(worldOpt.get());
+      loc.setExtent(Sponge.getServer().getWorld(worldOpt.get().getWorldName()).get());
     }
     p.setLocation(loc);
     return CommandResult.success();

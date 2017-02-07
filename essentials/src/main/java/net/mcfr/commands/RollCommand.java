@@ -138,7 +138,7 @@ public class RollCommand extends AbstractCommand {
     case RESISTANCE: {
       ResistanceRollResult result = (ResistanceRollResult) res;
 
-      line1 = String.format(" %s fait un jet d'encaissement, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
+      line1 = String.format("%s fait un jet d'encaissement, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
           result.getScore());
     }
       break;
