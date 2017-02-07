@@ -15,7 +15,7 @@ public class CommandListener {
 
   @Listener
   public void onSentCommand(SendCommandEvent e) {
-    if (e.getCommand().equals("tp")) {
+    if (e.getCommand().contains("tp")) {
       registerPositionForBack(e);
     }
   }

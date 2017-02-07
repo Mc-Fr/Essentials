@@ -20,24 +20,28 @@ public class TpPosCommand extends AbstractCommand {
 
   public TpPosCommand(Essentials plugin) {
     super(plugin);
-    // TODO Auto-generated constructor stub
   }
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     Location<World> loc = args.<Location<World>>getOne("position").get();
+    Optional<World> worldOpt = args.<World>getOne("world");
     Optional<Player> optP = args.<Player>getOne("joueur");
     Player p = (Player) src;
     if (src instanceof Player) {
       if (optP.isPresent()) {
         p = optP.get();
       }
+      if (worldOpt.isPresent()) {
+        loc.setExtent(worldOpt.get());
+      }
     } else {
-      if (!optP.isPresent()) {
+      if (!optP.isPresent() && !worldOpt.isPresent()) {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
         return CommandResult.empty();
       }
       p = optP.get();
+      loc.setExtent(worldOpt.get());
     }
     p.setLocation(loc);
     return CommandResult.success();
@@ -49,7 +53,7 @@ public class TpPosCommand extends AbstractCommand {
     return CommandSpec.builder()
             .description(Text.of("Téléporte le joueur ciblé sur une position."))
             .permission("essentials.command.tppos")
-            .arguments(GenericArguments.location(Text.of("position")), GenericArguments.optional(GenericArguments.player(Text.of("joueur"))))
+            .arguments(GenericArguments.optional(GenericArguments.world(Text.of("monde"))), GenericArguments.location(Text.of("position")), GenericArguments.optional(GenericArguments.player(Text.of("joueur"))))
             .executor(this)
             .build();
     //#f:1
@@ -59,5 +63,4 @@ public class TpPosCommand extends AbstractCommand {
   public String[] getAliases() {
     return new String[] { "tppos" };
   }
-
 }
