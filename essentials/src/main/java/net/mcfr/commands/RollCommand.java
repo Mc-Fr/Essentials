@@ -1,6 +1,6 @@
 package net.mcfr.commands;
 
-import static org.spongepowered.api.text.format.TextColors.YELLOW;
+import static org.spongepowered.api.text.format.TextColors.*;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
@@ -97,15 +97,15 @@ public class RollCommand extends AbstractCommand {
         break;
       }
 
-      line1 = String.format("%s attaque %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
-          weaponString, result.getScore());
+      line1 = String.format("%s attaque %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(), weaponString,
+          result.getScore());
     }
       break;
     case ATTRIBUTE: {
       AttributeRollResult result = (AttributeRollResult) res;
 
-      line1 = String.format("%s fait un jet de %s, score de %d" + result.getModifierString(),
-          McFrPlayer.getMcFrPlayer(player).getName(), result.getAttributeName(), result.getScore());
+      line1 = String.format("%s fait un jet de %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
+          result.getAttributeName(), result.getScore());
     }
       break;
     case DEFENSE: {
@@ -124,22 +124,22 @@ public class RollCommand extends AbstractCommand {
         break;
       }
 
-      line1 = String.format("%s tente %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
-          defenseString, result.getScore());
+      line1 = String.format("%s tente %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(), defenseString,
+          result.getScore());
     }
       break;
     case PERCEPTION: {
       PerceptionRollResult result = (PerceptionRollResult) res;
 
-      line1 = String.format("%s fait un jet de %s, score de %d" + result.getModifierString(),
-          McFrPlayer.getMcFrPlayer(player).getName(), result.getSense(), result.getScore());
+      line1 = String.format("%s fait un jet de %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
+          result.getSense(), result.getScore());
     }
       break;
     case RESISTANCE: {
       ResistanceRollResult result = (ResistanceRollResult) res;
 
-      line1 = String.format(" %s fait un jet d'encaissement, score de %d" + result.getModifierString(),
-          McFrPlayer.getMcFrPlayer(player).getName(), result.getScore());
+      line1 = String.format(" %s fait un jet d'encaissement, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
+          result.getScore());
     }
       break;
     case SKILL: {
@@ -397,8 +397,10 @@ public class RollCommand extends AbstractCommand {
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {      
-      src.sendMessage(Text.of(TextColors.YELLOW, "Jet de 3D6 : " + Sponge.getServiceManager().provide(RolePlayService.class).get().rollDice(3, 6)));
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      int faces = args.<Integer>getOne("faces").get();
+      src.sendMessage(Text.of(TextColors.YELLOW,
+          "Jet de dés à " + faces + " faces : " + Sponge.getServiceManager().provide(RolePlayService.class).get().rollDie(faces)));
       return CommandResult.success();
     }
 
@@ -408,6 +410,7 @@ public class RollCommand extends AbstractCommand {
     return CommandSpec.builder()
             .description(Text.of("Fait un jet sans attribut ni compétence."))
             .permission("essentials.command.roll.none")
+            .arguments(GenericArguments.integer(Text.of("faces")))
             .executor(this)
             .build();
     //#f:1

@@ -127,7 +127,7 @@ public class RolePlayImp implements RolePlayService {
 
     Skills attackSkill = Skills.getWeaponSkill(player);
     McFrPlayer mcfrPlayer = McFrPlayer.getMcFrPlayer(player);
-  
+
     int score = mcfrPlayer.getSkillLevel(attackSkill) + modifier;
     int margin = score - roll;
     return new AttackRollResult(player, attackSkill, attackSkill.getAttribute(), modifier, roll, score, margin);
@@ -165,7 +165,7 @@ public class RolePlayImp implements RolePlayService {
       }
       break;
     }
-    
+
     score += modifier;
     score += McFrPlayer.getMcFrPlayer(player).hasTrait("reflexes_de_combat") ? 1 : 0;
 
@@ -182,7 +182,8 @@ public class RolePlayImp implements RolePlayService {
     return value;
   }
 
-  private int rollDie(int faces) {
+  @Override
+  public int rollDie(int faces) {
     return this.rd.nextInt(faces - 1) + 1;
   }
 }
