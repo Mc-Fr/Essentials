@@ -23,7 +23,10 @@ import net.mcfr.commands.ServerLockCommand;
 import net.mcfr.commands.SpawnCommand;
 import net.mcfr.commands.SpeedCommand;
 import net.mcfr.commands.SpyMpCommand;
+import net.mcfr.commands.TpCommand;
 import net.mcfr.commands.TpHereCommand;
+import net.mcfr.commands.TpPosCommand;
+import net.mcfr.commands.TpToCommand;
 import net.mcfr.commands.TribalLanguageCommand;
 import net.mcfr.commands.VanishCommand;
 import net.mcfr.commands.WhoIsCommand;
@@ -52,7 +55,10 @@ public enum Commands {
   SPAWN(SpawnCommand.class),
   SPEED(SpeedCommand.class),
   SPYMP(SpyMpCommand.class),
+  TP(TpCommand.class),
   TPH(TpHereCommand.class),
+  TPPOS(TpPosCommand.class),
+  TPTO(TpToCommand.class),
   TRIBELANG(TribalLanguageCommand.class),
   VANISH(VanishCommand.class),
   WHOIS(WhoIsCommand.class);
@@ -66,5 +72,4 @@ public enum Commands {
   public Class<? extends AbstractCommand> getCommandClass() {
     return this.cmdClass;
   }
-
 }

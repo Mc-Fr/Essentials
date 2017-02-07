@@ -13,9 +13,9 @@ import org.spongepowered.api.text.format.TextColors;
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
 
-public class TpHereCommand extends AbstractCommand {
+public class TpCommand extends AbstractCommand {
 
-  public TpHereCommand(Essentials plugin) {
+  public TpCommand(Essentials plugin) {
     super(plugin);
   }
 
@@ -23,8 +23,8 @@ public class TpHereCommand extends AbstractCommand {
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (src instanceof Player) {
       Player p = args.<Player>getOne("joueur").get();
-      p.setLocation(((Player) src).getLocation());
-      src.sendMessage(Text.of(TextColors.YELLOW, String.format("%s a été téléporté sur vous.", p.getName())));
+      ((Player) src).setLocation(p.getLocation());
+      src.sendMessage(Text.of(TextColors.YELLOW, String.format("Vous avez été téléporté sur %s", p.getName())));
     } else {
       src.sendMessage(ONLY_PLAYERS_COMMAND);
     }
@@ -35,8 +35,8 @@ public class TpHereCommand extends AbstractCommand {
   public CommandSpec getCommandSpec() {
     //#f:0
     return CommandSpec.builder()
-            .description(Text.of("Téléporte le joueur ciblé sur l'émetteur de la commande."))
-            .permission("essentials.command.tphere")
+            .description(Text.of("Téléporte vers le joueur ciblé."))
+            .permission("essentials.command.tp")
             .arguments(GenericArguments.player(Text.of("joueur")))
             .executor(this)
             .build();
@@ -45,7 +45,7 @@ public class TpHereCommand extends AbstractCommand {
 
   @Override
   public String[] getAliases() {
-    return new String[] { "tph", "tphere" };
+    return new String[] { "tp" };
   }
 
 }
