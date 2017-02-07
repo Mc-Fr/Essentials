@@ -20,25 +20,22 @@ import com.google.gson.stream.JsonReader;
 public final class McFrConnection {
   private static String jdbcUrl;
   private static boolean configRead = false;
-
   private static McFrConnection jdrConnection;
   private static McFrConnection serverConnection;
-  
+
   private String database;
 
   private Connection connection;
 
   private McFrConnection(String database) {
     this.database = database;
-    
     if (!configRead) {
       readConfigFile();
       configRead = true;
     }
-
-    this.openConnection();
+    openConnection();
   }
-  
+
   public void openConnection() {
     try {
       Optional<SqlService> optService = Sponge.getServiceManager().provide(SqlService.class);
@@ -98,7 +95,7 @@ public final class McFrConnection {
   public PreparedStatement prepare(String query) {
     try {
       if (this.connection.isClosed()) {
-        this.openConnection();
+        openConnection();
       }
       return this.connection.prepareStatement(query);
     } catch (SQLException e) {

@@ -37,9 +37,8 @@ public class MessageData {
   private Collection<Player> recipients;
 
   /**
-   * Construit un {@code MessageData} à partir d'un {@code Player} et d'une
-   * chaîne de caractère. Extrait du message le type de tchat à utiliser, ainsi
-   * que tous les destinataires du message.
+   * Construit un {@code MessageData} à partir d'un {@code Player} et d'une chaîne de caractère. Extrait du message le
+   * type de tchat à utiliser, ainsi que tous les destinataires du message.
    *
    * @param sender
    *          L'émetteur du message
@@ -52,13 +51,6 @@ public class MessageData {
     this.message = text;
     this.chatType = ChatType.getChatType(getMessage(), McFrPlayer.getMcFrPlayer(sender).getDefaultChat());
     this.message = getMessage().substring(getChatType().getCharsRequired().length());
-    // if (getChatType().isTranslatable() && !getChatType().isRealname() &&
-    // McFrPlayer.getMcFrPlayer(sender).hasCharacter()) {
-    // McFrPlayer player = McFrPlayer.getMcFrPlayer(sender);
-    // Language lang = player.getLanguage();
-    // this.message = lang.transformMessage(getMessage(),
-    // player.getLanguageLevel(lang));
-    // }
     this.recipients = getListeningPlayers();
   }
 
@@ -79,8 +71,7 @@ public class MessageData {
   }
 
   /**
-   * Transforme le {@code MessageData} en {@code Text} afin qu'il puisse être
-   * envoyé.
+   * Transforme le {@code MessageData} en {@code Text} afin qu'il puisse être envoyé.
    *
    * @param recipient
    *          Le destinataire du message
@@ -129,7 +120,13 @@ public class MessageData {
       for (int i = 0; i < 4; i++) {
         translatedMessages[i] = lang.transformMessage(getMessage(), i);
       }
-      getRecipients().forEach(p -> p.sendMessage(toText(p, translatedMessages[McFrPlayer.getMcFrPlayer(p).getLanguageLevel(lang)])));
+      getRecipients().forEach(p -> {
+        if (p.equals(getSender())) {
+          p.sendMessage(toText(p));
+        } else {
+          p.sendMessage(toText(p, translatedMessages[McFrPlayer.getMcFrPlayer(p).getLanguageLevel(lang)]));
+        }
+      });
     } else {
       getRecipients().forEach(p -> p.sendMessage(toText(p)));
     }

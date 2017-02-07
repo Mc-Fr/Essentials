@@ -25,10 +25,10 @@ public class Skills {
     this.name = name;
     this.displayName = displayName.toLowerCase();
     this.attribute = attribute;
-    this.difficulty = - difficulty;
+    this.difficulty = -difficulty;
     this.dependencies = new HashMap<>();
   }
-  
+
   private void addDependency(Skills otherSkill, int score) {
     this.dependencies.put(otherSkill, score);
   }
@@ -44,7 +44,7 @@ public class Skills {
   public int getDifficulty() {
     return this.difficulty;
   }
-  
+
   public Map<Skills, Integer> getDependencies() {
     return this.dependencies;
   }
@@ -58,9 +58,8 @@ public class Skills {
             Attributes.getAttributeFromString(skillData.getString(3)), skillData.getInt(4)));
       }
       skillData.close();
-      
-      ResultSet dependenciesData = McFrConnection.getJdrConnection()
-          .executeQuery("SELECT skill1, skill2, score FROM fiche_perso_dependances");
+
+      ResultSet dependenciesData = McFrConnection.getJdrConnection().executeQuery("SELECT skill1, skill2, score FROM fiche_perso_dependances");
       while (dependenciesData.next()) {
         Skills skill1 = skills.get(dependenciesData.getString(1));
         Skills skill2 = skills.get(dependenciesData.getString(2));
@@ -81,7 +80,7 @@ public class Skills {
   public static Map<String, Skills> getSkills() {
     return skills;
   }
-  
+
   public static Skills getSkillByName(String name) {
     return skills.get(name);
   }
@@ -94,7 +93,7 @@ public class Skills {
         return skills.get("pugilat");
     }
 
-    String usedWeaponName = optUsedWeapon.get().getItem().getName();
+    String usedWeaponName = optUsedWeapon.get().getItem().getName().toLowerCase();
     if (usedWeaponName.contains("dagger"))
       return skills.get("dague");
     if (usedWeaponName.contains("rapier"))
