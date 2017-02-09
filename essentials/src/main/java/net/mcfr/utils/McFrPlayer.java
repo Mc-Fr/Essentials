@@ -8,13 +8,13 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
-import org.spongepowered.api.data.property.block.LightEmissionProperty;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.living.player.Player;
@@ -33,11 +33,11 @@ import net.mcfr.roleplay.Skills;
 public class McFrPlayer {
   private static List<McFrPlayer> players = new ArrayList<>();
   private final static int EFFECT_DURATION = 800000;
-  private final static PreparedStatement killCharacter, incrementDeaths, changeDescription, changeName, getPseudonym, getUserId, getCharacterSheetId,
+  private final static PreparedStatement addTrait, incrementDeaths, changeDescription, changeName, getPseudonym, getUserId, getCharacterSheetId,
       getCharacterSheet, getAttributes, getAdvantages, registerPlayer;
 
   static {
-    killCharacter = McFrConnection.getJdrConnection().prepare("INSERT INTO fiche_perso_personnage_avantage VALUES (?, ?, ?)");
+    addTrait = McFrConnection.getJdrConnection().prepare("INSERT INTO fiche_perso_personnage_avantage VALUES (?, ?, ?)");
     incrementDeaths = McFrConnection.getServerConnection().prepare("UPDATE Player SET deaths = ? WHERE pseudonym = ?");
     changeDescription = McFrConnection.getServerConnection().prepare("UPDATE Player SET description = ? WHERE pseudonym = ?");
     changeName = McFrConnection.getServerConnection().prepare("UPDATE Player SET name = ? WHERE pseudonym = ?");
@@ -438,15 +438,8 @@ public class McFrPlayer {
       effects.addElement(effect);
     }
     if (hasTrait("boiteux_jambe_en_moins")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).amplifier(1).particles(false)
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).particles(false)
           .build();
-      effects.addElement(effect);
-    } else if (hasTrait("boiteux_jambe_abimee")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).particles(false).build();
-      effects.addElement(effect);
-    }
-    if (hasTrait("aveugle")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.BLINDNESS).duration(EFFECT_DURATION).particles(false).build();
       effects.addElement(effect);
     }
     this.player.offer(effects);
@@ -462,13 +455,6 @@ public class McFrPlayer {
   public void killCharacter(String reason) {
     addTrait("mort", 1);
     this.player.kick(Text.of("Vous êtes mort." + (reason.equals("") ? "" : " (" + reason + ")")));
-  }
-
-  public int getLightLevelAtHeadLocation() {
-    Location<World> loc = this.player.getLocation();
-    Location<World> newLoc = new Location<>(loc.getExtent(), loc.getBlockX(), loc.getBlockY() + 1, loc.getBlockZ());
-    System.out.println(newLoc.getProperty(LightEmissionProperty.class).get().getValue());
-    return newLoc.getProperty(LightEmissionProperty.class).get().getValue();
   }
 
   public int getSkillLevel(Skills skill) {
@@ -527,15 +513,45 @@ public class McFrPlayer {
       return this.traits.get(trait);
     return 0;
   }
+  
+  public String getTraitsString() {
+    String result = "Traits :";
+    
+    for(Entry<String, Integer> entry : traits.entrySet()) {
+      result += "\n- " + entry.getKey() + " : " + entry.getValue();
+    }
+    
+    return result;
+  }
+  
+  public String getSkillsString() {
+    String result = "Compétences :";
+    
+    for(Skills skill : skills.keySet()) {
+      result += "\n- " + skill.getDisplayName() + " : " + getSkillLevel(skill);
+    }
+    
+    return result;
+  }
+  
+  public String getAttributesString() {
+    String result = "Attributs :";
+
+    for(Attributes attribute : attributes.keySet()) {
+      result += "\n- " + attribute.getName() + " : " + getAttributePoints(attribute);
+    }
+    
+    return result;
+  }
 
   public void addTrait(String trait, int level) {
     if (!hasTrait(trait)) {
       this.traits.put(trait, level);
       try {
-        killCharacter.setInt(1, this.sheetId);
-        killCharacter.setString(2, trait);
-        killCharacter.setInt(3, level);
-        killCharacter.execute();
+        addTrait.setInt(1, this.sheetId);
+        addTrait.setString(2, trait);
+        addTrait.setInt(3, level);
+        addTrait.execute();
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -559,20 +575,6 @@ public class McFrPlayer {
 
   public int getArmorModifier() {
     return 0; // TODO
-  }
-
-  public int getLightMalus() {
-    int lightLevel = getLightLevelAtHeadLocation();
-
-    if (lightLevel >= 0 && lightLevel <= 3) {
-      lightLevel = -9;
-    } else if (lightLevel >= 12 && lightLevel <= 15) {
-      lightLevel = 0;
-    } else {
-      lightLevel -= 12;
-    }
-
-    return lightLevel;
   }
 
   public long getReadDescriptionTime() {

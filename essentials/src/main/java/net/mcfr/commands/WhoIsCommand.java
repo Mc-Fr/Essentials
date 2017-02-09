@@ -42,6 +42,9 @@ public class WhoIsCommand extends AbstractCommand {
       src.sendMessage(Text.of(TextColors.DARK_GREEN, " - Desc : " + McFrPlayer.getMcFrPlayer(player).getDescription()));
       src.sendMessage(
           Text.of(TextColors.DARK_GREEN, " - Vous " + (mcfrPlayer.isInCareCenterEffectArea() ? "êtes" : "n'êtes pas") + " en zone sûre."));
+      src.sendMessage(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getAttributesString()));
+      src.sendMessage(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getSkillsString()));
+      src.sendMessage(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getTraitsString()));
     }
 
     return CommandResult.success();

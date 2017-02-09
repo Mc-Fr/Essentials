@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.projectile.arrow.Arrow;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
@@ -283,6 +285,20 @@ public class Essentials {
 
         if (skillLevel >= 12) {
           mustLoot = true;
+        }
+      } else if (source instanceof Arrow) {
+        Arrow sourceArrow = (Arrow) source;
+        Optional<UUID> arrowSource = ((Arrow) source).getCreator();
+        if (arrowSource.isPresent()) {
+          Optional<Entity> optEntity = Sponge.getServer().getWorld("world").get().getEntity(sourceArrow.getCreator().get());
+          if (optEntity.isPresent() && optEntity.get() instanceof Player) {
+            McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) optEntity.get());
+            int skillLevel = player.getSkillLevel(Skills.getSkillByName("chasse"));
+            
+            if (skillLevel >= 12) {
+              mustLoot = true;
+            }
+          }
         }
       }
     }
