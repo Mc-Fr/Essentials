@@ -27,25 +27,22 @@ public class TpPosCommand extends AbstractCommand {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     Location<World> loc = args.<Location<World>>getOne("position").get();
-    Optional<WorldProperties> worldOpt = args.<WorldProperties>getOne("monde");
+    WorldProperties worldOpt = args.<WorldProperties>getOne("monde").get();
     Optional<Player> optP = args.<Player>getOne("joueur");
-    Player p = (Player) src;
+    Player p = null;
     if (src instanceof Player) {
+      p = (Player) src;
       if (optP.isPresent()) {
         p = optP.get();
       }
-      if (worldOpt.isPresent()) {
-        loc.setExtent(Sponge.getServer().getWorld(worldOpt.get().getWorldName()).get());
-      }
     } else {
-      if (!optP.isPresent() && !worldOpt.isPresent()) {
+      if (!optP.isPresent()) {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
         return CommandResult.empty();
       }
       p = optP.get();
-      loc.setExtent(Sponge.getServer().getWorld(worldOpt.get().getWorldName()).get());
     }
-    p.setLocation(loc);
+    p.setLocation(new Location<>(Sponge.getServer().getWorld(worldOpt.getWorldName()).get(), loc.getPosition()));
     return CommandResult.success();
   }
 
@@ -55,7 +52,7 @@ public class TpPosCommand extends AbstractCommand {
     return CommandSpec.builder()
             .description(Text.of("Téléporte le joueur ciblé sur une position."))
             .permission("essentials.command.tppos")
-            .arguments(GenericArguments.optional(GenericArguments.world(Text.of("monde"))), GenericArguments.location(Text.of("position")), GenericArguments.optional(GenericArguments.player(Text.of("joueur"))))
+            .arguments(GenericArguments.world(Text.of("monde")), GenericArguments.location(Text.of("position")), GenericArguments.optional(GenericArguments.player(Text.of("joueur"))))
             .executor(this)
             .build();
     //#f:1
