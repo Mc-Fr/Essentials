@@ -82,7 +82,7 @@ public class RolePlayImp implements RolePlayService {
   public ResistanceRollResult resistanceRoll(Player player, int modifier) {
     int roll = rollDice(3, 6);
     int armorModifier = McFrPlayer.getMcFrPlayer(player).getArmorModifier();
-    int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.ENDURANCE) + modifier + armorModifier;
+    int score = (10 - McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.ENDURANCE))/2 + modifier + armorModifier;
 
     score += McFrPlayer.getMcFrPlayer(player).getTraitLevel("difficile_a_mettre_ko");
     score += McFrPlayer.getMcFrPlayer(player).getTraitLevel("armure_naturelle");
