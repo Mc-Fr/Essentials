@@ -386,20 +386,24 @@ public class McFrPlayer {
           this.traits.put(traitData.getString(1), traitData.getInt(2));
         }
         traitData.close();
-
-        boolean hasLanguage = false;
-        int maxLangLevel = 0;
-        int currentLevel = 0;
-        for (Language lang : Language.getLanguagesList()) {
-          currentLevel = getLanguageLevel(lang);
-          if (currentLevel > maxLangLevel) {
-            setLanguage(lang);
-            hasLanguage = true;
-            maxLangLevel = currentLevel;
+        
+        if (this.getLanguageLevel(Language.getLanguages().get("commun")) > 0) {
+          setLanguage(Language.getLanguages().get("commun"));
+        } else {
+          boolean hasLanguage = false;
+          int maxLangLevel = 0;
+          int currentLevel = 0;
+          for (Language lang : Language.getLanguagesList()) {
+            currentLevel = getLanguageLevel(lang);
+            if (currentLevel > maxLangLevel) {
+              setLanguage(lang);
+              hasLanguage = true;
+              maxLangLevel = currentLevel;
+            }
           }
-        }
-        if (!hasLanguage) {
-          this.language = Language.getLanguages().get("commun");
+          if (!hasLanguage) {
+            this.language = Language.getLanguages().get("commun");
+          }
         }
 
         applyJdrEffects();
