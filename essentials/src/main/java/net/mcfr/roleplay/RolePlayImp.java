@@ -30,7 +30,6 @@ public class RolePlayImp implements RolePlayService {
 
     switch (skill.getName()) {
     case "escalade":
-    case "arts_erotiques":
     case "evasion":
       score += McFrPlayer.getMcFrPlayer(player).hasTrait("souplesse") ? 3 : 0;
       break;
@@ -146,10 +145,7 @@ public class RolePlayImp implements RolePlayService {
       score += 3;
       break;
     case ESQUIVE:
-      score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.ENDURANCE)
-          + McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE);
-      score /= 4;
-      score += 3;
+      score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.DEXTERITE) - 4;
       score += McFrPlayer.getMcFrPlayer(player).hasTrait("esquive_amelioree") ? 1 : 0;
       break;
     case PARADE:
