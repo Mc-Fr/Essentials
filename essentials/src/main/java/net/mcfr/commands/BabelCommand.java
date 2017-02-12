@@ -1,6 +1,3 @@
-/**
- * 
- */
 package net.mcfr.commands;
 
 import org.spongepowered.api.command.CommandException;
@@ -19,20 +16,20 @@ import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.utils.McFrPlayer;
 
 public class BabelCommand extends AbstractCommand {
-  
+
   public BabelCommand(Essentials plugin) {
     super(plugin);
   }
-  
+
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (src instanceof Player) {
       McFrPlayer player = McFrPlayer.getMcFrPlayer(src.getName());
-      
+
       if (args.hasAny("langue")) {
-        Language lang = args.<Language> getOne("langue").get();
+        Language lang = args.<Language>getOne("langue").get();
         int playerLevel = player.getLanguageLevel(lang);
-        
+
         if (playerLevel > 0) {
           player.setLanguage(lang);
           src.sendMessage(Text.of(TextColors.YELLOW, "Vous parlez désormais " + lang.getDisplayName() + "."));
