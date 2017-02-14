@@ -83,11 +83,15 @@ public class Language {
   }
 
   public String transformMessage(String text, int languageLevel) {
+    if (languageLevel == 4) {
+      return text;
+    }
+    
     String result = "";
     String word = "";
     char[] characters = text.toCharArray();
     List<Character> separators = Arrays.asList(' ', '.', ',', ';', '?', '!', '~', '\'', ':', '-');
-
+    
     for (char c : characters) {
       if (separators.contains(c)) {
         result += transformWord(word, languageLevel) + c;
