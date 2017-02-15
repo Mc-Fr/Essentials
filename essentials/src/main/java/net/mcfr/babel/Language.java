@@ -82,11 +82,7 @@ public class Language {
     return languages.values();
   }
 
-  public String transformMessage(String text, int languageLevel) {
-    if (languageLevel == 4) {
-      return text;
-    }
-    
+  public String transformMessage(String text, int languageLevel) {    
     String result = "";
     String word = "";
     char[] characters = text.toCharArray();

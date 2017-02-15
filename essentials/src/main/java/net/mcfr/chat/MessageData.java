@@ -116,17 +116,17 @@ public class MessageData {
   public void send() {
     if (getChatType().isTranslatable()) {
       Language lang = McFrPlayer.getMcFrPlayer(this.sender).getLanguage();
-      String[] translatedMessages = new String[5];
-      for (int i = 0; i < 5; i++) {
+      String[] translatedMessages = new String[4];
+      for (int i = 0; i < 4; i++) {
         translatedMessages[i] = lang.transformMessage(getMessage(), i);
         
         if (!lang.getAlias().equals("commun")) {
-          translatedMessages[i] = "[" + lang.getName().substring(0, 3) + "] " + translatedMessages[i];
+          translatedMessages[i] = "[" + lang.getName().substring(0, 4) + "] " + translatedMessages[i];
         }
       }
       getRecipients().forEach(p -> {
         if (p.equals(getSender())) {
-          p.sendMessage(toText(p, translatedMessages[4]));
+          p.sendMessage(toText(p, translatedMessages[3]));
         } else {
           p.sendMessage(toText(p, translatedMessages[McFrPlayer.getMcFrPlayer(p).getLanguageLevel(lang)]));
         }
