@@ -25,7 +25,7 @@ public class RealnameCommand extends AbstractCommand {
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     String nom = args.<String>getOne("nom").get();
     List<McFrPlayer> l = McFrPlayer.getMcFrPlayers();
-    if (l.stream().filter(p -> p.getName().equals(nom)).count() == 0) {
+    if (l.stream().filter(p -> p.getName().equalsIgnoreCase(nom)).count() == 0) {
       src.sendMessage(Text.of(TextColors.YELLOW, "Aucun joueur ne correspond à ce nom."));
     } else {
       src.sendMessage(Text.of(TextColors.YELLOW, "Liste des \"" + nom + "\" :"));
