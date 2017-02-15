@@ -20,9 +20,9 @@ import org.spongepowered.api.text.format.TextStyle;
 import org.spongepowered.api.text.format.TextStyles;
 
 public enum ChatType {
-  WHISPER(2, LIGHT_PURPLE, DARK_PURPLE, ITALIC, "\"'", "Vous entendez un chuchotement indistinct.", false, "\"'%1$s : %3$s", true),
-  LOW_VOICE(5, LIGHT_PURPLE, DARK_PURPLE, ITALIC, "\"", "Vous entendez une voix faible.", false, "\"%1$s : %3$s", true),
-  SOFT_VOICE(10, LIGHT_PURPLE, DARK_PURPLE, ITALIC, "'", "Vous entendez une voix douce indistincte.", false, "'%1$s : %3$s", true),
+  WHISPER(2, DARK_PURPLE, DARK_PURPLE, ITALIC, "\"'", "Vous entendez un chuchotement indistinct.", false, "%1$s : %3$s", true),
+  LOW_VOICE(5, LIGHT_PURPLE, DARK_PURPLE, ITALIC, "\"", "Vous entendez une voix faible.", false, "%1$s : %3$s", true),
+  SOFT_VOICE(10, LIGHT_PURPLE, LIGHT_PURPLE, ITALIC, "'", "Vous entendez une voix douce indistincte.", false, "%1$s : %3$s", true),
   MEDIUM(20, WHITE, GRAY, TextStyles.NONE, "", "Vous entendez une voix au loin.", false, "%1$s : %3$s", true),
   LOUD_SPEAK(45, GOLD, GOLD, TextStyles.NONE, "&", "Quelqu'un parle fort au loin.", false, "%1$s : %3$s", true),
   SHOUT(60, RED, DARK_RED, TextStyles.NONE, "!", "Quelqu'un crie au loin.", false, "%1$s : %3$s", true),
