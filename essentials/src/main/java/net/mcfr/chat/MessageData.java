@@ -121,7 +121,7 @@ public class MessageData {
         translatedMessages[i] = lang.transformMessage(getMessage(), i);
         
         if (!lang.getAlias().equals("commun")) {
-          translatedMessages[i] = "[" + lang.getName().substring(0, 4) + "] " + translatedMessages[i];
+          translatedMessages[i] = "[" + lang.getAlias().substring(0, 4) + "] " + translatedMessages[i];
         }
       }
       getRecipients().forEach(p -> {
