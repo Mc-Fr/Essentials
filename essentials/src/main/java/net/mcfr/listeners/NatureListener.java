@@ -2,7 +2,6 @@ package net.mcfr.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
@@ -10,9 +9,6 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 
 public class NatureListener {
-  private static final float redFlowerSpawnChance = 1f;
-  private static final float yellowFlowerSpawnChance = 0.001f;
-  private static final Random rand = new Random();
   private static List<EntityType> forbiddenEntities = new ArrayList<>();
 
   static {
