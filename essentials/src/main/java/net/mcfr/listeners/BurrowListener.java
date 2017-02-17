@@ -1,4 +1,4 @@
-package net.mcfr.burrows;
+package net.mcfr.listeners;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,12 +12,15 @@ import java.util.Optional;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.Order;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.event.world.chunk.LoadChunkEvent;
 import org.spongepowered.api.event.world.chunk.UnloadChunkEvent;
 import org.spongepowered.api.world.Chunk;
 
 import com.flowpowered.math.vector.Vector3i;
 
+import net.mcfr.burrows.Burrow;
+import net.mcfr.burrows.BurrowPopulation;
 import net.mcfr.entities.mobs.EntityBurrowed;
 import net.mcfr.utils.McFrConnection;
 
@@ -96,5 +99,11 @@ public class BurrowListener {
     } catch (SQLException e) {
       e.printStackTrace();
     }
+  }
+  
+  @Listener
+  public void onServerStop(GameStoppingServerEvent event) {
+    Burrow.save();
+    BurrowListener.saveInDatabase();
   }
 }

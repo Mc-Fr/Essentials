@@ -20,6 +20,7 @@ import com.flowpowered.math.vector.Vector3i;
 import net.mcfr.entities.mobs.EntityBurrowed;
 import net.mcfr.entities.mobs.gender.EntityGendered;
 import net.mcfr.entities.mobs.gender.Genders;
+import net.mcfr.listeners.BurrowListener;
 
 public class BurrowPopulation {
   private final static int MAX_POPULATION = 40;

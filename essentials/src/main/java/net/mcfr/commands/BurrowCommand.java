@@ -21,10 +21,10 @@ import org.spongepowered.api.world.World;
 
 import net.mcfr.Essentials;
 import net.mcfr.burrows.Burrow;
-import net.mcfr.burrows.BurrowListener;
 import net.mcfr.burrows.BurrowedEntityClasses;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.entities.mobs.gender.EntityGendered;
+import net.mcfr.listeners.BurrowListener;
 import net.mcfr.utils.McFrPlayer;
 
 public class BurrowCommand extends AbstractCommand {
