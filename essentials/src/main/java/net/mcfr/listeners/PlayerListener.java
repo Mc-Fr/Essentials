@@ -130,10 +130,14 @@ public class PlayerListener {
   }
   
   @Listener
-  public void onMessageChannelEvent(MessageChannelEvent.Chat e, @First CommandSource sender) {
+  public void onClientConnectionMessage (MessageChannelEvent e) {
     if (e instanceof ClientConnectionEvent) {
       e.setMessageCancelled(true);
     }
+  }
+  
+  @Listener
+  public void onMessageChannelEvent(MessageChannelEvent.Chat e, @First CommandSource sender) {
     
     if (sender instanceof Player) {
       MessageData data = new MessageData((Player) sender, e.getRawMessage().toPlain());
