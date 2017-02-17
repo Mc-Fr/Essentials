@@ -4,10 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockType;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.block.TickBlockEvent;
+import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
+import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
+
+import com.flowpowered.math.vector.Vector3i;
 
 public class NatureListener {
   private static final float redFlowerSpawnChance = 1f;
@@ -54,5 +63,37 @@ public class NatureListener {
   @Listener
   public void onSpawnEntity(SpawnEntityEvent event) {
     event.setCancelled(event.getEntities().stream().filter(e -> forbiddenEntities.contains(e.getType())).count() != 0);
+  }
+  
+  @Listener
+  public void onBlockRandomTick(TickBlockEvent.Random event) {
+    BlockSnapshot block = event.getTargetBlock();
+    BlockType blockType = block.getExtendedState().getType();
+    if (block.getLocation().isPresent()) {
+      Location<World> location = block.getLocation().get();
+      
+      if (blockType.equals(BlockTypes.RED_FLOWER)) {
+        if (rand.nextFloat() < redFlowerSpawnChance) {
+          World world = location.getExtent();
+          int dx = rand.nextInt(11) - 5;
+          int dy = -2;
+          int dz = rand.nextInt(11) - 5;
+          Vector3i currentBlockPos,suppBlockPos;
+          boolean isPlaced = false;
+          
+          while (!isPlaced && dy < 3) {
+            currentBlockPos = location.getBlockPosition().add(dx, dy, dz);
+            suppBlockPos = currentBlockPos.add(0, 1, 0);
+            
+            if (world.getBlock(currentBlockPos).getType().equals(BlockTypes.GRASS) && world.getBlock(suppBlockPos).getType().equals(BlockTypes.AIR)) {
+              world.setBlock(suppBlockPos, BlockTypes.RED_FLOWER.getDefaultState(), Cause.source(block).build());
+              isPlaced = true;
+            } else {
+              dy++;
+            }
+          }
+        }
+      }
+    }
   }
 }
