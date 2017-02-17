@@ -1,5 +1,6 @@
 package net.mcfr.roleplay;
 
+import java.util.Optional;
 import java.util.Random;
 
 import org.spongepowered.api.entity.living.player.Player;
@@ -23,10 +24,10 @@ public class RolePlayImp implements RolePlayService {
   }
 
   @Override
-  public SkillRollResult skillRoll(Player player, Skills skill, int modifier) {
+  public SkillRollResult skillRoll(Player player, Skills skill, int modifier, Optional<Attributes> optAttribute) {
     int roll = rollDice(3, 6);
-    Attributes attribute = skill.getAttribute();
-    int score = McFrPlayer.getMcFrPlayer(player).getSkillLevel(skill) + modifier;
+    Attributes attribute = optAttribute.isPresent() ? optAttribute.get() : skill.getAttribute();
+    int score = McFrPlayer.getMcFrPlayer(player).getSkillLevel(skill, optAttribute) + modifier;
 
     switch (skill.getName()) {
     case "escalade":
@@ -121,13 +122,13 @@ public class RolePlayImp implements RolePlayService {
   }
 
   @Override
-  public AttackRollResult attackRoll(Player player, int modifier) {
+  public AttackRollResult attackRoll(Player player, int modifier, Optional<Skills> optSkill) {
     int roll = rollDice(3, 6);
 
-    Skills attackSkill = Skills.getWeaponSkill(player);
+    Skills attackSkill = optSkill.orElse(Skills.getWeaponSkill(player));
     McFrPlayer mcfrPlayer = McFrPlayer.getMcFrPlayer(player);
 
-    int score = mcfrPlayer.getSkillLevel(attackSkill) + modifier;
+    int score = mcfrPlayer.getSkillLevel(attackSkill, Optional.empty()) + modifier;
     int margin = score - roll;
     return new AttackRollResult(player, attackSkill, attackSkill.getAttribute(), modifier, roll, score, margin);
   }
@@ -140,7 +141,7 @@ public class RolePlayImp implements RolePlayService {
     switch (defense) {
     case BLOCAGE:
       Skills shieldSkill = Skills.getSkills().get("bouclier");
-      score = McFrPlayer.getMcFrPlayer(player).getSkillLevel(shieldSkill);
+      score = McFrPlayer.getMcFrPlayer(player).getSkillLevel(shieldSkill, Optional.empty());
       score /= 2;
       score += 3;
       break;
@@ -150,7 +151,7 @@ public class RolePlayImp implements RolePlayService {
       break;
     case PARADE:
       Skills weaponSkill = Skills.getWeaponSkill(player);
-      score = McFrPlayer.getMcFrPlayer(player).getSkillLevel(weaponSkill);
+      score = McFrPlayer.getMcFrPlayer(player).getSkillLevel(weaponSkill, Optional.empty());
       score /= 2;
       score += 3;
       if ((weaponSkill.getName().equals("pugilat") || weaponSkill.getName().equals("lutte"))
@@ -180,6 +181,6 @@ public class RolePlayImp implements RolePlayService {
 
   @Override
   public int rollDie(int faces) {
-    return this.rd.nextInt(faces - 1) + 1;
+    return this.rd.nextInt(faces) + 1;
   }
 }

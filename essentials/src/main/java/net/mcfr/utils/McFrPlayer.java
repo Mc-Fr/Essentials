@@ -461,12 +461,12 @@ public class McFrPlayer {
     this.player.kick(Text.of("Vous êtes mort." + (reason.equals("") ? "" : " (" + reason + ")")));
   }
 
-  public int getSkillLevel(Skills skill) {
+  public int getSkillLevel(Skills skill, Optional<Attributes> optAttribute) {
     List<Integer> scores = new ArrayList<>();
     if (this.skills.containsKey(skill)) {
-      scores.add(getAttributePoints(skill.getAttribute()) + this.skills.get(skill));
+      scores.add(getAttributePoints(optAttribute.orElse(skill.getAttribute())) + this.skills.get(skill));
     } else {
-      scores.add(getAttributePoints(skill.getAttribute()) - 3 + skill.getDifficulty());
+      scores.add(getAttributePoints(optAttribute.orElse(skill.getAttribute())) - 3 + skill.getDifficulty());
     }
 
     for (Map.Entry<Skills, Integer> dependency : skill.getDependencies().entrySet()) {
@@ -474,9 +474,9 @@ public class McFrPlayer {
       int depScore = dependency.getValue();
 
       if (this.skills.containsKey(depSkill)) {
-        scores.add(getAttributePoints(depSkill.getAttribute()) + this.skills.get(depSkill) + depScore);
+        scores.add(getAttributePoints(optAttribute.orElse(depSkill.getAttribute())) + this.skills.get(depSkill) + depScore);
       } else {
-        scores.add(getAttributePoints(depSkill.getAttribute()) - 3 + depSkill.getDifficulty() + depScore);
+        scores.add(getAttributePoints(optAttribute.orElse(depSkill.getAttribute())) - 3 + depSkill.getDifficulty() + depScore);
       }
     }
 
@@ -532,7 +532,7 @@ public class McFrPlayer {
     String result = "Compétences :";
     
     for(Skills skill : skills.keySet()) {
-      result += "\n- " + skill.getDisplayName() + " : " + getSkillLevel(skill);
+      result += "\n- " + skill.getDisplayName() + " : " + getSkillLevel(skill, Optional.empty());
     }
     
     return result;

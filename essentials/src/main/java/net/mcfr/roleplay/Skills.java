@@ -14,6 +14,7 @@ import net.mcfr.utils.McFrConnection;
 
 public class Skills {
   private static Map<String, Skills> skills = new HashMap<>();
+  private static Map<String, Skills> combatSkills = new HashMap<>();
 
   private String name;
   private String displayName;
@@ -52,10 +53,15 @@ public class Skills {
   public static void loadFromDatabase() {
     try {
       ResultSet skillData = McFrConnection.getJdrConnection()
-          .executeQuery("SELECT name, displayName, baseAttribute, difficulty FROM fiche_perso_competence");
+          .executeQuery("SELECT name, displayName, baseAttribute, difficulty, category FROM fiche_perso_competence");
       while (skillData.next()) {
-        skills.put(skillData.getString(1), new Skills(skillData.getString(1), skillData.getString(2),
-            Attributes.getAttributeFromString(skillData.getString(3)), skillData.getInt(4)));
+        Skills skill = new Skills(skillData.getString(1), skillData.getString(2), Attributes.getAttributeFromString(skillData.getString(3)),
+            skillData.getInt(4));
+        skills.put(skill.getName(), skill);
+        
+        if (skillData.getString(5).equals("combat")) {
+          combatSkills.put(skill.getName(), skill);
+        }
       }
       skillData.close();
 
@@ -79,6 +85,10 @@ public class Skills {
 
   public static Map<String, Skills> getSkills() {
     return skills;
+  }
+  
+  public static Map<String, Skills> getCombatSkills() {
+    return combatSkills;
   }
 
   public static Skills getSkillByName(String name) {

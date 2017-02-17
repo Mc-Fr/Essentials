@@ -102,7 +102,7 @@ public class PlayerListener {
 
       if (source instanceof Player) {
         McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) source);
-        int skillLevel = player.getSkillLevel(Skills.getSkillByName("chasse"));
+        int skillLevel = player.getSkillLevel(Skills.getSkillByName("chasse"), Optional.empty());
 
         if (skillLevel >= 12) {
           mustLoot = true;
@@ -114,7 +114,7 @@ public class PlayerListener {
           Optional<Entity> optEntity = Sponge.getServer().getWorld("world").get().getEntity(sourceArrow.getCreator().get());
           if (optEntity.isPresent() && optEntity.get() instanceof Player) {
             McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) optEntity.get());
-            int skillLevel = player.getSkillLevel(Skills.getSkillByName("chasse"));
+            int skillLevel = player.getSkillLevel(Skills.getSkillByName("chasse"), Optional.empty());
             
             if (skillLevel >= 12) {
               mustLoot = true;

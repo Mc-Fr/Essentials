@@ -1,5 +1,7 @@
 package net.mcfr.roleplay;
 
+import java.util.Optional;
+
 import org.spongepowered.api.entity.living.player.Player;
 
 import net.mcfr.roleplay.rollResults.AttackRollResult;
@@ -11,7 +13,7 @@ import net.mcfr.roleplay.rollResults.SkillRollResult;
 
 public interface RolePlayService {
 
-  SkillRollResult skillRoll(Player player, Skills skill, int modifier);
+  SkillRollResult skillRoll(Player player, Skills skill, int modifier, Optional<Attributes> optAttribute);
 
   AttributeRollResult attributeRoll(Player player, Attributes attribute, int modifier);
 
@@ -19,7 +21,7 @@ public interface RolePlayService {
 
   PerceptionRollResult perceptionRoll(Player player, Senses sense, int modifier);
 
-  AttackRollResult attackRoll(Player player, int modifier);
+  AttackRollResult attackRoll(Player player, int modifier, Optional<Skills> optSkill);
 
   DefenseRollResult defenseRoll(Player player, Defenses defense, int modifier);
 

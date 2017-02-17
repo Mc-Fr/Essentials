@@ -10,8 +10,4 @@ public class AttackRollResult extends SkillRollResult {
   public AttackRollResult(Player player, Skills skill, Attributes attribute, int modifier, int roll, int score, int margin) {
     super(player, skill, attribute, modifier, roll, score, margin);
   }
-
-  public Skills getWeaponSkill() {
-    return Skills.getWeaponSkill(getPlayer());
-  }
 }
