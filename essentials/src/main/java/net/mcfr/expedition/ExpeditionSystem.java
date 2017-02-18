@@ -27,15 +27,8 @@ import net.mcfr.utils.McFrPlayer;
 
 public class ExpeditionSystem {
   private static final int RADIUS_DELTA = 10;
-  private static List<AuthorizedArea> areas;
+  private static List<AuthorizedArea> areas = new ArrayList<>();
   private static States current;
-
-  private static List<AuthorizedArea> getAreas() {
-    if (areas == null) {
-      areas = new ArrayList<>();
-    }
-    return areas;
-  }
 
   @Listener
   public void onServerStart(GameStartedServerEvent event) throws IOException {
@@ -50,7 +43,7 @@ public class ExpeditionSystem {
         int y = area.get("y").getAsInt();
         int z = area.get("z").getAsInt();
         int r = area.get("radius").getAsInt();
-        getAreas().add(new AuthorizedArea(name, x, y, z, r));
+        areas.add(new AuthorizedArea(name, x, y, z, r));
       });
     }
   }
@@ -63,7 +56,7 @@ public class ExpeditionSystem {
       States nextState = getNextState(p.getLocation());
 
       if (!player.isAuthorizedToLeaveArea() && !p.hasPermission("essentials.leavearea") && p.getWorld().equals(Sponge.getServer().getWorld("world").get())) {
-        if (nextState.value > prevState.value) {
+        if (nextState.ordinal() > prevState.ordinal()) {
           switch (nextState) {
           case ADVERT:
             break;
@@ -82,7 +75,7 @@ public class ExpeditionSystem {
           }
 
           p.sendMessage(nextState.dangerMessage);
-        } else if (nextState.value < prevState.value) {
+        } else if (nextState.ordinal() < prevState.ordinal()) {
           p.sendMessage(nextState.safeMessage);
         }
       }
@@ -99,7 +92,7 @@ public class ExpeditionSystem {
       int radius = a.radius;
       
       if (distance < radius) {
-        current = getWeakest(current, States.INAREA);
+        current = getWeakest(current, States.IN_AREA);
       } else if (distance < radius + RADIUS_DELTA) {
         current = getWeakest(current, States.ADVERT);
       } else if (distance < radius + 2 * RADIUS_DELTA) {
@@ -115,7 +108,7 @@ public class ExpeditionSystem {
   }
   
   private States getWeakest(States current, States next) {
-    return (current.value > next.value ? next : current);
+    return (current.ordinal() > next.ordinal() ? next : current);
   }
 
   public static class AuthorizedArea {
@@ -142,39 +135,37 @@ public class ExpeditionSystem {
 
   public enum States {
     // #f:0
-    INAREA(0, 
+    IN_AREA( 
         Text.of(TextColors.YELLOW, "Vous vous sentez enfin débarassé de ce qui vous suivait.")),
-    ADVERT(1, 
+    ADVERT( 
         Text.of(TextColors.YELLOW, "Vous n'êtes toujours pas en sécurité..."),
         Text.of(TextColors.YELLOW, "Vous sentez une présence qui vous épie... Mieux vaut faire demi-tour.")),
-    HURT1(2,
+    HURT1(
         Text.of(TextColors.YELLOW, "La présence est toujours là, elle vous observe partir."),
         Text.of(TextColors.DARK_RED, "Une flèchette vient se planter dans votre bras ! Retournez vite sur vos pas !")),
-    HURT2(3,
+    HURT2(
         Text.of(TextColors.YELLOW, "Vous entendez des bruits de pas derrière vous pendant que vous faites demi-tour."),
         Text.of(TextColors.DARK_RED, "Une autre fléchette touche votre jambe ! Fuyez !")),
-    HURT3(4,
+    HURT3(
         Text.of(TextColors.YELLOW, ""),
         Text.of(TextColors.DARK_RED, "Encore une ! Dans le torse cette fois-ci. Vous allez y passer !")),
-    KILL(5);
+    KILL();
     // #f:1
 
-    private final int value;
     private final Text safeMessage;
     private final Text dangerMessage;
 
-    private States(int value, Text safeMessage, Text dangerMessage) {
-      this.value = value;
+    private States(Text safeMessage, Text dangerMessage) {
       this.safeMessage = safeMessage;
       this.dangerMessage = dangerMessage;
     }
 
-    private States(int value, Text safeMessage) {
-      this(value, safeMessage, Text.of(""));
+    private States(Text safeMessage) {
+      this(safeMessage, Text.of(""));
     }
 
-    private States(int value) {
-      this(value, Text.of(""));
+    private States() {
+      this(Text.of(""));
     }
   }
 }
