@@ -120,7 +120,7 @@ public class McFrPlayer {
     this.booleans = 0b00_0001_1000;
     this.name = player.getName();
     this.description = Optional.empty();
-    this.expeditionState = ExpeditionSystem.States.INAREA;
+    this.expeditionState = ExpeditionSystem.States.IN_AREA;
     this.defaultChat = ChatType.MEDIUM;
     this.sheetId = -1;
     this.skills = new HashMap<>();
