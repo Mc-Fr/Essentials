@@ -146,5 +146,52 @@ public class ItemCommand extends AbstractCommand {
     }
 
   }
+  
+  static class Clear extends AbstractCommand {
 
+    public Clear(Essentials plugin) {
+      super(plugin);
+    }
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      if (src instanceof Player) {
+        Player p = (Player) src;
+        Optional<ItemStack> it = p.getItemInHand(HandTypes.MAIN_HAND);
+        if (it.isPresent()) {
+          ItemStack it1 = it.get();
+
+          Optional<List<Text>> optionalList = it1.get(Keys.ITEM_LORE);
+          List<Text> list = optionalList.orElse(new ArrayList<>());
+          list.clear();
+          it1.offer(Keys.ITEM_LORE, list);
+
+          p.setItemInHand(HandTypes.MAIN_HAND, it1);
+          src.sendMessage(Text.of(TextColors.YELLOW, "La description de l'item a été effacée."));
+        } else {
+          src.sendMessage(Text.of(TextColors.RED, "Vous devez tenir un objet en main pour pouvoir effacer sa description !"));
+        }
+      } else {
+        src.sendMessage(ONLY_PLAYERS_COMMAND);
+      }
+      return CommandResult.success();
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+      //#f:0
+      return CommandSpec.builder()
+              .description(Text.of("Vide la description d'un item."))
+              .permission("essentials.command.item.clear")
+              .executor(this)
+              .build();
+      //#f:1
+    }
+
+    @Override
+    public String[] getAliases() {
+      return new String[] { "clear" };
+    }
+
+  }
 }
