@@ -81,10 +81,10 @@ public class Burrow {
   private Burrow(int id, Optional<String> name, Location<World> location, long delay, int maxPopulation, int initMalePopulation,
       int initFemalePopulation, EntityType entityType) {
     this(id, name, location, delay, Calendar.getInstance().getTime().getTime(), maxPopulation, entityType);
-    
+
     this.population.spawnNewEntities(initMalePopulation, initFemalePopulation);
   }
-  
+
   private Burrow(int id, Optional<String> name, Location<World> location, long delay, long lastEventTime, int maxPopulation, EntityType entityType) {
     this.id = id;
     this.name = name.orElse("Terrier " + id);
@@ -92,7 +92,7 @@ public class Burrow {
     this.delay = delay * M_TO_MS;
     this.lastEventTime = lastEventTime;
     this.population = new BurrowPopulation(this.location, this.id, maxPopulation, entityType);
-    
+
     setVisibleForAll();
   }
 
@@ -275,10 +275,10 @@ public class Burrow {
   private void setInvisibleForAll() {
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).seesBurrows()).forEach(p -> setInvisible(p));
   }
-  
+
   public static Optional<Burrow> createBurrow(int id, Optional<String> name, Location<World> location, long delay, int maxPopulation,
       int initMalePopulation, int initFemalePopulation, Optional<EntityType> entityType) {
-    
+
     if (entityType.isPresent()) {
       Burrow newBurrow = new Burrow(id, name, location, delay, maxPopulation, initMalePopulation, initFemalePopulation, entityType.get());
       burrows.add(newBurrow);
@@ -294,8 +294,9 @@ public class Burrow {
         .filter(e -> e.getEntityClass().equals(entityClass)).findAny();
     return createBurrow(getUnusedId(), name, location, delay, maxPopulation, initMalePopulation, initFemalePopulation, entityType);
   }
-  
-  public static void loadBurrow(int id, Optional<String> name, Location<World> location, long delay, long lastEventTime, int maxPopulation, Optional<EntityType> entityType) {
+
+  public static void loadBurrow(int id, Optional<String> name, Location<World> location, long delay, long lastEventTime, int maxPopulation,
+      Optional<EntityType> entityType) {
     if (entityType.isPresent()) {
       Burrow loadedBurrow = new Burrow(id, name, location, delay, lastEventTime, maxPopulation, entityType.get());
       burrows.add(loadedBurrow);
@@ -325,7 +326,7 @@ public class Burrow {
   public static Optional<Burrow> getBurrowByName(String name) {
     return burrows.stream().filter(b -> b.getName().equals(name)).findFirst();
   }
-  
+
   public static Optional<Burrow> getBurrowById(int id) {
     return burrows.stream().filter(b -> b.getId() == id).findFirst();
   }
@@ -345,7 +346,7 @@ public class Burrow {
   public static int getUnusedId() {
     int id = 0;
     try {
-      ResultSet idData = McFrConnection.getServerConnection().executeQuery("SELECT MAX(id)+1 FROM Burrow");
+      ResultSet idData = McFrConnection.getServerConnection().executeQuery("SELECT MAX(id)+1 FROM Burrow"); // TODO A dégager
       if (idData.next()) {
         id = idData.getInt(1);
       }
@@ -365,7 +366,8 @@ public class Burrow {
 
   public static String loadFromDatabase() {
     try {
-      ResultSet burrowData = McFrConnection.getServerConnection().executeQuery("SELECT id, name, world, timer, maxPopulation, entityType, lastEventTime, x, y, z FROM Burrow WHERE dead = 0");
+      ResultSet burrowData = McFrConnection.getServerConnection()
+          .executeQuery("SELECT id, name, timer, maxPopulation, entity, lastEvent, world, x, y, z FROM AliveBurrows");
       Location<World> location;
       String worldName;
       String entityTypeName;
@@ -373,21 +375,21 @@ public class Burrow {
       int count = 0;
 
       while (burrowData.next()) {
-        int id = burrowData.getInt(1);
+        int id = burrowData.getInt("id");
         if (burrows.stream().filter(b -> b.getId() == id).count() == 0) {
-          worldName = burrowData.getString(3);
-          location = new Location<>(Sponge.getServer().getWorld(worldName).get(), burrowData.getDouble(8), burrowData.getDouble(9),
-              burrowData.getDouble(10));
+          worldName = burrowData.getString("world");
+          location = new Location<>(Sponge.getServer().getWorld(worldName).get(), burrowData.getDouble("x"), burrowData.getDouble("y"),
+              burrowData.getDouble("z"));
 
-          entityTypeName = burrowData.getString(6);
+          entityTypeName = burrowData.getString("entity");
           for (EntityType eT : Sponge.getGame().getRegistry().getAllOf(EntityType.class)) {
             if (eT.getName().equals(entityTypeName)) {
               entityType = eT;
             }
           }
 
-          loadBurrow(id, Optional.of(burrowData.getString(2)), location, burrowData.getLong(4) / M_TO_MS, burrowData.getLong(7), burrowData.getInt(5),
-              Optional.of(entityType));
+          loadBurrow(id, Optional.of(burrowData.getString("name")), location, burrowData.getLong("timer") / M_TO_MS, burrowData.getLong("lastEvent"),
+              burrowData.getInt("maxPopulation"), Optional.of(entityType));
           count++;
         }
       }

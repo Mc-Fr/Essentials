@@ -53,23 +53,23 @@ public class Skills {
   public static void loadFromDatabase() {
     try {
       ResultSet skillData = McFrConnection.getJdrConnection()
-          .executeQuery("SELECT name, displayName, baseAttribute, difficulty, category FROM fiche_perso_competence");
+          .executeQuery("SELECT name, displayName, baseAttribute, difficulty, category FROM Skills");
       while (skillData.next()) {
-        Skills skill = new Skills(skillData.getString(1), skillData.getString(2), Attributes.getAttributeFromString(skillData.getString(3)),
-            skillData.getInt(4));
+        Skills skill = new Skills(skillData.getString("name"), skillData.getString("displayName"),
+            Attributes.getAttributeFromString(skillData.getString("baseAttribute")), skillData.getInt("difficulty"));
         skills.put(skill.getName(), skill);
-        
-        if (skillData.getString(5).equals("combat")) {
+
+        if (skillData.getString("category").equals("combat")) {
           combatSkills.put(skill.getName(), skill);
         }
       }
       skillData.close();
 
-      ResultSet dependenciesData = McFrConnection.getJdrConnection().executeQuery("SELECT skill1, skill2, score FROM fiche_perso_dependances");
+      ResultSet dependenciesData = McFrConnection.getJdrConnection().executeQuery("SELECT skill1, skill2, score FROM Dependances");
       while (dependenciesData.next()) {
-        Skills skill1 = skills.get(dependenciesData.getString(1));
-        Skills skill2 = skills.get(dependenciesData.getString(2));
-        int score = dependenciesData.getInt(3);
+        Skills skill1 = skills.get(dependenciesData.getString("skill1"));
+        Skills skill2 = skills.get(dependenciesData.getString("skill2"));
+        int score = dependenciesData.getInt("score");
         skill1.addDependency(skill2, score);
         skill2.addDependency(skill1, score);
       }
@@ -86,7 +86,7 @@ public class Skills {
   public static Map<String, Skills> getSkills() {
     return skills;
   }
-  
+
   public static Map<String, Skills> getCombatSkills() {
     return combatSkills;
   }

@@ -90,17 +90,17 @@ public class BurrowListener {
 
   public static void loadFromDatabase() {
     try {
-      ResultSet chunkData = McFrConnection.getServerConnection().executeQuery("SELECT `burrowId`, `x`, `y`, `z` FROM `BurrowChunks` WHERE 1");
+      ResultSet chunkData = McFrConnection.getServerConnection().executeQuery("SELECT id, x, y, z FROM Chunks");
 
       while (chunkData.next()) {
-        Vector3i position = new Vector3i(chunkData.getInt(2), chunkData.getInt(3), chunkData.getInt(4));
-        addOnList(chunkData.getInt(1), Sponge.getServer().getWorld("world").get().loadChunk(position, true).orElse(null));
+        Vector3i position = new Vector3i(chunkData.getInt("x"), chunkData.getInt("y"), chunkData.getInt("z"));
+        addOnList(chunkData.getInt("id"), Sponge.getServer().getWorld("world").get().loadChunk(position, true).orElse(null));
       }
     } catch (SQLException e) {
       e.printStackTrace();
     }
   }
-  
+
   @Listener
   public void onServerStop(GameStoppingServerEvent event) {
     Burrow.save();

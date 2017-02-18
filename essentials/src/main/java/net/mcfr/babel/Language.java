@@ -48,9 +48,12 @@ public class Language {
 
   public static void loadFromDatabase() {
     try {
-      ResultSet langData = McFrConnection.getJdrConnection().executeQuery("SELECT * FROM fiche_perso_langue");
+      ResultSet langData = McFrConnection.getJdrConnection().executeQuery("SELECT name, displayName, alias FROM Languages");
       while (langData.next()) {
-        loadLanguages.setString(1, langData.getString(1));
+        String langName = langData.getString(1);
+        String langDisplayName = langData.getString(2);
+        String langAlias = langData.getString(3);
+        loadLanguages.setString(1, langName);
         ResultSet symbolsData = loadLanguages.executeQuery();
 
         ArrayList<Character> symbols = new ArrayList<>();
@@ -64,7 +67,7 @@ public class Language {
           symbols.add('σ');
         }
 
-        languages.put(langData.getString(3), new Language(langData.getString(1), langData.getString(2), langData.getString(3), symbols));
+        languages.put(langAlias, new Language(langName, langDisplayName, langAlias, symbols));
 
         symbolsData.close();
       }
@@ -82,12 +85,12 @@ public class Language {
     return languages.values();
   }
 
-  public String transformMessage(String text, int languageLevel) {    
+  public String transformMessage(String text, int languageLevel) {
     String result = "";
     String word = "";
     char[] characters = text.toCharArray();
     List<Character> separators = Arrays.asList(' ', '.', ',', ';', '?', '!', '~', '\'', ':', '-');
-    
+
     for (char c : characters) {
       if (separators.contains(c)) {
         result += transformWord(word, languageLevel) + c;
@@ -104,22 +107,22 @@ public class Language {
     String result = "";
     int wordLength = word.length();
     float jamming = computeJamming(languageLevel, wordLength);
-    
-    for(char c : word.toCharArray()) {
+
+    for (char c : word.toCharArray()) {
       if (rand.nextFloat() < jamming) {
         result += this.symbols.get(rand.nextInt(this.symbols.size()));
       } else {
         result += c;
       }
     }
-    
+
     return result;
   }
 
   public float computeJamming(int languageLevel, int wordLength) {
     double value;
-    
-    switch(languageLevel) {
+
+    switch (languageLevel) {
     case 0:
       return 1.0F;
     case 1:
@@ -131,7 +134,7 @@ public class Language {
     default:
       return 0.0F;
     }
-    
-    return  0.9F * (1.0F/(1.0F + (float) Math.exp(value))) + 0.1F;
+
+    return 0.9F * (1.0F / (1.0F + (float) Math.exp(value))) + 0.1F;
   }
 }
