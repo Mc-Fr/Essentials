@@ -23,11 +23,22 @@ public final class McFrConnection {
 
   private String database;
 
+  private Connection connection;
+
   private McFrConnection(String database) {
     this.database = database;
     if (!configRead) {
       readConfigFile();
       configRead = true;
+    }
+    openConnection();
+  }
+
+  public void openConnection() {
+    try {
+      this.connection = sql.getDataSource(jdbcUrl + this.database).getConnection();
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
   }
 
@@ -67,17 +78,26 @@ public final class McFrConnection {
   }
 
   public ResultSet executeQuery(String query) {
-    try (Connection connection = sql.getDataSource(jdbcUrl + this.database).getConnection()) {
-      return connection.prepareStatement(query).executeQuery();
+    try {
+      return this.connection.prepareStatement(query).executeQuery();
     } catch (SQLException e) {
       e.printStackTrace();
       return null;
     }
   }
 
+<<<<<<< Upstream, based on origin/bdRefactor
   public Connection getConnection() {
     try {
       return sql.getDataSource(jdbcUrl + this.database).getConnection();
+=======
+  public PreparedStatement prepare(String query) {
+    try {
+      if (this.connection.isClosed()) {
+        openConnection();
+      }
+      return this.connection.prepareStatement(query);
+>>>>>>> 3e35a4f fix: rétablissement ancienne version McFrConnection
     } catch (SQLException e) {
       e.printStackTrace();
       return null;
