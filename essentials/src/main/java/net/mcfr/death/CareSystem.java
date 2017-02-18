@@ -87,8 +87,8 @@ public class CareSystem {
         if (centerOpt.isPresent()) {
           AttributeRollResult result = Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll(player, Attributes.ENDURANCE,
               computeModifier(mcFrPlayer));
-          Text deathMessage = Text.of(String.format("%s fait un jet de %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""),
-              McFrPlayer.getMcFrPlayer(player).getName(), result.getAttributeName(), result.getScore(), result.getMargin()));
+          Text deathMessage = Text.of(TextColors.YELLOW, String.format("%s fait un jet de %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""),
+              McFrPlayer.getMcFrPlayer(player).getName(), result.getAttribute().getName(), result.getScore(), result.getMargin()));
           switch (result.getResult()) {
           case CRITICAL_SUCCESS:
             deathMessage.concat(Text.of(TextColors.GREEN, "Vous n'avez aucune séquelle, tout juste quelques cicatrices."));

@@ -12,7 +12,7 @@ public class AttributeRollResult extends RollResult {
     this.attribute = attribute;
   }
   
-  public String getAttributeName() {
-    return this.attribute.name();
+  public Attributes getAttribute() {
+    return this.attribute;
   }
 }
