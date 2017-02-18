@@ -97,6 +97,7 @@ public class McFrPlayer {
   private HashMap<Skills, Integer> skills;
   private HashMap<Attributes, Integer> attributes;
   private HashMap<String, Integer> traits;
+  private int healthMalus;
   private Location<World> previousLocation;
   private long lastBreathTime;
   private long readDescriptionTime;
@@ -574,6 +575,25 @@ public class McFrPlayer {
       incrementDeaths.execute();
     } catch (SQLException e) {
       e.printStackTrace();
+    }
+  }
+  
+  public int getHealthMalus() {
+    return this.healthMalus;
+  }
+  
+  public int getHealthMalusOnRoll(Attributes attribute) {
+    if (attribute.equals(Attributes.INTELLECT)) {
+      return this.healthMalus/2;
+    } else {
+      return this.healthMalus;
+    }
+  }
+  
+  public void addHealth(int value) {
+    this.healthMalus += value;
+    if (this.healthMalus > 0) {
+      this.healthMalus = 0;
     }
   }
 
