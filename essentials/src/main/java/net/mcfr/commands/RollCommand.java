@@ -114,7 +114,7 @@ public class RollCommand extends AbstractCommand {
       AttributeRollResult result = (AttributeRollResult) res;
 
       line1 = String.format("%s fait un jet de %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
-          result.getAttributeName(), result.getScore());
+          result.getAttribute().getName(), result.getScore());
     }
       break;
     case DEFENSE: {
@@ -163,7 +163,7 @@ public class RollCommand extends AbstractCommand {
         skillDisplayName = "de " + skillDisplayName;
       }
 
-      String alternateAttribute = result.getSkill().getAttribute().getName().equals(result.getAttributeName()) ? "" : " (" + result.getAttributeName() + ") ";
+      String alternateAttribute = result.getSkill().getAttribute().equals(result.getAttribute()) ? "" : " (" + result.getAttribute().getName() + ") ";
       
       line1 = String.format("%s fait un jet %s, score de %d" + result.getModifierString() + alternateAttribute, McFrPlayer.getMcFrPlayer(player).getName(),
           skillDisplayName, result.getScore());
