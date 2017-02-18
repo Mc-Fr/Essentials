@@ -87,18 +87,34 @@ public class Language {
   public String transformMessage(String text, int languageLevel) {
     String result = "";
     String word = "";
+    boolean isTranslating = true;
     char[] characters = text.toCharArray();
     List<Character> separators = Arrays.asList(' ', '.', ',', ';', '?', '!', '~', '\'', ':', '-');
 
     for (char c : characters) {
-      if (separators.contains(c)) {
+      if (c == '[' && isTranslating) {
+        result += transformWord(word, languageLevel);
+        word = "";
+        isTranslating = false;
+        
+      } else if (c == ']' && !isTranslating) {
+        result += word;
+        word = "";
+        isTranslating = true;
+        
+      } else if (isTranslating && separators.contains(c)) {
         result += transformWord(word, languageLevel) + c;
         word = "";
+        
       } else {
         word += c;
       }
     }
-    result += transformWord(word, languageLevel);
+    if (isTranslating) {
+      result += transformWord(word, languageLevel);
+    } else {
+      result += word;
+    }
     return result;
   }
 
