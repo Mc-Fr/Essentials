@@ -15,7 +15,6 @@ public class FightCommand extends AbstractCommand {
 
   public FightCommand(Essentials plugin) {
     super(plugin);
-    // TODO Auto-generated constructor stub
   }
 
   @Override
@@ -40,5 +39,4 @@ public class FightCommand extends AbstractCommand {
   public String[] getAliases() {
     return new String[] { "fight", "f" };
   }
-  
 }
