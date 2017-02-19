@@ -42,7 +42,9 @@ public class ItemCommand extends AbstractCommand {
             .description(Text.of("Commande de manipulation d'un objet."))
             .permission("essentials.command.item")
             .executor(this)
-            .children(getChildrenList(new Name(getPlugin()), new Description(getPlugin())))
+            .children(getChildrenList(new Name(getPlugin()),
+                new Description(getPlugin()),
+                new Clear(getPlugin())))
             .build();
     // #f:1
   }
