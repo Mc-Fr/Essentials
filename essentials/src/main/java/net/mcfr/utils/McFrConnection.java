@@ -86,18 +86,9 @@ public final class McFrConnection {
     }
   }
 
-<<<<<<< Upstream, based on origin/bdRefactor
   public Connection getConnection() {
     try {
       return sql.getDataSource(jdbcUrl + this.database).getConnection();
-=======
-  public PreparedStatement prepare(String query) {
-    try {
-      if (this.connection.isClosed()) {
-        openConnection();
-      }
-      return this.connection.prepareStatement(query);
->>>>>>> 3e35a4f fix: rétablissement ancienne version McFrConnection
     } catch (SQLException e) {
       e.printStackTrace();
       return null;
