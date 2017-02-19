@@ -55,7 +55,8 @@ public class ExpeditionSystem {
       States prevState = player.getExpeditionState();
       States nextState = getNextState(p.getLocation());
 
-      if (!player.isAuthorizedToLeaveArea() && !p.hasPermission("essentials.leavearea") && p.getWorld().equals(Sponge.getServer().getWorld("world").get())) {
+      if (!player.isAuthorizedToLeaveArea() && !p.hasPermission("essentials.leavearea")
+          && p.getWorld().equals(Sponge.getServer().getWorld("world").get())) {
         if (nextState.ordinal() > prevState.ordinal()) {
           switch (nextState) {
           case ADVERT:
@@ -86,11 +87,11 @@ public class ExpeditionSystem {
 
   public States getNextState(Location<World> loc) {
     current = States.KILL;
-    
+
     areas.forEach(a -> {
       double distance = a.distance(loc);
       int radius = a.radius;
-      
+
       if (distance < radius) {
         current = getWeakest(current, States.IN_AREA);
       } else if (distance < radius + RADIUS_DELTA) {
@@ -106,9 +107,9 @@ public class ExpeditionSystem {
 
     return current;
   }
-  
+
   private States getWeakest(States current, States next) {
-    return (current.ordinal() > next.ordinal() ? next : current);
+    return current.ordinal() > next.ordinal() ? next : current;
   }
 
   public static class AuthorizedArea {
@@ -149,7 +150,7 @@ public class ExpeditionSystem {
     HURT3(
         Text.of(TextColors.YELLOW, ""),
         Text.of(TextColors.DARK_RED, "Encore une ! Dans le torse cette fois-ci. Vous allez y passer !")),
-    KILL();
+    KILL;
     // #f:1
 
     private final Text safeMessage;

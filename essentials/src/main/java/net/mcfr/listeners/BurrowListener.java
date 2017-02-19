@@ -70,7 +70,7 @@ public class BurrowListener {
     }
     chunks.forEach((b, l) -> {
       Optional<Burrow> burrow = Burrow.getBurrowById(b);
-      if (burrow.isPresent() && Burrow.isBurrowAlive(burrow.get())) {
+      if (burrow.isPresent() && burrow.get().isBurrowAlive()) {
         PreparedStatement saveQuery;
         try {
           saveQuery = McFrConnection.getServerConnection().getConnection()

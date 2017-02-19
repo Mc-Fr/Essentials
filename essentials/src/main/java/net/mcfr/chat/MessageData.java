@@ -41,9 +41,9 @@ public class MessageData {
    * type de tchat à utiliser, ainsi que tous les destinataires du message.
    *
    * @param sender
-   *          L'émetteur du message
+   *          l'émetteur du message
    * @param text
-   *          Le contenu du message
+   *          le contenu du message
    */
   public MessageData(Player sender, String text) {
     Objects.requireNonNull(sender);
@@ -71,24 +71,29 @@ public class MessageData {
   }
 
   /**
-   * Transforme le {@code MessageData} en {@code Text} afin qu'il puisse être envoyé.
-   *
+   * Transforme le message passé en {@code Text} afin qu'il puisse être envoyé.
+   * 
    * @param recipient
-   *          Le destinataire du message
+   *          le destinataire du message
+   * @param message
+   *          le message à transformer
    * @return une instance de {@code Text}
    */
-  public Text toText(Player recipient) {
-    return toText(recipient, getMessage());
-  }
-
   public Text toText(Player recipient, String message) {
     ChatType type = getChatType();
-    TextColor color = McFrPlayer.distance(getSender(), recipient) <= type.getDistance() / 2 ? type.getNearColor()
-        : McFrPlayer.distance(getSender(), recipient) <= type.getDistance() ? type.getFarColor() : type.getNearColor();
+    int distance = type.getDistance();
+    double distanceBetweenPlayers = McFrPlayer.distance(getSender(), recipient);
+    TextColor nearColor = type.getNearColor();
+
+    TextColor color = distanceBetweenPlayers <= distance / 2 ? nearColor : distanceBetweenPlayers <= distance ? type.getFarColor() : nearColor;
     String[] names = getFormattedNames(recipient);
+
     return Text.of(color, type.getStyle(), String.format(type.getMessageFormat(), names[0], names[1], message));
   }
 
+  /**
+   * @return la liste des joueurs capables d'entendre le message
+   */
   private Collection<Player> getListeningPlayers() {
     Set<Player> players = new HashSet<>();
     Sponge.getServer().getOnlinePlayers().stream()
@@ -99,6 +104,11 @@ public class MessageData {
     return players;
   }
 
+  /**
+   * @param player
+   *          le destinataire du message
+   * @return les noms à utiliser pour traiter le message
+   */
   private String[] getFormattedNames(Player player) {
     String[] names = new String[2];
     McFrPlayer mcfrSender = McFrPlayer.getMcFrPlayer(getSender());
@@ -113,13 +123,16 @@ public class MessageData {
     return names;
   }
 
+  /**
+   * Envoi le message aux joueurs.
+   */
   public void send() {
     if (getChatType().isTranslatable()) {
       Language lang = McFrPlayer.getMcFrPlayer(this.sender).getLanguage();
       String[] translatedMessages = new String[4];
       for (int i = 0; i < 4; i++) {
         translatedMessages[i] = lang.transformMessage(getMessage(), i);
-        
+
         if (!lang.getAlias().equals("commun")) {
           translatedMessages[i] = "[" + lang.getAlias().substring(0, 4) + "] " + translatedMessages[i];
         }
@@ -132,10 +145,15 @@ public class MessageData {
         }
       });
     } else {
-      getRecipients().forEach(p -> p.sendMessage(toText(p)));
+      getRecipients().forEach(p -> p.sendMessage(toText(p, getMessage())));
     }
   }
 
+  /**
+   * Vérifie si le message saisi est valide en fonction de diverses conditions.
+   * 
+   * @return la validité du message
+   */
   public boolean checkConditions() {
     Player sender = getSender();
     ChatType type = getChatType();
@@ -161,5 +179,4 @@ public class MessageData {
 
     return true;
   }
-
 }

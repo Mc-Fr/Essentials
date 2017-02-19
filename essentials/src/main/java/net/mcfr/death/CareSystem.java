@@ -149,6 +149,10 @@ public class CareSystem {
     return modifier;
   }
 
+  public boolean isPlayerInSafeArea(McFrPlayer player) {
+    return getNearest(player.getPlayer().getLocation()).isPresent();
+  }
+
   public static class CareCenter {
     private String name;
     private Location<World> location;
@@ -174,9 +178,5 @@ public class CareSystem {
     public String toString() {
       return this.name + " (" + this.location.getBlockX() + ", " + this.location.getBlockY() + ", " + this.location.getBlockZ() + ")";
     }
-  }
-
-  public boolean isPlayerInSafeArea(McFrPlayer player) {
-    return getNearest(player.getPlayer().getLocation()).isPresent();
   }
 }

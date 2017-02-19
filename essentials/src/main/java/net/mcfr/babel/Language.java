@@ -14,12 +14,30 @@ import java.util.Random;
 import net.mcfr.utils.McFrConnection;
 
 public class Language {
+  /**
+   * Collection contenant les langues indicées par leur alias.
+   */
   private static Map<String, Language> languages = new HashMap<>();
   private static Random rand = new Random();
 
+  /**
+   * Identifiant de la langue.
+   */
   private String name;
+
+  /**
+   * Nom utilisé pour l'affichage en jeu.
+   */
   private String displayName;
+
+  /**
+   * Nom accessible aux joueurs avec tabulation.
+   */
   private String alias;
+
+  /**
+   * Liste des symboles utilisés par une langue.
+   */
   private ArrayList<Character> symbols;
 
   public Language(String name, String displayName, String alias, ArrayList<Character> symbols) {
@@ -41,6 +59,10 @@ public class Language {
     return this.alias;
   }
 
+  /**
+   * Charge les langues depuis la base de données. Si aucun symbole n'est défini
+   * pour une langue, quatre sont ajoutés par défaut.
+   */
   public static void loadFromDatabase() {
     try {
       ResultSet langData = McFrConnection.getJdrConnection().executeQuery("SELECT name, displayName, alias FROM Languages");
@@ -50,7 +72,7 @@ public class Language {
         String langAlias = langData.getString(3);
 
         PreparedStatement loadLanguages = McFrConnection.getJdrConnection().getConnection()
-            .prepareStatement("SELECT symbol FROM fiche_perso_langue_symbole WHERE lang = ?");
+            .prepareStatement("SELECT symbol FROM fiche_perso_langue_symbole WHERE lang = ?"); // TODO Passer sur un curseur SQL.
 
         loadLanguages.setString(1, langName);
         ResultSet symbolsData = loadLanguages.executeQuery();
@@ -76,14 +98,29 @@ public class Language {
     }
   }
 
+  /**
+   * @return la liste des langues indicées par aliass
+   */
   public static Map<String, Language> getLanguages() {
     return languages;
   }
 
+  /**
+   * @return la liste des langues
+   */
   public static Collection<Language> getLanguagesList() {
     return languages.values();
   }
 
+  /**
+   * Transforme un message mot par mot.
+   * 
+   * @param text
+   *          le message à hacher
+   * @param languageLevel
+   *          le niveau du joueur dans la langue parlée
+   * @return le message haché
+   */
   public String transformMessage(String text, int languageLevel) {
     String result = "";
     String word = "";
@@ -96,16 +133,16 @@ public class Language {
         result += transformWord(word, languageLevel);
         word = "";
         isTranslating = false;
-        
+
       } else if (c == ']' && !isTranslating) {
         result += word;
         word = "";
         isTranslating = true;
-        
+
       } else if (isTranslating && separators.contains(c)) {
         result += transformWord(word, languageLevel) + c;
         word = "";
-        
+
       } else {
         word += c;
       }
@@ -118,6 +155,16 @@ public class Language {
     return result;
   }
 
+  /**
+   * Transforme un mot lettre par lettre. Chaque lettre a une certaine chance
+   * d'être hachée.
+   * 
+   * @param word
+   *          le mot à hacher
+   * @param languageLevel
+   *          le niveau du joueur dans la langue parlée
+   * @return le mot haché
+   */
   private String transformWord(String word, int languageLevel) {
     String result = "";
     int wordLength = word.length();
@@ -134,6 +181,15 @@ public class Language {
     return result;
   }
 
+  /**
+   * Suit une fonction logistique.
+   * 
+   * @param languageLevel
+   *          le niveau du joueur dans la langue parlée
+   * @param wordLength
+   *          la longueur du mot à hacher.
+   * @return le coefficient de hachage
+   */
   public float computeJamming(int languageLevel, int wordLength) {
     double value;
 

@@ -36,6 +36,7 @@ public class McFrPlayer {
 
   private Player player;
   private int deaths;
+
   /**
    * Représente tous les booléens présents dans la classe.
    * <table style="border-collapse: collapse">
@@ -581,19 +582,18 @@ public class McFrPlayer {
       e.printStackTrace();
     }
   }
-  
+
   public int getHealthMalus() {
     return this.healthMalus;
   }
-  
+
   public int getHealthMalusOnRoll(Attributes attribute) {
-    if (attribute.equals(Attributes.INTELLECT)) {
-      return this.healthMalus/2;
-    } else {
+    if (attribute.equals(Attributes.INTELLECT))
+      return this.healthMalus / 2;
+    else
       return this.healthMalus;
-    }
   }
-  
+
   public void addHealth(int value) {
     this.healthMalus += value;
     if (this.healthMalus > 0) {

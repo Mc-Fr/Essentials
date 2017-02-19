@@ -31,40 +31,43 @@ import net.mcfr.utils.McFrPlayer;
  */
 
 public class Burrow {
-  private final static long M_TO_MS = 60000;
+  /**
+   * Coefficient de conversion d'une minute en millisecondes.
+   */
+  private final static long MINUTE_TO_MILLISECONDS = 60000;
 
   /**
-   * Liste de tous les terriers enregistrés
+   * Liste des terriers enregistrés.
    */
   private static List<Burrow> burrows = new LinkedList<>();
 
   /**
-   * ID du terrier en base de donnée
+   * ID du terrier en base de donnée.
    */
   private int id;
 
   /**
-   * Nom du terrier, pour les utilisateurs uniquement
+   * Nom du terrier.
    */
   private String name;
 
   /**
-   * Endroit où se situe le terrier
+   * Position du terrier.
    */
   private Location<World> location;
 
   /**
-   * Intervale de temps entre une naissance et le dernier événement, en minutes
+   * Durée minimale entre une naissance et le dernier événement, en minutes.
    */
   private long delay;
 
   /**
-   * Date du dernier événement, en minutes
+   * Date du dernier événement, en minutes.
    */
   private long lastEventTime;
 
   /**
-   * Population du terrier
+   * Population du terrier.
    */
   private BurrowPopulation population;
 
@@ -79,20 +82,23 @@ public class Burrow {
     this.id = id;
     this.name = name.orElse("Terrier " + id);
     this.location = location;
-    this.delay = delay * M_TO_MS;
+    this.delay = delay * MINUTE_TO_MILLISECONDS;
     this.lastEventTime = lastEventTime;
     this.population = new BurrowPopulation(this.location, this.id, maxPopulation, entityType);
 
     setVisibleForAll();
   }
 
+  /**
+   * Mise à jour du terrier.
+   */
   private void update() {
     long currentTime = Calendar.getInstance().getTime().getTime();
 
     this.population.count();
 
     if (this.population.isEmpty()) {
-      removeBurrow(this);
+      removeBurrow();
     }
 
     if (this.population.hasBeenDeaths()) {
@@ -187,7 +193,7 @@ public class Burrow {
   }
 
   public String getFormatedDelay() {
-    long minutes = this.delay / M_TO_MS;
+    long minutes = this.delay / MINUTE_TO_MILLISECONDS;
     long hours = (long) Math.floor(minutes / 60.0F);
     minutes = minutes % 60;
     return hours + "h" + minutes + "m";
@@ -221,7 +227,7 @@ public class Burrow {
    *          En minutes
    */
   public void setDelay(long delay) {
-    this.delay = delay * M_TO_MS;
+    this.delay = delay * MINUTE_TO_MILLISECONDS;
     saveInDatabase();
   }
 
@@ -302,19 +308,14 @@ public class Burrow {
     }
   }
 
-  public static void removeBurrow(Burrow burrow) {
-    Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).getSelectedBurrow().orElse(null) == burrow)
+  public void removeBurrow() {
+    Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).getSelectedBurrow().orElse(null) == this)
         .forEach(p -> McFrPlayer.getMcFrPlayer(p).unselectBurrow());
-    burrow.setInvisibleForAll();
+    setInvisibleForAll();
 
-    burrows.remove(burrow);
-    burrow.getPopulation().killAllEntities();
-    burrow.deleteFromDatabase();
-  }
-
-  public static Optional<Burrow> removeBurrow(Optional<Burrow> burrowOpt) {
-    burrowOpt.ifPresent(Burrow::removeBurrow);
-    return burrowOpt;
+    burrows.remove(this);
+    getPopulation().killAllEntities();
+    deleteFromDatabase();
   }
 
   public static Optional<Burrow> getNearestBurrow(Location<World> searchLocation) {
@@ -334,8 +335,8 @@ public class Burrow {
     return burrows;
   }
 
-  public static boolean isBurrowAlive(Burrow burrow) {
-    return burrows.contains(burrow);
+  public boolean isBurrowAlive() {
+    return burrows.contains(this);
   }
 
   public static void updateBurrows() {
@@ -387,8 +388,8 @@ public class Burrow {
             }
           }
 
-          loadBurrow(id, Optional.of(burrowData.getString("name")), location, burrowData.getLong("timer") / M_TO_MS, burrowData.getLong("lastEvent"),
-              burrowData.getInt("maxPopulation"), Optional.of(entityType));
+          loadBurrow(id, Optional.of(burrowData.getString("name")), location, burrowData.getLong("timer") / MINUTE_TO_MILLISECONDS,
+              burrowData.getLong("lastEvent"), burrowData.getInt("maxPopulation"), Optional.of(entityType));
           count++;
         }
       }

@@ -150,9 +150,10 @@ public class BurrowCommand extends AbstractCommand {
         Optional<Burrow> burrowOpt = getSelectedBurrow(player);
 
         if (burrowOpt.isPresent()) {
+          Burrow burrow = burrowOpt.get();
           McFrPlayer.getMcFrPlayer(player).unselectBurrow();
-          Burrow.removeBurrow(burrowOpt.get());
-          src.sendMessage(Text.of(TextColors.YELLOW, "Le terrier " + burrowOpt.get().getName() + " a été détruit."));
+          burrow.removeBurrow();
+          src.sendMessage(Text.of(TextColors.YELLOW, "Le terrier " + burrow.getName() + " a été détruit."));
         } else {
           src.sendMessage(Text.of(TextColors.YELLOW, "Aucun terrier n'est actuellement sélectionné."));
         }
@@ -189,7 +190,7 @@ public class BurrowCommand extends AbstractCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-      
+
       BurrowListener.loadFromDatabase();
       String loadResult = Burrow.loadFromDatabase();
 
