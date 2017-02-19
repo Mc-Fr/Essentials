@@ -15,7 +15,7 @@ import net.mcfr.utils.McFrPlayer;
 
 public class LoginListener {
   private Essentials plugin;
-  
+
   public LoginListener(Essentials plugin) {
     this.plugin = plugin;
   }
@@ -31,7 +31,7 @@ public class LoginListener {
       player.getPlayer().sendMessage(Text.of(TextColors.GOLD, "Attention, vous êtes encore dans une zone non sécurisée !"));
     }
   }
-  
+
   @Listener
   public void onPlayerLogin(ClientConnectionEvent.Login e) {
     if (this.plugin.isServerLocked() && !e.getTargetUser().hasPermission("essentials.admin.log_when_lock")) {
@@ -39,21 +39,21 @@ public class LoginListener {
     } else {
       try {
         int userId = -1;
-        PreparedStatement forumAccountId = McFrConnection.getJdrConnection()
-            .prepare("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
+        PreparedStatement forumAccountId = McFrConnection.getJdrConnection().getConnection()
+            .prepareStatement("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
         forumAccountId.setString(1, e.getTargetUser().getName());
         ResultSet user = forumAccountId.executeQuery();
 
         if (user.next()) {
           userId = user.getInt(1);
-          PreparedStatement activeCharacterSheet = McFrConnection.getJdrConnection()
-              .prepare("SELECT id FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
+          PreparedStatement activeCharacterSheet = McFrConnection.getJdrConnection().getConnection()
+              .prepareStatement("SELECT id FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
           activeCharacterSheet.setInt(1, userId);
           ResultSet characterSheet = activeCharacterSheet.executeQuery();
 
           if (characterSheet.next()) {
-            PreparedStatement deathDataReq = McFrConnection.getJdrConnection()
-                .prepare("SELECT avantage FROM fiche_perso_personnage_avantage WHERE avantage = \"mort\" AND id_fiche_perso_personnage = ?");
+            PreparedStatement deathDataReq = McFrConnection.getJdrConnection().getConnection()
+                .prepareStatement("SELECT avantage FROM fiche_perso_personnage_avantage WHERE avantage = \"mort\" AND id_fiche_perso_personnage = ?");
             deathDataReq.setInt(1, characterSheet.getInt(1));
             ResultSet deathData = deathDataReq.executeQuery();
             if (deathData.next()) {
@@ -74,7 +74,7 @@ public class LoginListener {
       }
     }
   }
-  
+
   @Listener
   public void onPlayerDisconnect(ClientConnectionEvent.Disconnect e) {
     McFrPlayer.removePlayer(e.getTargetEntity());

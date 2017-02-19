@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -76,9 +75,9 @@ public final class McFrConnection {
     }
   }
 
-  public PreparedStatement prepare(String query) {
-    try (Connection connection = sql.getDataSource(jdbcUrl + this.database).getConnection()) {
-      return connection.prepareStatement(query);
+  public Connection getConnection() {
+    try {
+      return sql.getDataSource(jdbcUrl + this.database).getConnection();
     } catch (SQLException e) {
       e.printStackTrace();
       return null;

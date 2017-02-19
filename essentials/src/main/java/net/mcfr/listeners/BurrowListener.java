@@ -25,8 +25,6 @@ import net.mcfr.entities.mobs.EntityBurrowed;
 import net.mcfr.utils.McFrConnection;
 
 public class BurrowListener {
-  private final static PreparedStatement saveQuery = McFrConnection.getServerConnection()
-      .prepare("INSERT INTO `BurrowChunks`(`burrowId`, `x`, `y`, `z`) VALUES (?, ?, ?, ?)");
 
   private static Map<Integer, List<Vector3i>> chunks = new HashMap<>();
 
@@ -66,24 +64,32 @@ public class BurrowListener {
 
   public static void saveInDatabase() {
     try {
-      McFrConnection.getServerConnection().prepare("DELETE FROM BurrowChunks WHERE 1").execute();
+      McFrConnection.getServerConnection().getConnection().prepareStatement("DELETE FROM BurrowChunks").execute();
     } catch (SQLException e) {
       e.printStackTrace();
     }
     chunks.forEach((b, l) -> {
       Optional<Burrow> burrow = Burrow.getBurrowById(b);
       if (burrow.isPresent() && Burrow.isBurrowAlive(burrow.get())) {
-        l.forEach(p -> {
-          try {
-            saveQuery.setInt(1, b);
-            saveQuery.setInt(2, p.getX());
-            saveQuery.setInt(3, p.getY());
-            saveQuery.setInt(4, p.getZ());
-            saveQuery.execute();
-          } catch (SQLException e) {
-            e.printStackTrace();
-          }
-        });
+        PreparedStatement saveQuery;
+        try {
+          saveQuery = McFrConnection.getServerConnection().getConnection()
+              .prepareStatement("INSERT INTO `BurrowChunks`(`burrowId`, `x`, `y`, `z`) VALUES (?, ?, ?, ?)");
+
+          l.forEach(p -> {
+            try {
+              saveQuery.setInt(1, b);
+              saveQuery.setInt(2, p.getX());
+              saveQuery.setInt(3, p.getY());
+              saveQuery.setInt(4, p.getZ());
+              saveQuery.execute();
+            } catch (SQLException e) {
+              e.printStackTrace();
+            }
+          });
+        } catch (SQLException e1) {
+          e1.printStackTrace();
+        }
       }
     });
   }

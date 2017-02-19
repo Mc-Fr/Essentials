@@ -32,17 +32,7 @@ import net.mcfr.utils.McFrPlayer;
 
 public class Burrow {
   private final static long M_TO_MS = 60000;
-  private final static PreparedStatement insertQuery;
-  private final static PreparedStatement deleteQuery;
-  private final static PreparedStatement updateQuery;
 
-  static {
-    McFrConnection conn = McFrConnection.getServerConnection();
-    insertQuery = conn.prepare(
-        "INSERT INTO `Burrow`(`id`, `name`, `world`, `timer`, `maxPopulation`, `entityType`, `lastEventTime`, `x`, `y`, `z`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    deleteQuery = conn.prepare("UPDATE Burrow SET dead = 1 WHERE id = ?");
-    updateQuery = conn.prepare("UPDATE Burrow SET name = ?, timer = ?, maxPopulation = ?, lastEventTime = ?, x = ?, y = ?, z = ? WHERE id = ?");
-  }
   /**
    * Liste de tous les terriers enregistrés
    */
@@ -120,6 +110,9 @@ public class Burrow {
 
   private void registerInDatabase() {
     try {
+      PreparedStatement insertQuery = McFrConnection.getServerConnection().getConnection().prepareStatement(
+          "INSERT INTO Burrow(id, name, world, timer, maxPopulation, entityType, lastEventTime`, `x`, `y`, `z`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
       insertQuery.setInt(1, this.id);
       insertQuery.setString(2, this.name);
       insertQuery.setString(3, this.location.getExtent().getName());
@@ -139,6 +132,9 @@ public class Burrow {
 
   private void deleteFromDatabase() {
     try {
+      PreparedStatement deleteQuery = McFrConnection.getServerConnection().getConnection()
+          .prepareStatement("UPDATE Burrow SET dead = 1 WHERE id = ?");
+
       deleteQuery.setInt(1, this.id);
       deleteQuery.execute();
     } catch (SQLException e) {
@@ -148,6 +144,9 @@ public class Burrow {
 
   private void saveInDatabase() {
     try {
+      PreparedStatement updateQuery = McFrConnection.getServerConnection().getConnection()
+          .prepareStatement("UPDATE Burrow SET name = ?, timer = ?, maxPopulation = ?, lastEventTime = ?, x = ?, y = ?, z = ? WHERE id = ?");
+
       updateQuery.setString(1, this.name);
       updateQuery.setLong(2, this.delay);
       updateQuery.setInt(3, this.population.getMax());

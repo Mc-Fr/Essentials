@@ -15,7 +15,6 @@ import net.mcfr.utils.McFrConnection;
 public class TribalWord {
   private static List<TribalWord> words = new LinkedList<>();
   private final static Random rand = new Random();
-  private final static PreparedStatement addWord = McFrConnection.getJdrConnection().prepare("INSERT INTO langue_tribale VALUES (?, ?, ?)");;
   private String word;
   private String translation;
   private int level;
@@ -44,6 +43,7 @@ public class TribalWord {
 
   public void registerToDatabase() {
     try {
+      PreparedStatement addWord = McFrConnection.getJdrConnection().getConnection().prepareStatement("INSERT INTO langue_tribale VALUES (?, ?, ?)");
       addWord.setString(1, this.word);
       addWord.setString(2, this.translation);
       addWord.setInt(3, this.level);

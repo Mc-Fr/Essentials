@@ -16,11 +16,6 @@ import net.mcfr.utils.McFrConnection;
 public class Language {
   private static Map<String, Language> languages = new HashMap<>();
   private static Random rand = new Random();
-  private final static PreparedStatement loadLanguages;
-
-  static {
-    loadLanguages = McFrConnection.getJdrConnection().prepare("SELECT symbol FROM fiche_perso_langue_symbole WHERE lang = ?");
-  }
 
   private String name;
   private String displayName;
@@ -53,6 +48,10 @@ public class Language {
         String langName = langData.getString(1);
         String langDisplayName = langData.getString(2);
         String langAlias = langData.getString(3);
+
+        PreparedStatement loadLanguages = McFrConnection.getJdrConnection().getConnection()
+            .prepareStatement("SELECT symbol FROM fiche_perso_langue_symbole WHERE lang = ?");
+
         loadLanguages.setString(1, langName);
         ResultSet symbolsData = loadLanguages.executeQuery();
 
