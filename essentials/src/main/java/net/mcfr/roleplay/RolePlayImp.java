@@ -28,7 +28,8 @@ public class RolePlayImp implements RolePlayService {
     int roll = rollDice(3, 6);
     McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
     Attributes attribute = optAttribute.isPresent() ? optAttribute.get() : skill.getAttribute();
-    int score = mcFrPlayer.getSkillLevel(skill, optAttribute) + modifier + mcFrPlayer.getHealthMalusOnRoll(attribute);
+    modifier += mcFrPlayer.getHealthMalusOnRoll(attribute);
+    int score = mcFrPlayer.getSkillLevel(skill, optAttribute) + modifier;
 
     switch (skill.getName()) {
     case "escalade":
@@ -73,8 +74,8 @@ public class RolePlayImp implements RolePlayService {
   @Override
   public AttributeRollResult attributeRoll(Player player, Attributes attribute, int modifier) {
     int roll = rollDice(3, 6);
-    int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(attribute) + modifier
-        + McFrPlayer.getMcFrPlayer(player).getHealthMalusOnRoll(attribute);
+    modifier += McFrPlayer.getMcFrPlayer(player).getHealthMalusOnRoll(attribute);
+    int score = McFrPlayer.getMcFrPlayer(player).getAttributePoints(attribute) + modifier;
 
     int margin = score - roll;
     return new AttributeRollResult(player, attribute, modifier, roll, score, margin);
@@ -85,7 +86,8 @@ public class RolePlayImp implements RolePlayService {
     int roll = rollDice(3, 6);
     int armorModifier = McFrPlayer.getMcFrPlayer(player).getArmorModifier();
     int endModifier = (McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attributes.ENDURANCE) - 10) / 2;
-    int score = 10 + endModifier + armorModifier + modifier + McFrPlayer.getMcFrPlayer(player).getHealthMalusOnRoll(Attributes.ENDURANCE);
+    modifier += McFrPlayer.getMcFrPlayer(player).getHealthMalusOnRoll(Attributes.ENDURANCE);
+    int score = 10 + endModifier + armorModifier + modifier;
 
     score += McFrPlayer.getMcFrPlayer(player).getTraitLevel("armure_naturelle");
 
@@ -97,7 +99,7 @@ public class RolePlayImp implements RolePlayService {
   public PerceptionRollResult perceptionRoll(Player player, Senses sense, int modifier) {
     int roll = rollDice(3, 6);
     McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
-    int score = mcFrPlayer.getAttributePoints(Attributes.INTELLECT) + mcFrPlayer.getHealthMalusOnRoll(Attributes.INTELLECT);
+    int score = mcFrPlayer.getAttributePoints(Attributes.INTELLECT);
 
     switch (sense) {
     case VISION:
@@ -118,6 +120,7 @@ public class RolePlayImp implements RolePlayService {
       break;
     }
 
+    modifier += mcFrPlayer.getHealthMalusOnRoll(Attributes.INTELLECT);
     score += modifier;
 
     int margin = score - roll;
@@ -131,7 +134,8 @@ public class RolePlayImp implements RolePlayService {
     Skills attackSkill = optSkill.orElse(Skills.getWeaponSkill(player));
     McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
 
-    int score = mcFrPlayer.getSkillLevel(attackSkill, Optional.empty()) + modifier + mcFrPlayer.getHealthMalusOnRoll(attackSkill.getAttribute());
+    modifier += mcFrPlayer.getHealthMalusOnRoll(attackSkill.getAttribute());
+    int score = mcFrPlayer.getSkillLevel(attackSkill, Optional.empty()) + modifier;
     int margin = score - roll;
     return new AttackRollResult(player, attackSkill, attackSkill.getAttribute(), modifier, roll, score, margin);
   }
@@ -167,7 +171,8 @@ public class RolePlayImp implements RolePlayService {
       break;
     }
 
-    score += modifier + mcFrPlayer.getHealthMalusOnRoll(Attributes.DEXTERITE);
+    modifier += mcFrPlayer.getHealthMalusOnRoll(Attributes.DEXTERITE);
+    score += modifier;
     score += mcFrPlayer.hasTrait("reflexes_de_combat") ? 1 : 0;
 
     int margin = score - roll;
