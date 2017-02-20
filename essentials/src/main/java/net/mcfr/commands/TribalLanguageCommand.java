@@ -16,6 +16,14 @@ import net.mcfr.Essentials;
 import net.mcfr.babel.TribalWord;
 import net.mcfr.commands.utils.AbstractCommand;
 
+/**
+ * Commande avec arborescence sur le langage tribal.<br/>
+ *  - <strong>/tribal random</strong>    Envoit une liste aléatoire de mots à un joueur<br/>
+ *  - <strong>/tribal add</strong>       Ajoute un mot au dictionnaire<br/>
+ *  - <strong>/tribal tribal</strong>    Donne la traduction en langue tribale d'un mot commun<br/>
+ *  - <strong>/tribal common</strong>    Donne la traduction en langue commune d'un mot tribal<br/>
+ *  - <strong>/tribal list</strong>      Donne la liste des mots d'un certain niveau
+ */
 public class TribalLanguageCommand extends AbstractCommand {
   public TribalLanguageCommand(Essentials plugin) {
     super(plugin);
@@ -63,7 +71,7 @@ public class TribalLanguageCommand extends AbstractCommand {
         this.message = "Vous apprenez les mots tribaux suivants (prenez des notes !) :";
 
         TribalWord.getRandomsByLevel(args.<Integer>getOne("nombre de mots").get(), args.<Integer>getOne("niveau des mots").get())
-            .forEach(w -> this.message += "\n- " + w.getTranslationString());
+            .forEach(w -> this.message += "\n- " + w.getTranslationString(false));
 
         player.sendMessage(Text.of(TextColors.BLUE, this.message));
       } else {
@@ -146,8 +154,12 @@ public class TribalLanguageCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (args.hasAny("mot")) {
-        String word = args.<String>getOne("mot").get();
-        src.sendMessage(Text.of(TextColors.YELLOW, "- " + word + " = " + TribalWord.getTribalTranslation(word).orElse("Non traduit")));
+        Optional<TribalWord> word = TribalWord.getByCommonWord(args.<String>getOne("mot").get());
+        if (word.isPresent()) {
+          src.sendMessage(Text.of(TextColors.YELLOW, "- " + word.get().getTranslationString(true)));
+        } else {
+          src.sendMessage(Text.of(TextColors.YELLOW, "- Non traduit"));
+        }
       } else {
         src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner les arguments : /tribal tribal <mot commun>"));
       }
@@ -181,8 +193,12 @@ public class TribalLanguageCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (args.hasAny("mot")) {
-        String word = args.<String>getOne("mot").get();
-        src.sendMessage(Text.of(TextColors.YELLOW, "- " + word + " = " + TribalWord.getCommonTranslation(word).orElse("Non traduit")));
+        Optional<TribalWord> word = TribalWord.getByTribalWord(args.<String>getOne("mot").get());
+        if (word.isPresent()) {
+          src.sendMessage(Text.of(TextColors.YELLOW, "- " + word.get().getTranslationString(true)));
+        } else {
+          src.sendMessage(Text.of(TextColors.YELLOW, "- Non traduit"));
+        }
       } else {
         src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner les arguments : /tribal common <mot tribal>"));
       }
@@ -219,7 +235,7 @@ public class TribalLanguageCommand extends AbstractCommand {
       if (args.hasAny("niveau")) {
         this.message = "Mots de niveau " + args.<Integer>getOne("niveau").get() + " :";
 
-        TribalWord.getByLevel(args.<Integer>getOne("niveau").get()).forEach(w -> this.message += "\n- " + w.getTranslationString());
+        TribalWord.getByLevel(args.<Integer>getOne("niveau").get()).forEach(w -> this.message += "\n- " + w.getTranslationString(false));
 
         src.sendMessage(Text.of(TextColors.BLUE, this.message));
       } else {
