@@ -180,12 +180,12 @@ public class BurrowCommand extends AbstractCommand {
 
   static class Load extends AbstractCommand {
     private Essentials plugin;
-    private boolean firstTimeCalled;
+    private boolean notYetCalled;
 
     public Load(Essentials plugin) {
       super(plugin);
       this.plugin = plugin;
-      this.firstTimeCalled = true;
+      this.notYetCalled = true;
     }
 
     @Override
@@ -194,10 +194,10 @@ public class BurrowCommand extends AbstractCommand {
       BurrowListener.loadFromDatabase();
       String loadResult = Burrow.loadFromDatabase();
 
-      if (this.firstTimeCalled) {
+      if (this.notYetCalled) {
         Task.Builder taskBuilder = Sponge.getScheduler().createTaskBuilder();
         taskBuilder.execute(() -> Burrow.updateBurrows()).delay(10, TimeUnit.MINUTES).interval(10, TimeUnit.SECONDS).submit(this.plugin);
-        this.firstTimeCalled = false;
+        this.notYetCalled = false;
       }
 
       src.sendMessage(Text.of(TextColors.YELLOW, loadResult));
