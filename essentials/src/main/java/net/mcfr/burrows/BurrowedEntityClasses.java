@@ -7,6 +7,9 @@ import net.mcfr.entities.mobs.entity.EntityNiale;
 import net.mcfr.entities.mobs.entity.EntitySiker;
 import net.mcfr.entities.mobs.gender.EntityGendered;
 
+/**
+ * Classes d'entités utilisables par le système des terriers
+ */
 public enum BurrowedEntityClasses {
   SIKER(EntitySiker.class),
   HOEN(EntityHoen.class),

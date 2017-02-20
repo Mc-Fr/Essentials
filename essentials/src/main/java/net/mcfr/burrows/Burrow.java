@@ -16,7 +16,6 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 
 import net.mcfr.entities.mobs.gender.EntityGendered;
@@ -114,6 +113,9 @@ public class Burrow {
     saveInDatabase();
   }
 
+  /**
+   * Enregistre le terrier en base de données
+   */
   private void registerInDatabase() {
     try {
       PreparedStatement insertQuery = McFrConnection.getServerConnection().getConnection().prepareStatement(
@@ -136,6 +138,9 @@ public class Burrow {
     }
   }
 
+  /**
+   * Marque un terrier comme détruit en base de données
+   */
   private void deleteFromDatabase() {
     try {
       PreparedStatement deleteQuery = McFrConnection.getServerConnection().getConnection()
@@ -147,7 +152,10 @@ public class Burrow {
       e.printStackTrace();
     }
   }
-
+  
+  /**
+   * Sauvegarde le nouvel état du terrier en base de données
+   */
   private void saveInDatabase() {
     try {
       PreparedStatement updateQuery = McFrConnection.getServerConnection().getConnection()
@@ -168,14 +176,21 @@ public class Burrow {
     }
   }
 
+  /**
+   * Reset la population du terrier
+   */
   public void reset() {
     this.population.reset();
   }
-
   private Location<World> getLocation() {
     return this.location;
   }
 
+  /**
+   * Calcule la distance euclidienne entre le terrier et une position donnée.
+   * @param location Position de référence
+   * @return Distance entre la position de référence et le terrier
+   */
   private double distance(Location<World> location) {
     return getLocation().getPosition().distance(location.getPosition());
   }
@@ -192,6 +207,9 @@ public class Burrow {
     return this.population;
   }
 
+  /**
+   * @return Chaîne de caractère formatée indiquant le délai du terrier
+   */
   public String getFormatedDelay() {
     long minutes = this.delay / MINUTE_TO_MILLISECONDS;
     long hours = (long) Math.floor(minutes / 60.0F);
@@ -199,10 +217,16 @@ public class Burrow {
     return hours + "h" + minutes + "m";
   }
 
+  /**
+   * @return Nom de l'entité que le terrier fait spawner
+   */
   public String getEntityName() {
     return this.population.getEntityName();
   }
 
+  /**
+   * @return Chaîne de caractère formatée indiquant la position du terrier
+   */
   public String getFormatedPosition() {
     return this.location.getBlockX() + " " + (this.location.getBlockY() + 1) + " " + this.location.getBlockZ();
   }
@@ -231,6 +255,10 @@ public class Burrow {
     saveInDatabase();
   }
 
+  /**
+   * Déplace le terrier à une nouvelle position.
+   * @param location Nouvel emplacement
+   */
   public void setLocation(Location<World> location) {
     Vector3i prevPosition = this.location.getBlockPosition();
     this.location = location;
@@ -239,15 +267,15 @@ public class Burrow {
     moveDisplay(prevPosition);
   }
 
-  public void setPosition(Vector3d position) {
-    setLocation(new Location<>(this.location.getExtent(), position));
-  }
-
   public void setMaximumPopulation(int maxPopulation) {
     this.population.setMax(maxPopulation);
     saveInDatabase();
   }
 
+  /**
+   * Rend le terrier visible pour un joueur.
+   * @param player Joueur pour lequel le terrier doit être visible
+   */
   public void setVisible(Player player) {
     BlockState blockState;
     Optional<Burrow> burrowOpt = McFrPlayer.getMcFrPlayer(player).getSelectedBurrow();
@@ -262,10 +290,18 @@ public class Burrow {
 
   }
 
+  /**
+   * Rend le terrier invisible pour un joueur
+   * @param player Joueur pour lequel le terrier doit être invisible
+   */
   private void setInvisible(Player player) {
     player.resetBlockChange(this.location.getBlockPosition());
   }
 
+  /**
+   * Met à jour la visualisation d'un terrier pour tous les joueurs pouvant le voir
+   * @param prevPosition Ancien emplacement du terrier
+   */
   private void moveDisplay(Vector3i prevPosition) {
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).seesBurrows()).forEach(p -> {
       p.resetBlockChange(prevPosition);
@@ -273,15 +309,33 @@ public class Burrow {
     });
   }
 
+  /**
+   * Rend le terrier visible pour tous les joueurs qui voient les terriers
+   */
   private void setVisibleForAll() {
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).seesBurrows()).forEach(p -> setVisible(p));
   }
 
+  /**
+   * Rend le terrier invisible pour tous les joueurs qui voient les terriers
+   */
   private void setInvisibleForAll() {
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).seesBurrows()).forEach(p -> setInvisible(p));
   }
 
-  public static Optional<Burrow> createBurrow(int id, Optional<String> name, Location<World> location, long delay, int maxPopulation,
+  /**
+   * Crée un nouveau terrier avec les paramètes spécifiés. Le type de l'entité spécifié peut ne pas exister, auquel cas le terrier n'est pas créé et la méthode renvoie un optionnel vide.
+   * @param id
+   * @param name
+   * @param location
+   * @param delay
+   * @param maxPopulation
+   * @param initMalePopulation
+   * @param initFemalePopulation
+   * @param entityType Optionnel contenant le type d'entité, ou vide
+   * @return Optionnel contenant le terrier créé, ou vide si pas de terrier créé
+   */
+  private static Optional<Burrow> createBurrow(int id, Optional<String> name, Location<World> location, long delay, int maxPopulation,
       int initMalePopulation, int initFemalePopulation, Optional<EntityType> entityType) {
 
     if (entityType.isPresent()) {
@@ -293,6 +347,18 @@ public class Burrow {
     return Optional.empty();
   }
 
+  /**
+   * Cherche le type d'entité correspondant à la classe d'entité fournie, puis crée le terrier avec les paramètres renseignés.
+   * Si le type d'entité n'est pas reconnu, le terrier n'est pas créé et un optionel vide est retourné.
+   * @param name
+   * @param location
+   * @param delay
+   * @param maxPopulation
+   * @param initMalePopulation
+   * @param initFemalePopulation
+   * @param entityClass
+   * @return Optionnel contenant le terrier créé, ou vide si pas de terrier créé
+   */
   public static Optional<Burrow> createBurrow(Optional<String> name, Location<World> location, long delay, int maxPopulation, int initMalePopulation,
       int initFemalePopulation, Class<? extends EntityGendered> entityClass) {
     Optional<EntityType> entityType = Sponge.getGame().getRegistry().getAllOf(EntityType.class).stream()
@@ -300,7 +366,17 @@ public class Burrow {
     return createBurrow(getUnusedId(), name, location, delay, maxPopulation, initMalePopulation, initFemalePopulation, entityType);
   }
 
-  public static void loadBurrow(int id, Optional<String> name, Location<World> location, long delay, long lastEventTime, int maxPopulation,
+  /**
+   * Crée un terrier qui était présent en base de données.
+   * @param id
+   * @param name
+   * @param location
+   * @param delay
+   * @param lastEventTime
+   * @param maxPopulation
+   * @param entityType
+   */
+  private static void loadBurrow(int id, Optional<String> name, Location<World> location, long delay, long lastEventTime, int maxPopulation,
       Optional<EntityType> entityType) {
     if (entityType.isPresent()) {
       Burrow loadedBurrow = new Burrow(id, name, location, delay, lastEventTime, maxPopulation, entityType.get());
@@ -308,6 +384,9 @@ public class Burrow {
     }
   }
 
+  /**
+   * Détruit un terrier, les entités qui le composent et le marque comme détruit en base de données.
+   */
   public void removeBurrow() {
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).getSelectedBurrow().orElse(null) == this)
         .forEach(p -> McFrPlayer.getMcFrPlayer(p).unselectBurrow());
@@ -318,31 +397,56 @@ public class Burrow {
     deleteFromDatabase();
   }
 
+  /**
+   * Renvoit un optionnel contenant s'il existe le terrier le plus proche de l'emplacement indiqué.
+   * @param searchLocation Emplacement de référence
+   * @return Optionnel contenant le terrier le plus proche du lieu de référence s'il existe, vide sinon
+   */
   public static Optional<Burrow> getNearestBurrow(Location<World> searchLocation) {
     return burrows.stream().filter(b -> b.getLocation().getExtent().equals(searchLocation.getExtent()))
         .min((o1, o2) -> Double.compare(o1.distance(searchLocation), o2.distance(searchLocation)));
   }
 
+  /**
+   * @param name Nom du terrier à chercher
+   * @return Optionnel contenant le premier terrier dont le nom correpond au nom du terrier à chercher, vide s'il n'existe pas
+   */
   public static Optional<Burrow> getBurrowByName(String name) {
     return burrows.stream().filter(b -> b.getName().equals(name)).findFirst();
   }
 
+  /**
+   * @param id Numéro d'identification à chercher
+   * @return Optionnel contenant le premier terrier dont l'identifiant est celui spécifié, vide s'il n'existe pas
+   */
   public static Optional<Burrow> getBurrowById(int id) {
     return burrows.stream().filter(b -> b.getId() == id).findFirst();
   }
 
+  /**
+   * @return La liste de tous les terriers
+   */
   public static List<Burrow> getAll() {
     return burrows;
   }
 
+  /**
+   * @return Vrai si le terrier est toujours mis à jour par le système, faux sinon
+   */
   public boolean isBurrowAlive() {
     return burrows.contains(this);
   }
 
+  /**
+   * Lance la mise à jour de tous les terriers actifs.
+   */
   public static void updateBurrows() {
     burrows.forEach(Burrow::update);
   }
 
+  /**
+   * @return Le plus petit entier non utilisé par les identifiants des terriers existants
+   */
   public static int getUnusedId() {
     int id = 0;
     try {
@@ -356,14 +460,26 @@ public class Burrow {
     return id;
   }
 
+  /**
+   * Rend tous les terriers visibles pour un joueur.
+   * @param player Joueur pour lequel tous les terriers doivent être rendus visibles
+   */
   public static void setAllVisible(Player player) {
     burrows.forEach(b -> b.setVisible(player));
   }
 
+  /**
+   * Rend tous les terriers invisibles pour un joueur.
+   * @param player Joueur pour lequel tous les terriers doivent être rendus invisibles
+   */
   public static void setAllInvisible(Player player) {
     burrows.forEach(b -> b.setInvisible(player));
   }
 
+  /**
+   * Charge les terriers contenus en base de données.
+   * @return Chaîne de caractère indiquant le nombre de terriers chargés et actifs
+   */
   public static String loadFromDatabase() {
     try {
       ResultSet burrowData = McFrConnection.getServerConnection()
@@ -401,6 +517,9 @@ public class Burrow {
     }
   }
 
+  /**
+   * Sauvegarde tous les terriers en base de données
+   */
   public static void save() {
     burrows.forEach(Burrow::saveInDatabase);
   }

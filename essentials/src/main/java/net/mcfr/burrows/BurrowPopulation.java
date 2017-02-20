@@ -23,18 +23,51 @@ import net.mcfr.entities.mobs.gender.Genders;
 import net.mcfr.listeners.BurrowListener;
 
 public class BurrowPopulation {
+  /**
+   * Population maximale que les terriers peuvent posséder
+   */
   private final static int MAX_POPULATION = 40;
+  /**
+   * Probabilité qu'une naissance ait lieu si toutes les conditions sont réunies
+   */
   private final static float BIRTH_CHANCE = 0.8F;
+  /**
+   * Probabilité qu'une naissance ait lieu si toutes les conditions sont réunies mais que le terrier n'est pas mixte
+   */
   private final static float BIRTH_CHANCE_NOMIX = 0.15F;
   private final static Random RAND = new Random();
 
+  /**
+   * Emplacement du terrier
+   */
   private Location<World> location;
+  /**
+   * Population maximale du terrier
+   */
   private int max;
+  /**
+   * Nombre de créatures mâles dans le terrier
+   */
   private int males;
+  /**
+   * Nombre de créatures femelles dans le terrier
+   */
   private int females;
+  /**
+   * Nombre de créatures mâles dans le terrier à la dernière vérification
+   */
   private int prevMales;
+  /**
+   * Nombre de créatures femelles dans le terrier à la dernière vérification
+   */
   private int prevFemales;
+  /**
+   * Type d'entités qui composent la population du terrier
+   */
   private EntityType entityType;
+  /**
+   * Identifiant du terrier qui possède cette population
+   */
   private int burrowId;
 
   public BurrowPopulation(Location<World> location, int burrowId, int max, EntityType entityType) {    
@@ -48,6 +81,11 @@ public class BurrowPopulation {
     actualize();
   }
   
+  /**
+   * Fais apparaître les membres d'une nouvelle population
+   * @param males Mâles dans la population
+   * @param females Femelles dans la population
+   */
   public void spawnNewEntities(int males, int females) {
     this.males = Math.min(males, this.max);
     this.females = Math.min(females, this.max - this.males);
@@ -55,6 +93,9 @@ public class BurrowPopulation {
     spawnAllEntities();
   }
   
+  /**
+   * Fait le compte des créatures mâles et femelles dans le terrier
+   */
   public void count() {
     this.males = 0;
     this.females = 0;
@@ -68,6 +109,9 @@ public class BurrowPopulation {
     });
   }
   
+  /**
+   * @return Stream sur les entités appartenant à ce terrier
+   */
   public Stream<Entity> getEntities() {
     BurrowListener.loadAllOccupiedChunks(this);
     
@@ -85,19 +129,31 @@ public class BurrowPopulation {
     return this.burrowId;
   }
   
+  /**
+   * @return Le monde dans lequel le terrier se trouve
+   */
   public World getWorld() {
     return this.location.getExtent();
   }
 
+  /**
+   * Fais passer les valeurs actuelles de démographie dans les champs prevFemales et prevMales.
+   */
   public void actualize() {
     this.prevFemales = this.females;
     this.prevMales = this.males;
   }
 
+  /**
+   * @return Vrai si il y a eu des morts depuis la dernière actualisation de la population
+   */
   public boolean hasBeenDeaths() {
     return (this.prevFemales - this.females + this.prevMales - this.males) > 0;
   }
 
+  /**
+   * Tente de réaliser une naissance si toutes les conditions sont réunies.
+   */
   public void tryBirth() {
     if (birthAvailable()) {
       spawnEntity(Genders.RANDOM);
@@ -106,6 +162,9 @@ public class BurrowPopulation {
     }
   }
 
+  /**
+   * @return Vrai si la naissance peut et doit avoir lieu, faux sinon
+   */
   private boolean birthAvailable() {
 
     boolean needsBirth = this.males + this.females < this.max;
@@ -115,10 +174,17 @@ public class BurrowPopulation {
     return needsBirth && hasMaleAndFemale && birthRandom;
   }
 
+  /**
+   * @return Vrai si la population du terrier est à zéro, faux sinon
+   */
   public boolean isEmpty() {
     return this.males == 0 && this.females == 0;
   }
 
+  /**
+   * Téléporte toutes les entités appartenant au terrier sur l'emplacement du terrier.
+   * Paramètre le lieu de repos des créatures comme l'emplacement du terrier : elles y retourneront une fois la nuit tombée.
+   */
   public void reset() {
     getEntities().forEach(e -> {
       e.setLocationSafely(this.location);
@@ -126,6 +192,10 @@ public class BurrowPopulation {
     });
   }
 
+  /**
+   * Fait apparaître une entité appartenant au terrier du genre indiqué.
+   * @param gender Genre de l'entité
+   */
   private void spawnEntity(Genders gender) {
     World world = this.location.getExtent();
     Vector3i spawnPosition = this.getPreparedPosition();
@@ -143,6 +213,9 @@ public class BurrowPopulation {
     world.spawnEntity(entity, cause);
   }
 
+  /**
+   * @return Une position de spawn sécurisée et proche de l'emplacement de terrier
+   */
   private Vector3i getPreparedPosition() {
     Vector3i randomPosition = new Vector3i(RAND.nextInt(3) - 1, 0, RAND.nextInt(3) - 1);
     Vector3i horizontalSpawnPosition = this.location.getBlockPosition().add(randomPosition);
@@ -167,6 +240,9 @@ public class BurrowPopulation {
     return spawnPosition;
   }
 
+  /**
+   * Fais apparaître autant d'entités de chaque genre que ce que le terrier doit contenir.
+   */
   public void spawnAllEntities() {
     for (int i = 0; i < this.males; i++) {
       spawnEntity(Genders.MALE);
@@ -176,12 +252,19 @@ public class BurrowPopulation {
     }
   }
 
+  /**
+   * Fais disparaître toutes les entités appartenant au terrier.
+   */
   public void killAllEntities() {
     getEntities().forEach(e -> ((EntityBurrowed)e).setToRemove(true));
     this.males = 0;
     this.females = 0;
   }
 
+  /**
+   * Change la population de mâles dans le terrier, sous réserve de place. Si la quantité renseignée est plus petite que la quantité actuelle, les entités sont toutes tuées puis recréées.
+   * @param males Nombre de mâles à atteindre
+   */
   public void setMales(int males) {
     count();
     int females = this.females;
@@ -191,6 +274,10 @@ public class BurrowPopulation {
     spawnAllEntities();
   }
 
+  /**
+   * Change la population de femelles dans le terrier, sous réserve de place. Si la quantité renseignée est plus petite que la quantité actuelle, les entités sont toutes tuées puis recréées.
+   * @param females Nombre de femelles à atteindre
+   */
   public void setFemales(int females) {
     count();
     int males = this.males;
@@ -200,6 +287,11 @@ public class BurrowPopulation {
     spawnAllEntities();
   }
 
+  /**
+   * Change la population maximum du terrier.
+   * Si la population actuelle dépasse la valeur renseignée, toutes les entités sont tuées puis une quantité équivalente de mâles et de femelles sont recréés.
+   * @param max Population maximale de la tribu
+   */
   public void setMax(int max) {
     count();
     this.max = Integer.min(max, MAX_POPULATION);
