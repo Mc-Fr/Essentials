@@ -153,13 +153,19 @@ public class TribalLanguageCommand extends AbstractCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-      if (args.hasAny("mot")) {
-        Optional<TribalWord> word = TribalWord.getByCommonWord(args.<String>getOne("mot").get());
-        if (word.isPresent()) {
-          src.sendMessage(Text.of(TextColors.YELLOW, "- " + word.get().getTranslationString(true)));
-        } else {
-          src.sendMessage(Text.of(TextColors.YELLOW, "- Non traduit"));
+      if (args.hasAny("mots")) {
+        String[] words = args.<String> getOne("mots").get().split(" ");
+        String translatedMessage = "";
+        
+        for (String word : words) {
+          Optional<TribalWord> translatedWord = TribalWord.getByCommonWord(word);
+          if (translatedWord.isPresent()) {
+            translatedMessage += translatedWord.get().getWord() + " ";
+          } else {
+            translatedMessage += "### ";
+          }
         }
+        src.sendMessage(Text.of(TextColors.YELLOW, "Message traduit : " + translatedMessage));
       } else {
         src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner les arguments : /tribal tribal <mot commun>"));
       }
@@ -172,7 +178,7 @@ public class TribalLanguageCommand extends AbstractCommand {
       return CommandSpec.builder()
           .description(Text.of("Donne la traduction tribale du mot commun renseigné."))
           .permission("essentials.command.tribal.tribal")
-          .arguments(GenericArguments.string(Text.of("mot")))
+          .arguments(GenericArguments.remainingJoinedStrings(Text.of("mots")))
           .executor(this)
           .build();
       // #f:1
@@ -193,12 +199,18 @@ public class TribalLanguageCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (args.hasAny("mot")) {
-        Optional<TribalWord> word = TribalWord.getByTribalWord(args.<String>getOne("mot").get());
-        if (word.isPresent()) {
-          src.sendMessage(Text.of(TextColors.YELLOW, "- " + word.get().getTranslationString(true)));
-        } else {
-          src.sendMessage(Text.of(TextColors.YELLOW, "- Non traduit"));
+        String[] words = args.<String> getOne("mots").get().split(" ");
+        String translatedMessage = "";
+        
+        for (String word : words) {
+          Optional<TribalWord> translatedWord = TribalWord.getByTribalWord(word);
+          if (translatedWord.isPresent()) {
+            translatedMessage += translatedWord.get().getTranslation() + " ";
+          } else {
+            translatedMessage += "### ";
+          }
         }
+        src.sendMessage(Text.of(TextColors.YELLOW, "Message traduit : " + translatedMessage));
       } else {
         src.sendMessage(Text.of(TextColors.RED, "Merci de renseigner les arguments : /tribal common <mot tribal>"));
       }
@@ -211,7 +223,7 @@ public class TribalLanguageCommand extends AbstractCommand {
       return CommandSpec.builder()
           .description(Text.of("Donne la traduction commune du mot tribal renseigné."))
           .permission("essentials.command.tribal.common")
-          .arguments(GenericArguments.string(Text.of("mot")))
+          .arguments(GenericArguments.string(Text.of("mots")))
           .executor(this)
           .build();
       // #f:1

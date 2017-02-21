@@ -40,10 +40,16 @@ public class TribalWord {
     this.level = level;
   }
 
+  /**
+   * @return Mot dans la langue tribale
+   */
   public String getWord() {
     return this.word;
   }
 
+  /**
+   * @return Mot dans la langue commune
+   */
   public String getTranslation() {
     return this.translation;
   }
