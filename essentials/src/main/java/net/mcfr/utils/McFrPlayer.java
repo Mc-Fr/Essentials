@@ -27,10 +27,11 @@ import net.mcfr.babel.Language;
 import net.mcfr.burrows.Burrow;
 import net.mcfr.chat.ChatType;
 import net.mcfr.expedition.ExpeditionSystem;
+import net.mcfr.fight.Fighter;
 import net.mcfr.roleplay.Attributes;
 import net.mcfr.roleplay.Skills;
 
-public class McFrPlayer {
+public class McFrPlayer implements Fighter {
   private static List<McFrPlayer> players = new ArrayList<>();
   private final static int EFFECT_DURATION = 800000;
   private final static PreparedStatement addTrait, incrementDeaths, changeDescription, changeName, getPseudonym, getUserId, getCharacterSheetId,
@@ -386,8 +387,8 @@ public class McFrPlayer {
           this.traits.put(traitData.getString(1), traitData.getInt(2));
         }
         traitData.close();
-        
-        if (this.getLanguageLevel(Language.getLanguages().get("commun")) > 0) {
+
+        if (getLanguageLevel(Language.getLanguages().get("commun")) > 0) {
           setLanguage(Language.getLanguages().get("commun"));
         } else {
           boolean hasLanguage = false;
@@ -442,8 +443,7 @@ public class McFrPlayer {
       effects.addElement(effect);
     }
     if (hasTrait("boiteux_jambe_en_moins")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).particles(false)
-          .build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).particles(false).build();
       effects.addElement(effect);
     }
     this.player.offer(effects);
@@ -517,34 +517,34 @@ public class McFrPlayer {
       return this.traits.get(trait);
     return 0;
   }
-  
+
   public String getTraitsString() {
     String result = "Traits :";
-    
-    for(Entry<String, Integer> entry : traits.entrySet()) {
+
+    for (Entry<String, Integer> entry : this.traits.entrySet()) {
       result += "\n- " + entry.getKey() + " : " + entry.getValue();
     }
-    
+
     return result;
   }
-  
+
   public String getSkillsString() {
     String result = "Compétences :";
-    
-    for(Skills skill : skills.keySet()) {
+
+    for (Skills skill : this.skills.keySet()) {
       result += "\n- " + skill.getDisplayName() + " : " + getSkillLevel(skill);
     }
-    
+
     return result;
   }
-  
+
   public String getAttributesString() {
     String result = "Attributs :";
 
-    for(Attributes attribute : attributes.keySet()) {
+    for (Attributes attribute : this.attributes.keySet()) {
       result += "\n- " + attribute.getName() + " : " + getAttributePoints(attribute);
     }
-    
+
     return result;
   }
 

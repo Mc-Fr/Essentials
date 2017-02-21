@@ -4,7 +4,7 @@ import net.mcfr.utils.McFrPlayer;
 
 public interface FightService {
 
-  String createFight(String fightId, McFrPlayer creator);
+  void createFight(String fightId, McFrPlayer creator);
 
   void stopFight(String fightId);
 
@@ -14,11 +14,11 @@ public interface FightService {
 
   void startFight(String fightId);
 
-  void addSpectator(String fightId);
+  void addSpectator(String fightId, McFrPlayer spectator);
 
-  void displayMaluses(String fightId, McFrPlayer fighter);
+  void displayMaluses(String fightId, McFrPlayer player);
 
-  void hideMaluses(String fightId, McFrPlayer fighter);
+  void hideMaluses(String fightId, McFrPlayer player);
 
   void next(String fightId) throws IllegalStateException;
 
@@ -28,7 +28,7 @@ public interface FightService {
 
   void resume(String fightId, Fighter fighter) throws IllegalStateException;
 
-  void changeLeader(String fightId, McFrPlayer oldLeader, McFrPlayer newLeader) throws IllegalArgumentException;
+  void changeLeader(String fightId, McFrPlayer newLeader) throws IllegalArgumentException;
 
   void kickFighter(String fightId, McFrPlayer fighter);
 
