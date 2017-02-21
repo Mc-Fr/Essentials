@@ -53,7 +53,7 @@ public class Skills {
 
   public static void loadFromDatabase() {
     try {
-      PreparedStatement getSkills = McFrConnection.getJdrConnection().prepareStatement("SELECT name, displayName, baseAttribute, difficulty, category FROM fiche_perso_competence");
+      PreparedStatement getSkills = McFrConnection.getJdrConnection().prepareStatement("SELECT name, displayName, baseAttribute, difficulty, category FROM Skills");
       ResultSet skillData = getSkills.executeQuery();
       getSkills.close();
       
@@ -68,7 +68,7 @@ public class Skills {
       }
       skillData.close();
 
-      PreparedStatement getDependencies = McFrConnection.getJdrConnection().prepareStatement("SELECT skill1, skill2, score FROM fiche_perso_dependances");
+      PreparedStatement getDependencies = McFrConnection.getJdrConnection().prepareStatement("SELECT skill1, skill2, score FROM Dependances");
       ResultSet dependenciesData = getDependencies.executeQuery();
       getDependencies.close();
       

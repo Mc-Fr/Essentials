@@ -479,7 +479,7 @@ public class Burrow {
    */
   public static String loadFromDatabase() {
     try (PreparedStatement getBurrows = McFrConnection.getServerConnection()
-        .prepareStatement("SELECT id, name, timer, maxPopulation, entityType, lastEventTime, world, x, y, z FROM Burrow WHERE dead = 0")){
+        .prepareStatement("SELECT id, name, timer, maxPopulation, entity, lastEvent, world, x, y, z FROM AliveBurrows")){
       ResultSet burrowData = getBurrows.executeQuery();
       Location<World> location;
       String worldName;

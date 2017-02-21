@@ -64,7 +64,7 @@ public class Language {
    * pour une langue, quatre sont ajoutés par défaut.
    */
   public static void loadFromDatabase() {
-    try (PreparedStatement getLanguages = McFrConnection.getJdrConnection().prepareStatement("SELECT name, displayName, alias FROM fiche_perso_langue")){
+    try (PreparedStatement getLanguages = McFrConnection.getJdrConnection().prepareStatement("SELECT name, displayName, alias FROM Languages")){
       ResultSet langData = getLanguages.executeQuery();
       while (langData.next()) {
         String langName = langData.getString(1);

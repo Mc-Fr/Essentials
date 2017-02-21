@@ -99,8 +99,8 @@ public class BurrowListener {
 
   public static void loadFromDatabase() {
     try {
-      PreparedStatement getChunkData = McFrConnection.getServerConnection().prepareStatement("SELECT burrowId, x, y, z FROM BurrowChunks");
-      ResultSet chunkData = getChunkData.executeQuery("SELECT burrowId, x, y, z FROM BurrowChunks");
+      PreparedStatement getChunkData = McFrConnection.getServerConnection().prepareStatement("SELECT id, x, y, z FROM Chunks");
+      ResultSet chunkData = getChunkData.executeQuery();
       getChunkData.close();
 
       while (chunkData.next()) {

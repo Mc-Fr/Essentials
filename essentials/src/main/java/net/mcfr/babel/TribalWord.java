@@ -84,7 +84,7 @@ public class TribalWord {
    * Charge tous les mots présents en base de donnée.
    */
   public static void loadFromDatabase() {
-    try (PreparedStatement getWords = McFrConnection.getJdrConnection().prepareStatement("SELECT tribal, commun, level FROM langue_tribale")){
+    try (PreparedStatement getWords = McFrConnection.getJdrConnection().prepareStatement("SELECT tribal, commun, level FROM TribalDictionnary")){
       ResultSet tribalData = getWords.executeQuery();
 
       while (tribalData.next()) {
