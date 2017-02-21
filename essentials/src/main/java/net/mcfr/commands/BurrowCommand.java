@@ -196,7 +196,7 @@ public class BurrowCommand extends AbstractCommand {
 
       if (this.notYetCalled) {
         Task.Builder taskBuilder = Sponge.getScheduler().createTaskBuilder();
-        taskBuilder.execute(() -> Burrow.updateBurrows()).delay(10, TimeUnit.MINUTES).interval(10, TimeUnit.SECONDS).submit(this.plugin);
+        taskBuilder.execute(() -> Burrow.updateBurrows()).delay(10, TimeUnit.SECONDS).interval(10, TimeUnit.MINUTES).submit(this.plugin);
         this.notYetCalled = false;
       }
 
