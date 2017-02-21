@@ -117,10 +117,8 @@ public class Burrow {
    * Enregistre le terrier en base de données
    */
   private void registerInDatabase() {
-    try {
-      PreparedStatement insertQuery = McFrConnection.getServerConnection().getConnection().prepareStatement(
-          "INSERT INTO Burrow(id, name, world, timer, maxPopulation, entityType, lastEventTime`, `x`, `y`, `z`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
+    try (PreparedStatement insertQuery = McFrConnection.getServerConnection().prepareStatement(
+          "INSERT INTO Burrow(id, name, world, timer, maxPopulation, entityType, lastEventTime`, `x`, `y`, `z`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")){
       insertQuery.setInt(1, this.id);
       insertQuery.setString(2, this.name);
       insertQuery.setString(3, this.location.getExtent().getName());
@@ -142,9 +140,8 @@ public class Burrow {
    * Marque un terrier comme détruit en base de données
    */
   private void deleteFromDatabase() {
-    try {
-      PreparedStatement deleteQuery = McFrConnection.getServerConnection().getConnection()
-          .prepareStatement("UPDATE Burrow SET dead = 1 WHERE id = ?");
+    try (PreparedStatement deleteQuery = McFrConnection.getServerConnection()
+        .prepareStatement("UPDATE Burrow SET dead = 1 WHERE id = ?")){
 
       deleteQuery.setInt(1, this.id);
       deleteQuery.execute();
@@ -157,9 +154,8 @@ public class Burrow {
    * Sauvegarde le nouvel état du terrier en base de données
    */
   private void saveInDatabase() {
-    try {
-      PreparedStatement updateQuery = McFrConnection.getServerConnection().getConnection()
-          .prepareStatement("UPDATE Burrow SET name = ?, timer = ?, maxPopulation = ?, lastEventTime = ?, x = ?, y = ?, z = ? WHERE id = ?");
+    try (PreparedStatement updateQuery = McFrConnection.getServerConnection()
+          .prepareStatement("UPDATE Burrow SET name = ?, timer = ?, maxPopulation = ?, lastEventTime = ?, x = ?, y = ?, z = ? WHERE id = ?")){
 
       updateQuery.setString(1, this.name);
       updateQuery.setLong(2, this.delay);
@@ -449,8 +445,9 @@ public class Burrow {
    */
   public static int getUnusedId() {
     int id = 0;
-    try {
-      ResultSet idData = McFrConnection.getServerConnection().executeQuery("SELECT MAX(id)+1 FROM Burrow"); // TODO A dégager
+    try (PreparedStatement getUnusedId = McFrConnection.getServerConnection().prepareStatement("SELECT MAX(id)+1 FROM Burrow")) {
+      ResultSet idData = getUnusedId.executeQuery();
+      
       if (idData.next()) {
         id = idData.getInt(1);
       }
@@ -481,9 +478,9 @@ public class Burrow {
    * @return Chaîne de caractère indiquant le nombre de terriers chargés et actifs
    */
   public static String loadFromDatabase() {
-    try {
-      ResultSet burrowData = McFrConnection.getServerConnection()
-          .executeQuery("SELECT id, name, timer, maxPopulation, entity, lastEvent, world, x, y, z FROM AliveBurrows");
+    try (PreparedStatement getBurrows = McFrConnection.getServerConnection()
+        .prepareStatement("SELECT id, name, timer, maxPopulation, entityType, lastEventTime, world, x, y, z FROM Burrow WHERE dead = 0")){
+      ResultSet burrowData = getBurrows.executeQuery();
       Location<World> location;
       String worldName;
       String entityTypeName;

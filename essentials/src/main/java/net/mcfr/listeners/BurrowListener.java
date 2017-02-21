@@ -64,16 +64,17 @@ public class BurrowListener {
 
   public static void saveInDatabase() {
     try {
-      McFrConnection.getServerConnection().getConnection().prepareStatement("DELETE FROM BurrowChunks").execute();
+      PreparedStatement emptyBurrowChunks = McFrConnection.getServerConnection().prepareStatement("DELETE FROM BurrowChunks");
+      emptyBurrowChunks.execute();
+      emptyBurrowChunks.close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
     chunks.forEach((b, l) -> {
       Optional<Burrow> burrow = Burrow.getBurrowById(b);
       if (burrow.isPresent() && burrow.get().isBurrowAlive()) {
-        PreparedStatement saveQuery;
         try {
-          saveQuery = McFrConnection.getServerConnection().getConnection()
+          PreparedStatement saveQuery = McFrConnection.getServerConnection()
               .prepareStatement("INSERT INTO `BurrowChunks`(`burrowId`, `x`, `y`, `z`) VALUES (?, ?, ?, ?)");
 
           l.forEach(p -> {
@@ -87,6 +88,8 @@ public class BurrowListener {
               e.printStackTrace();
             }
           });
+          
+          saveQuery.close();
         } catch (SQLException e1) {
           e1.printStackTrace();
         }
@@ -96,7 +99,9 @@ public class BurrowListener {
 
   public static void loadFromDatabase() {
     try {
-      ResultSet chunkData = McFrConnection.getServerConnection().executeQuery("SELECT id, x, y, z FROM Chunks");
+      PreparedStatement getChunkData = McFrConnection.getServerConnection().prepareStatement("SELECT burrowId, x, y, z FROM BurrowChunks");
+      ResultSet chunkData = getChunkData.executeQuery("SELECT burrowId, x, y, z FROM BurrowChunks");
+      getChunkData.close();
 
       while (chunkData.next()) {
         Vector3i position = new Vector3i(chunkData.getInt("x"), chunkData.getInt("y"), chunkData.getInt("z"));

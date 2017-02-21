@@ -1,5 +1,6 @@
 package net.mcfr.listeners;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,21 +39,22 @@ public class LoginListener {
       e.setCancelled(true);
     } else {
       try {
+        Connection jdrConnection = McFrConnection.getJdrConnection();
         int userId = -1;
-        PreparedStatement forumAccountId = McFrConnection.getJdrConnection().getConnection()
+        PreparedStatement forumAccountId = jdrConnection
             .prepareStatement("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
         forumAccountId.setString(1, e.getTargetUser().getName());
         ResultSet user = forumAccountId.executeQuery();
 
         if (user.next()) {
           userId = user.getInt(1);
-          PreparedStatement activeCharacterSheet = McFrConnection.getJdrConnection().getConnection()
+          PreparedStatement activeCharacterSheet = jdrConnection
               .prepareStatement("SELECT id FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
           activeCharacterSheet.setInt(1, userId);
           ResultSet characterSheet = activeCharacterSheet.executeQuery();
 
           if (characterSheet.next()) {
-            PreparedStatement deathDataReq = McFrConnection.getJdrConnection().getConnection()
+            PreparedStatement deathDataReq = jdrConnection
                 .prepareStatement("SELECT avantage FROM fiche_perso_personnage_avantage WHERE avantage = \"mort\" AND id_fiche_perso_personnage = ?");
             deathDataReq.setInt(1, characterSheet.getInt(1));
             ResultSet deathData = deathDataReq.executeQuery();
@@ -69,6 +71,7 @@ public class LoginListener {
           e.setCancelled(!e.getTargetUser().hasPermission("essentials.admin.connect_without_character"));
         }
         user.close();
+        jdrConnection.close();
       } catch (SQLException ex) {
         ex.printStackTrace();
       }

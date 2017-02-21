@@ -1,5 +1,6 @@
 package net.mcfr.utils;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -253,9 +254,8 @@ public class McFrPlayer {
   }
 
   public void setName(String name) {
-    try {
-      PreparedStatement changeName = McFrConnection.getServerConnection().getConnection()
-          .prepareStatement("UPDATE Player SET name = ? WHERE pseudonym = ?");
+    try (PreparedStatement changeName = McFrConnection.getServerConnection().prepareStatement("UPDATE Player SET name = ? WHERE pseudonym = ?")) {
+
       changeName.setString(1, name);
       changeName.setString(2, this.player.getName());
       changeName.execute();
@@ -270,9 +270,8 @@ public class McFrPlayer {
   }
 
   public void setDescription(String description) {
-    try {
-      PreparedStatement changeDescription = McFrConnection.getServerConnection().getConnection()
-          .prepareStatement("UPDATE Player SET description = ? WHERE pseudonym = ?");
+    try (PreparedStatement changeDescription = McFrConnection.getServerConnection()
+        .prepareStatement("UPDATE Player SET description = ? WHERE pseudonym = ?")) {
 
       changeDescription.setString(1, description);
       changeDescription.setString(2, this.player.getName());
@@ -312,19 +311,20 @@ public class McFrPlayer {
       this.skills.clear();
       this.attributes.clear();
       this.traits.clear();
-      PreparedStatement getPseudonym = McFrConnection.getServerConnection().getConnection()
-          .prepareStatement("SELECT * FROM Player WHERE pseudonym = ?");
-      PreparedStatement getUserId = McFrConnection.getJdrConnection().getConnection()
+      Connection serverConnection = McFrConnection.getServerConnection();
+      Connection jdrConnection = McFrConnection.getJdrConnection();
+      PreparedStatement getPseudonym = serverConnection.prepareStatement("SELECT * FROM Player WHERE pseudonym = ?");
+      PreparedStatement getUserId = jdrConnection
           .prepareStatement("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
-      PreparedStatement getCharacterSheetId = McFrConnection.getJdrConnection().getConnection()
+      PreparedStatement getCharacterSheetId = jdrConnection
           .prepareStatement("SELECT id FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
-      PreparedStatement getCharacterSheet = McFrConnection.getJdrConnection().getConnection()
+      PreparedStatement getCharacterSheet = jdrConnection
           .prepareStatement("SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement getAttributes = McFrConnection.getJdrConnection().getConnection()
+      PreparedStatement getAttributes = jdrConnection
           .prepareStatement("SELECT attribut,level FROM fiche_perso_personnage_attribut WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement getAdvantages = McFrConnection.getJdrConnection().getConnection()
+      PreparedStatement getAdvantages = jdrConnection
           .prepareStatement("SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement registerPlayer = McFrConnection.getServerConnection().getConnection()
+      PreparedStatement registerPlayer = serverConnection
           .prepareStatement("INSERT INTO `Player`(`uuid`, `pseudonym`, `name`, `description`, `gender`, `race`, `deaths`) VALUES (?,?,?,?,?,?,?)");
 
       getPseudonym.setString(1, this.player.getName());
@@ -412,6 +412,9 @@ public class McFrPlayer {
         this.player.sendMessage(Text.of(TextColors.YELLOW, "Attention, vous n'avez pas de fiche de personnage active !"));
       }
       characterSheet.close();
+
+      serverConnection.close();
+      jdrConnection.close();
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -551,9 +554,8 @@ public class McFrPlayer {
   public void addTrait(String trait, int level) {
     if (!hasTrait(trait)) {
       this.traits.put(trait, level);
-      try {
-        PreparedStatement addTrait = McFrConnection.getJdrConnection().getConnection()
-            .prepareStatement("INSERT INTO fiche_perso_personnage_avantage VALUES (?, ?, ?)");
+      try (PreparedStatement addTrait = McFrConnection.getJdrConnection()
+          .prepareStatement("INSERT INTO fiche_perso_personnage_avantage VALUES (?, ?, ?)")) {
 
         addTrait.setInt(1, this.sheetId);
         addTrait.setString(2, trait);
@@ -571,9 +573,8 @@ public class McFrPlayer {
 
   public void incrementNumberOfDeaths() {
     this.deaths++;
-    try {
-      PreparedStatement incrementDeaths = McFrConnection.getServerConnection().getConnection()
-          .prepareStatement("UPDATE Player SET deaths = ? WHERE pseudonym = ?");
+    try (PreparedStatement incrementDeaths = McFrConnection.getServerConnection()
+        .prepareStatement("UPDATE Player SET deaths = ? WHERE pseudonym = ?")) {
 
       incrementDeaths.setInt(1, this.deaths);
       incrementDeaths.setString(2, this.player.getName());
