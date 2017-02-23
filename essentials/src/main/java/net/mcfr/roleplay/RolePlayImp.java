@@ -54,7 +54,7 @@ public class RolePlayImp implements RolePlayService {
     case "litterature":
     case "naturaliste":
     case "theologie":
-      score += McFrPlayer.getMcFrPlayer(player).hasTrait("tres_bonne_memoire") ? 3 : 0;
+      score += McFrPlayer.getMcFrPlayer(player).hasTrait("tres_bonne_memoire") ? 1 : 0;
       break;
     }
 
