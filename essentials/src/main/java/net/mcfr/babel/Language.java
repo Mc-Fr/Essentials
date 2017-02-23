@@ -1,5 +1,6 @@
 package net.mcfr.babel;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -64,19 +65,18 @@ public class Language {
    * pour une langue, quatre sont ajoutés par défaut.
    */
   public static void loadFromDatabase() {
-    try (PreparedStatement getLanguages = McFrConnection.getJdrConnection().prepareStatement("SELECT name, displayName, alias FROM Languages")){
-      ResultSet langData = getLanguages.executeQuery();
+    try (Connection jdrConnection = McFrConnection.getJdrConnection()) {
+      ResultSet langData = jdrConnection.prepareStatement("SELECT name, displayName, alias FROM Languages").executeQuery();
       while (langData.next()) {
         String langName = langData.getString(1);
         String langDisplayName = langData.getString(2);
         String langAlias = langData.getString(3);
 
-        PreparedStatement loadLanguages = McFrConnection.getJdrConnection()
+        PreparedStatement loadLanguages = jdrConnection
             .prepareStatement("SELECT symbol FROM fiche_perso_langue_symbole WHERE lang = ?"); // TODO Passer sur un curseur SQL.
 
         loadLanguages.setString(1, langName);
         ResultSet symbolsData = loadLanguages.executeQuery();
-        loadLanguages.close();
 
         ArrayList<Character> symbols = new ArrayList<>();
         while (symbolsData.next()) {

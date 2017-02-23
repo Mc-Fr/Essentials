@@ -1,5 +1,6 @@
 package net.mcfr.babel;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -69,8 +70,8 @@ public class TribalWord {
    * Enregistre le mot dans la base de donnée.
    */
   private void registerInDatabase() {
-    try (PreparedStatement addWord = McFrConnection.getJdrConnection().prepareStatement("INSERT INTO langue_tribale VALUES (?, ?, ?)")){
-      
+    try (Connection jdrConnection = McFrConnection.getJdrConnection()){
+      PreparedStatement addWord = jdrConnection.prepareStatement("INSERT INTO langue_tribale VALUES (?, ?, ?)");
       addWord.setString(1, this.word);
       addWord.setString(2, this.translation);
       addWord.setInt(3, this.level);
@@ -84,8 +85,8 @@ public class TribalWord {
    * Charge tous les mots présents en base de donnée.
    */
   public static void loadFromDatabase() {
-    try (PreparedStatement getWords = McFrConnection.getJdrConnection().prepareStatement("SELECT tribal, commun, level FROM TribalDictionnary")){
-      ResultSet tribalData = getWords.executeQuery();
+    try (Connection jdrConnection = McFrConnection.getJdrConnection()){
+      ResultSet tribalData = jdrConnection.prepareStatement("SELECT tribal, commun, level FROM TribalDictionnary").executeQuery();
 
       while (tribalData.next()) {
         dictionary.add(new TribalWord(tribalData.getString("tribal"), tribalData.getString("commun"), tribalData.getInt("level")));

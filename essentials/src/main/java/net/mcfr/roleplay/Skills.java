@@ -1,6 +1,6 @@
 package net.mcfr.roleplay;
 
-import java.sql.PreparedStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -52,10 +52,8 @@ public class Skills {
   }
 
   public static void loadFromDatabase() {
-    try {
-      PreparedStatement getSkills = McFrConnection.getJdrConnection().prepareStatement("SELECT name, displayName, baseAttribute, difficulty, category FROM Skills");
-      ResultSet skillData = getSkills.executeQuery();
-      getSkills.close();
+    try (Connection jdrConnection = McFrConnection.getJdrConnection();){
+      ResultSet skillData = jdrConnection.prepareStatement("SELECT name, displayName, baseAttribute, difficulty, category FROM Skills").executeQuery();
       
       while (skillData.next()) {
         Skills skill = new Skills(skillData.getString("name"), skillData.getString("displayName"),
@@ -68,9 +66,7 @@ public class Skills {
       }
       skillData.close();
 
-      PreparedStatement getDependencies = McFrConnection.getJdrConnection().prepareStatement("SELECT skill1, skill2, score FROM Dependances");
-      ResultSet dependenciesData = getDependencies.executeQuery();
-      getDependencies.close();
+      ResultSet dependenciesData = jdrConnection.prepareStatement("SELECT skill1, skill2, score FROM Dependances").executeQuery();
       
       while (dependenciesData.next()) {
         Skills skill1 = skills.get(dependenciesData.getString("skill1"));

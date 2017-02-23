@@ -38,7 +38,7 @@ public class McFrPlayer {
   private Player player;
   private int deaths;
 
-  /**
+  /** 
    * Représente tous les booléens présents dans la classe.
    * <table style="border-collapse: collapse">
    * <tr>
@@ -254,8 +254,8 @@ public class McFrPlayer {
   }
 
   public void setName(String name) {
-    try (PreparedStatement changeName = McFrConnection.getServerConnection().prepareStatement("UPDATE Player SET name = ? WHERE pseudonym = ?")) {
-
+    try (Connection serverConnection = McFrConnection.getServerConnection()) {
+      PreparedStatement changeName = serverConnection.prepareStatement("UPDATE Player SET name = ? WHERE pseudonym = ?");
       changeName.setString(1, name);
       changeName.setString(2, this.player.getName());
       changeName.execute();
@@ -270,9 +270,10 @@ public class McFrPlayer {
   }
 
   public void setDescription(String description) {
-    try (PreparedStatement changeDescription = McFrConnection.getServerConnection()
-        .prepareStatement("UPDATE Player SET description = ? WHERE pseudonym = ?")) {
-
+    try (Connection serverConnection = McFrConnection.getServerConnection()) {
+      
+      PreparedStatement changeDescription = serverConnection
+          .prepareStatement("UPDATE Player SET description = ? WHERE pseudonym = ?");
       changeDescription.setString(1, description);
       changeDescription.setString(2, this.player.getName());
       changeDescription.execute();
@@ -554,9 +555,9 @@ public class McFrPlayer {
   public void addTrait(String trait, int level) {
     if (!hasTrait(trait)) {
       this.traits.put(trait, level);
-      try (PreparedStatement addTrait = McFrConnection.getJdrConnection()
-          .prepareStatement("INSERT INTO fiche_perso_personnage_avantage VALUES (?, ?, ?)")) {
-
+      try (Connection jdrConnection = McFrConnection.getJdrConnection()) {
+        PreparedStatement addTrait = jdrConnection
+            .prepareStatement("INSERT INTO fiche_perso_personnage_avantage VALUES (?, ?, ?)");
         addTrait.setInt(1, this.sheetId);
         addTrait.setString(2, trait);
         addTrait.setInt(3, level);
@@ -573,9 +574,9 @@ public class McFrPlayer {
 
   public void incrementNumberOfDeaths() {
     this.deaths++;
-    try (PreparedStatement incrementDeaths = McFrConnection.getServerConnection()
-        .prepareStatement("UPDATE Player SET deaths = ? WHERE pseudonym = ?")) {
-
+    try (Connection serverConnection = McFrConnection.getServerConnection()) {
+      PreparedStatement incrementDeaths = serverConnection
+          .prepareStatement("UPDATE Player SET deaths = ? WHERE pseudonym = ?");
       incrementDeaths.setInt(1, this.deaths);
       incrementDeaths.setString(2, this.player.getName());
       incrementDeaths.execute();

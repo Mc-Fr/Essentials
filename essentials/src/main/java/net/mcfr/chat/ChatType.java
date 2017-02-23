@@ -1,7 +1,15 @@
 package net.mcfr.chat;
 
-import static org.spongepowered.api.text.format.TextColors.*;
-import static org.spongepowered.api.text.format.TextStyles.*;
+import static org.spongepowered.api.text.format.TextColors.DARK_GREEN;
+import static org.spongepowered.api.text.format.TextColors.DARK_PURPLE;
+import static org.spongepowered.api.text.format.TextColors.DARK_RED;
+import static org.spongepowered.api.text.format.TextColors.GOLD;
+import static org.spongepowered.api.text.format.TextColors.GRAY;
+import static org.spongepowered.api.text.format.TextColors.GREEN;
+import static org.spongepowered.api.text.format.TextColors.LIGHT_PURPLE;
+import static org.spongepowered.api.text.format.TextColors.RED;
+import static org.spongepowered.api.text.format.TextColors.WHITE;
+import static org.spongepowered.api.text.format.TextStyles.ITALIC;
 
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextStyle;
@@ -20,7 +28,8 @@ public enum ChatType {
   ACTION(25, GREEN, DARK_GREEN, TextStyles.NONE, "*", false, "* %1$s %3$s"),
   VISIBLE_ACTION(40, GREEN, DARK_GREEN, TextStyles.NONE, "*&", false, "* %1$s %3$s"),
 
-  ORP_WHISPER(4, GRAY, "('", false, "'(%1$s : %3$s)"),
+  ORP_LOW(5, GRAY, "(\"", false, "\"(%1$s : %3$s)"),
+  ORP_SOFT(10, GRAY, "('", false, "'(%1$s : %3$s)"),
   ORP(25, GRAY, "(", false, "(%1$s : %3$s)"),
   ORP_LOUD(60, GRAY, "(&", false, "&(%1$s : %3$s)"),
 

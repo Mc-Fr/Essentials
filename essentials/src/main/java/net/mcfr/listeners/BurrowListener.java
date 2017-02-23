@@ -1,5 +1,6 @@
 package net.mcfr.listeners;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,45 +64,39 @@ public class BurrowListener {
   }
 
   public static void saveInDatabase() {
-    try {
-      PreparedStatement emptyBurrowChunks = McFrConnection.getServerConnection().prepareStatement("DELETE FROM BurrowChunks");
-      emptyBurrowChunks.execute();
-      emptyBurrowChunks.close();
+    try (Connection serverConnection = McFrConnection.getServerConnection()) {
+      serverConnection.prepareStatement("DELETE FROM BurrowChunks").execute();
+      chunks.forEach((b, l) -> {
+        try {
+          Optional<Burrow> burrow = Burrow.getBurrowById(b);
+          if (burrow.isPresent() && burrow.get().isBurrowAlive()) {
+            PreparedStatement saveQuery = serverConnection
+                .prepareStatement("INSERT INTO `BurrowChunks`(`burrowId`, `x`, `y`, `z`) VALUES (?, ?, ?, ?)");
+
+            l.forEach(p -> {
+              try {
+                saveQuery.setInt(1, b);
+                saveQuery.setInt(2, p.getX());
+                saveQuery.setInt(3, p.getY());
+                saveQuery.setInt(4, p.getZ());
+                saveQuery.execute();
+              } catch (SQLException e) {
+                e.printStackTrace();
+              }
+            });
+          }
+        } catch (SQLException e) {
+          e.printStackTrace();
+        }
+      });
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    chunks.forEach((b, l) -> {
-      Optional<Burrow> burrow = Burrow.getBurrowById(b);
-      if (burrow.isPresent() && burrow.get().isBurrowAlive()) {
-        try {
-          PreparedStatement saveQuery = McFrConnection.getServerConnection()
-              .prepareStatement("INSERT INTO `BurrowChunks`(`burrowId`, `x`, `y`, `z`) VALUES (?, ?, ?, ?)");
-
-          l.forEach(p -> {
-            try {
-              saveQuery.setInt(1, b);
-              saveQuery.setInt(2, p.getX());
-              saveQuery.setInt(3, p.getY());
-              saveQuery.setInt(4, p.getZ());
-              saveQuery.execute();
-            } catch (SQLException e) {
-              e.printStackTrace();
-            }
-          });
-          
-          saveQuery.close();
-        } catch (SQLException e1) {
-          e1.printStackTrace();
-        }
-      }
-    });
   }
 
   public static void loadFromDatabase() {
-    try {
-      PreparedStatement getChunkData = McFrConnection.getServerConnection().prepareStatement("SELECT id, x, y, z FROM Chunks");
-      ResultSet chunkData = getChunkData.executeQuery();
-      getChunkData.close();
+    try (Connection serverConnection = McFrConnection.getServerConnection()){
+      ResultSet chunkData = serverConnection.prepareStatement("SELECT id, x, y, z FROM Chunks").executeQuery();
 
       while (chunkData.next()) {
         Vector3i position = new Vector3i(chunkData.getInt("x"), chunkData.getInt("y"), chunkData.getInt("z"));
