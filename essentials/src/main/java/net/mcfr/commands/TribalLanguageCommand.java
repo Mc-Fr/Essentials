@@ -198,7 +198,7 @@ public class TribalLanguageCommand extends AbstractCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-      if (args.hasAny("mot")) {
+      if (args.hasAny("mots")) {
         String[] words = args.<String> getOne("mots").get().split(" ");
         String translatedMessage = "";
         
@@ -221,9 +221,9 @@ public class TribalLanguageCommand extends AbstractCommand {
     public CommandSpec getCommandSpec() {
       // #f:0
       return CommandSpec.builder()
-          .description(Text.of("Donne la traduction commune du mot tribal renseigné."))
+          .description(Text.of("Donne la traduction commune des mots tribaux renseignés."))
           .permission("essentials.command.tribal.common")
-          .arguments(GenericArguments.string(Text.of("mots")))
+          .arguments(GenericArguments.remainingJoinedStrings(Text.of("mots")))
           .executor(this)
           .build();
       // #f:1
