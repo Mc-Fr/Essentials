@@ -1,10 +1,16 @@
 package net.mcfr.roleplay;
 
 public enum Results {
-  CRITICAL_SUCCESS,
-  SUCCESS,
-  FAILURE,
-  CRITICAL_FAILURE;
+  CRITICAL_SUCCESS("succès critique"),
+  SUCCESS("succès"),
+  FAILURE("échec"),
+  CRITICAL_FAILURE("échec critique");
+
+  private String sentence;
+
+  private Results(String sentence) {
+    this.sentence = sentence;
+  }
 
   public static Results getResult(int roll, int margin) {
     if (roll == 3 || roll == 4)
@@ -23,18 +29,6 @@ public enum Results {
 
   @Override
   public String toString() {
-    switch (this) {
-    case CRITICAL_FAILURE:
-      return "échec critique";
-    case CRITICAL_SUCCESS:
-      return "succès critique";
-    case FAILURE:
-      return "échec";
-    case SUCCESS:
-      return "succès";
-    }
-
-    throw new IllegalStateException("Le résultat du jet de dés n'a pas pu être déterminé !");
+    return this.sentence;
   }
-
 }
