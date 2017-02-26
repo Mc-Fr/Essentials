@@ -32,7 +32,6 @@ import net.mcfr.roleplay.rollResults.AttributeRollResult;
 import net.mcfr.utils.McFrPlayer;
 
 public class CareSystem {
-  public static final int CARE_CENTER_RADIUS_EFFECT_AREA = 500;
   private static List<CareCenter> centers;
 
   private static List<CareCenter> getCenters() {
@@ -51,12 +50,16 @@ public class CareSystem {
       centers.forEach(c -> {
         JsonObject center = c.getAsJsonObject();
         String name = center.get("name").getAsString();
+        int radius = 500;
+        if (center.has("radius")) {
+          radius = center.get("radius").getAsInt();
+        }
         World world = Sponge.getServer().getWorld(center.get("world").getAsString()).orElse(null);
         int x = center.get("x").getAsInt();
         int y = center.get("y").getAsInt();
         int z = center.get("z").getAsInt();
         if (world != null) {
-          getCenters().add(new CareCenter(name, world, x, y, z));
+          getCenters().add(new CareCenter(name, radius, world, x, y, z));
         }
       });
     }
@@ -87,8 +90,9 @@ public class CareSystem {
         if (centerOpt.isPresent()) {
           AttributeRollResult result = Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll(player, Attributes.ENDURANCE,
               computeModifier(mcFrPlayer));
-          Text deathMessage = Text.of(TextColors.YELLOW, String.format("%s fait un jet de %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""),
-              McFrPlayer.getMcFrPlayer(player).getName(), result.getAttribute().getName(), result.getScore(), result.getMargin()));
+          Text deathMessage = Text.of(TextColors.YELLOW,
+              String.format("%s fait un jet de %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""),
+                  McFrPlayer.getMcFrPlayer(player).getName(), result.getAttribute().getName(), result.getScore(), result.getMargin()));
           switch (result.getResult()) {
           case CRITICAL_SUCCESS:
             deathMessage.concat(Text.of(TextColors.GREEN, "Vous n'avez aucune séquelle, tout juste quelques cicatrices."));
@@ -129,8 +133,8 @@ public class CareSystem {
   }
 
   public Optional<CareCenter> getNearest(Location<World> loc) {
-    return centers.stream().filter(c -> c.getLocation().getExtent().equals(loc.getExtent()))
-        .filter(c -> c.distance(loc) < CARE_CENTER_RADIUS_EFFECT_AREA).min((o1, o2) -> Double.compare(o1.distance(loc), o2.distance(loc)));
+    return centers.stream().filter(c -> c.getLocation().getExtent().equals(loc.getExtent())).filter(c -> c.distance(loc) < c.getRadius())
+        .min((o1, o2) -> Double.compare(o1.distance(loc), o2.distance(loc)));
   }
 
   private int computeModifier(McFrPlayer player) {
@@ -155,10 +159,12 @@ public class CareSystem {
 
   public static class CareCenter {
     private String name;
+    private int radius;
     private Location<World> location;
 
-    public CareCenter(String name, World world, int x, int y, int z) {
+    public CareCenter(String name, int radius, World world, int x, int y, int z) {
       this.name = name;
+      this.radius = radius;
       this.location = new Location<>(world, x, y, z);
     }
 
@@ -168,6 +174,10 @@ public class CareSystem {
 
     public String getName() {
       return this.name;
+    }
+
+    public int getRadius() {
+      return this.radius;
     }
 
     public Location<World> getLocation() {
