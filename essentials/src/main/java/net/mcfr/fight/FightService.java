@@ -36,6 +36,6 @@ public interface FightService {
 
   void insertFighter(String fightId, Fighter fighter, int index);
 
-  void setTurn(String fightId, Fighter fighter);
+  void setTurn(String fightId, int index);
 
 }
