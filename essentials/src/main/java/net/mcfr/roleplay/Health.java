@@ -54,7 +54,7 @@ public class Health {
   }
 
   public void set(McFrPlayer owner, int value) {
-    this.value = value;
+    this.value = Math.min(value, this.max);
     this.save(owner);
   }
 

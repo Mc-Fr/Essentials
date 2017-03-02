@@ -134,7 +134,7 @@ public class McFrPlayer {
     this.selectedBurrow = Optional.empty();
     this.lastBreathTime = 0;
     this.readDescriptionTime = 0;
-    this.health = new Health(100);
+    this.health = new Health(1000);
   }
 
   public Player getPlayer() {
