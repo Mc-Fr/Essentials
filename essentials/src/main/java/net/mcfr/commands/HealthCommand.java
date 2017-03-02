@@ -15,17 +15,29 @@ import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.utils.McFrPlayer;
 
 public class HealthCommand extends AbstractCommand {
-  
+
   public HealthCommand(Essentials plugin) {
     super(plugin);
   }
-  
+
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (src instanceof Player) {
       McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) src);
       if (player.hasCharacter()) {
-        src.sendMessage(Text.of(TextColors.YELLOW, "Votre malus de santé est de : " + player.getHealthMalus()));
+        if (args.hasAny("ajout")) {
+          int addingValue = args.<Integer>getOne("ajout").get();
+          player.getHealth().add(player, addingValue);
+
+          if (addingValue > 0) {
+            src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez été soigné de " + addingValue + "points."));
+          } else {
+            src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez été blessé de " + (-addingValue) + "points."));
+          }
+        }
+
+        src.sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + player.getHealth().getValue() + "/" + player.getHealth().getMax()
+            + ", malus de " + player.getHealth().getMalus()));
       } else {
         src.sendMessage(Text.of(TextColors.YELLOW, "Vous n'avez pas de personnage."));
       }
@@ -34,120 +46,58 @@ public class HealthCommand extends AbstractCommand {
     }
     return CommandResult.success();
   }
-  
+
   @Override
   public CommandSpec getCommandSpec() {
     //#f:0
     return CommandSpec.builder()
-            .description(Text.of("Affiche votre malus de santé."))
+            .description(Text.of("Permet de gérer votre santé."))
             .permission("essentials.command.health")
             .executor(this)
-            .children(getChildrenList(new Hurt(getPlugin()), 
-                new Heal(getPlugin()),
-                new Check(getPlugin())))
+            .arguments(GenericArguments.optional(GenericArguments.integer(Text.of("ajout"))))
+            .children(getChildrenList(new Mj(getPlugin())))
             .build();
     //#f:1
   }
-  
+
   @Override
   public String[] getAliases() {
     return new String[] { "health", "h" };
   }
-  
-  static class Hurt extends AbstractCommand {
 
-    public Hurt(Essentials plugin) {
-      super(plugin);
-    }
+  static class Mj extends AbstractCommand {
 
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-      if (src instanceof Player) {
-        McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) src);
-        if (player.hasCharacter()) {
-          int injury = args.<Integer>getOne("blessure").get();
-          injury = injury > 0 ? -injury : injury;
-          player.addHealth(injury);
-          src.sendMessage(Text.of(TextColors.YELLOW, "Votre malus de santé est maintenant de : " + player.getHealthMalus()));
-        } else {
-          src.sendMessage(Text.of(TextColors.YELLOW, "Vous n'avez pas de personnage."));
-        }
-      } else {
-        src.sendMessage(ONLY_PLAYERS_COMMAND);
-      }
-      return CommandResult.success();
-    }
-
-    @Override
-    public CommandSpec getCommandSpec() {
-      // #f:0
-      return CommandSpec.builder()
-          .description(Text.of("Ajoute un malus de santé."))
-          .permission("essentials.command.health.hurt")
-          .arguments(GenericArguments.integer(Text.of("blessure")))
-          .executor(this)
-          .build();
-      // #f:1
-    }
-
-    @Override
-    public String[] getAliases() {
-      return new String[] { "hurt" };
-    }
-  }
-  
-  static class Heal extends AbstractCommand {
-
-    public Heal(Essentials plugin) {
-      super(plugin);
-    }
-
-    @Override
-    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-      if (src instanceof Player) {
-        McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) src);
-        if (player.hasCharacter()) {
-          int healing = args.<Integer>getOne("soin").get();
-          healing = healing < 0 ? -healing : healing;
-          player.addHealth(healing);
-          src.sendMessage(Text.of(TextColors.YELLOW, "Votre malus de santé est maintenant de : " + player.getHealthMalus()));
-        } else {
-          src.sendMessage(Text.of(TextColors.YELLOW, "Vous n'avez pas de personnage."));
-        }
-      } else {
-        src.sendMessage(ONLY_PLAYERS_COMMAND);
-      }
-      return CommandResult.success();
-    }
-
-    @Override
-    public CommandSpec getCommandSpec() {
-      // #f:0
-      return CommandSpec.builder()
-          .description(Text.of("Retire une partie du malus de santé."))
-          .permission("essentials.command.health.heal")
-          .arguments(GenericArguments.integer(Text.of("soin")))
-          .executor(this)
-          .build();
-      // #f:1
-    }
-
-    @Override
-    public String[] getAliases() {
-      return new String[] { "heal" };
-    }
-  }
-  
-  static class Check extends AbstractCommand {
-
-    public Check(Essentials plugin) {
+    public Mj(Essentials plugin) {
       super(plugin);
     }
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       McFrPlayer player = McFrPlayer.getMcFrPlayer(args.<Player>getOne("joueur").get());
-      src.sendMessage(Text.of(TextColors.YELLOW, "Le malus de santé de " + player.getName() + " est de : " + player.getHealthMalus()));
+
+      if (player.hasCharacter()) {
+        if (args.hasAny("ajout")) {
+          int addingValue = args.<Integer>getOne("ajout").get();
+          player.getHealth().add(player, addingValue);
+
+          if (addingValue > 0) {
+            src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez soigné " + player.getName() + " de " + addingValue + "points."));
+            player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez été soigné de " + addingValue + "points."));
+          } else {
+            src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez blessé " + player.getName() + " de " + (-addingValue) + "points."));
+            player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez été blessé de " + (-addingValue) + "points."));
+          }
+
+          player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + player.getHealth().getValue() + "/" + player.getHealth().getMax()
+              + ", malus de " + player.getHealth().getMalus()));
+        }
+
+        src.sendMessage(Text.of(TextColors.YELLOW, "Le malus de santé de " + player.getName() + " est de : " + player.getHealth().getValue() + "/"
+            + player.getHealth().getMax() + ", malus de " + player.getHealth().getMalus()));
+      } else {
+        src.sendMessage(Text.of(TextColors.YELLOW, "Le joueur ciblé n'a pas de personnage."));
+      }
+
       return CommandResult.success();
     }
 
@@ -155,9 +105,9 @@ public class HealthCommand extends AbstractCommand {
     public CommandSpec getCommandSpec() {
       // #f:0
       return CommandSpec.builder()
-          .description(Text.of("Vérifie la santé d'un joueur."))
-          .permission("essentials.command.health.check")
-          .arguments(GenericArguments.player(Text.of("joueur")))
+          .description(Text.of("Permet de gérer la santé d'un joueur."))
+          .permission("essentials.command.health.mj")
+          .arguments(GenericArguments.player(Text.of("joueur")), GenericArguments.optional(GenericArguments.integer(Text.of("ajout"))))
           .executor(this)
           .build();
       // #f:1
@@ -165,7 +115,7 @@ public class HealthCommand extends AbstractCommand {
 
     @Override
     public String[] getAliases() {
-      return new String[] { "check" };
+      return new String[] { "mj" };
     }
   }
 }
