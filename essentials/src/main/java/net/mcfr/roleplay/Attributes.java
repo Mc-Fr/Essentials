@@ -4,7 +4,8 @@ public enum Attributes {
   FORCE("Force"),
   DEXTERITE("Dextérité"),
   INTELLECT("Intellect"),
-  ENDURANCE("Endurance");
+  ENDURANCE("Endurance"),
+  PERCEPTION("Perception");
 
   private String name;
 
