@@ -201,7 +201,11 @@ public class Language {
       value = -0.6F * wordLength + 4;
       break;
     case 2:
-      value = -0.8F * wordLength + 8.5F;
+      if (this.alias.equals("commun")) {
+        value = -0.8F * wordLength + 12.0F;
+      } else {
+        value = -0.8F * wordLength + 8.5F;
+      }
       break;
     default:
       return 0.0F;

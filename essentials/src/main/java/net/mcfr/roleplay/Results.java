@@ -15,8 +15,11 @@ public enum Results {
   public static Results getResult(int roll, int margin) {
     if (roll == 3 || roll == 4)
       return CRITICAL_SUCCESS;
-    if (roll == 17 || roll == 18)
-      return CRITICAL_FAILURE;
+    if ((roll == 17 || roll == 18))
+      if (margin < 0)
+        return CRITICAL_FAILURE;
+      else
+        return FAILURE;
     if (margin >= 10)
       return CRITICAL_SUCCESS;
     if (margin <= -10)
