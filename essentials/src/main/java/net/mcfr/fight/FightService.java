@@ -3,7 +3,6 @@ package net.mcfr.fight;
 import net.mcfr.utils.McFrPlayer;
 
 public interface FightService {
-
   void createFight(String fightId, McFrPlayer creator);
 
   void stopFight(String fightId);
@@ -37,5 +36,4 @@ public interface FightService {
   void insertFighter(String fightId, Fighter fighter, int index);
 
   void setTurn(String fightId, int index);
-
 }
