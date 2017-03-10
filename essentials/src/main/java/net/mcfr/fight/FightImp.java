@@ -71,12 +71,12 @@ public class FightImp implements FightService {
 
   @Override
   public void displayMaluses(String fightId, McFrPlayer player) {
-
+    //TODO
   }
 
   @Override
   public void hideMaluses(String fightId, McFrPlayer player) {
-
+    //TODO
   }
 
   @Override
@@ -147,7 +147,7 @@ public class FightImp implements FightService {
 
   @Override
   public void insertFighter(String fightId, Fighter fighter, int index) {
-
+    //TODO
   }
 
   @Override

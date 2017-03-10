@@ -3,6 +3,7 @@ package net.mcfr.fight;
 import java.util.Set;
 import java.util.TreeSet;
 
+import net.mcfr.roleplay.rollResults.AttributeRollResult;
 import net.mcfr.utils.McFrPlayer;
 
 public class Fight {
@@ -17,7 +18,16 @@ public class Fight {
     this.id = id;
     this.leader = leader;
     this.index = 0;
-    this.fighters = new TreeSet<>((f1, f2) -> 0); //TODO Compléter le Comparator.
+    this.fighters = new TreeSet<>((f1, f2) -> {
+      AttributeRollResult f1Result = f1.getInitiativeRoll();
+      AttributeRollResult f2Result = f2.getInitiativeRoll();
+      if (f1Result.getMargin() == f2Result.getMargin()) {
+        if (f1Result.getScore() == f2Result.getScore()) {
+
+        }
+      }
+      return 0;
+    });
   }
 
   public void stop() {

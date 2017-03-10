@@ -29,7 +29,9 @@ import net.mcfr.chat.ChatType;
 import net.mcfr.expedition.ExpeditionSystem;
 import net.mcfr.fight.Fighter;
 import net.mcfr.roleplay.Attributes;
+import net.mcfr.roleplay.RolePlayService;
 import net.mcfr.roleplay.Skills;
+import net.mcfr.roleplay.rollResults.AttributeRollResult;
 
 public class McFrPlayer implements Fighter {
   private static List<McFrPlayer> players = new ArrayList<>();
@@ -617,5 +619,13 @@ public class McFrPlayer implements Fighter {
   @Override
   public String toString() {
     return this.player.toString();
+  }
+
+  @Override
+  public AttributeRollResult getInitiativeRoll() {
+    Optional<RolePlayService> serviceOpt = Sponge.getServiceManager().provide(RolePlayService.class);
+    if (serviceOpt.isPresent())
+      return serviceOpt.get().attributeRoll(getPlayer(), Attributes.DEXTERITE, 0);
+    throw new IllegalStateException("Roleplay Service is not available!");
   }
 }
