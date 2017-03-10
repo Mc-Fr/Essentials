@@ -15,8 +15,6 @@ import com.google.gson.stream.JsonReader;
 
 public final class McFrConnection {
   private static String jdbcUrl;
-  private static String jdrDatabase;
-  private static String serverDatabase;
   private static SqlService sql = Sponge.getServiceManager().provide(SqlService.class).get();
 
   /**
@@ -28,33 +26,23 @@ public final class McFrConnection {
     File commandsFile = new File("config/essentials-config/database.json");
     if (commandsFile.exists()) {
       try {
-        JsonObject database = new JsonParser().parse(new JsonReader(new FileReader(commandsFile))).getAsJsonObject();
+        JsonObject databaseConfig = new JsonParser().parse(new JsonReader(new FileReader(commandsFile))).getAsJsonObject();
 
-        String ip = database.get("ip").getAsString();
-        String user = database.get("user").getAsString();
-        String password = database.get("password").getAsString();
+        String ip = databaseConfig.get("ip").getAsString();
+        String user = databaseConfig.get("user").getAsString();
+        String password = databaseConfig.get("password").getAsString();
 
-        serverDatabase = database.get("serverDatabase").getAsString();
-        jdrDatabase = database.get("jdrDatabase").getAsString();
-        jdbcUrl = "jdbc:mysql://" + user + ":" + password + "@" + ip + "/";
+        String database = databaseConfig.get("database").getAsString();
+        jdbcUrl = "jdbc:mysql://" + user + ":" + password + "@" + ip + "/" + database;
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
   }
 
-  public static Connection getJdrConnection() {
+  public static Connection getConnection() {
     try {
-      return sql.getDataSource(jdbcUrl + jdrDatabase).getConnection();
-    } catch (SQLException e) {
-      e.printStackTrace();
-      return null;
-    }
-  }
-
-  public static Connection getServerConnection() {
-    try {
-      return sql.getDataSource(jdbcUrl + serverDatabase).getConnection();
+      return sql.getDataSource(jdbcUrl).getConnection();
     } catch (SQLException e) {
       e.printStackTrace();
       return null;

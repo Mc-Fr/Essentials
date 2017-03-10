@@ -70,7 +70,7 @@ public class TribalWord {
    * Enregistre le mot dans la base de donnée.
    */
   private void registerInDatabase() {
-    try (Connection jdrConnection = McFrConnection.getJdrConnection()){
+    try (Connection jdrConnection = McFrConnection.getConnection()){
       PreparedStatement addWord = jdrConnection.prepareStatement("INSERT INTO langue_tribale VALUES (?, ?, ?)");
       addWord.setString(1, this.word);
       addWord.setString(2, this.translation);
@@ -85,7 +85,7 @@ public class TribalWord {
    * Charge tous les mots présents en base de donnée.
    */
   public static void loadFromDatabase() {
-    try (Connection jdrConnection = McFrConnection.getJdrConnection()){
+    try (Connection jdrConnection = McFrConnection.getConnection()){
       ResultSet tribalData = jdrConnection.prepareStatement("SELECT tribal, commun, level FROM TribalDictionnary").executeQuery();
 
       while (tribalData.next()) {

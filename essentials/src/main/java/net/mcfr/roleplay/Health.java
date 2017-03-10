@@ -38,7 +38,7 @@ public class Health {
   }
 
   private void save(McFrPlayer owner) {
-    try (Connection jdrConnection = McFrConnection.getJdrConnection()) {
+    try (Connection jdrConnection = McFrConnection.getConnection()) {
       PreparedStatement setHealth = jdrConnection.prepareStatement("UPDATE `fiche_perso_personnage` SET `health`=? WHERE `id`=?");
       setHealth.setInt(1, this.value);
       setHealth.setInt(2, owner.getSheetId());

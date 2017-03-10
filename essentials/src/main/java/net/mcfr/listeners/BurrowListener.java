@@ -64,7 +64,7 @@ public class BurrowListener {
   }
 
   public static void saveInDatabase() {
-    try (Connection serverConnection = McFrConnection.getServerConnection()) {
+    try (Connection serverConnection = McFrConnection.getConnection()) {
       serverConnection.prepareStatement("DELETE FROM BurrowChunks").execute();
       chunks.forEach((b, l) -> {
         try {
@@ -95,7 +95,7 @@ public class BurrowListener {
   }
 
   public static void loadFromDatabase() {
-    try (Connection serverConnection = McFrConnection.getServerConnection()){
+    try (Connection serverConnection = McFrConnection.getConnection()){
       ResultSet chunkData = serverConnection.prepareStatement("SELECT id, x, y, z FROM Chunks").executeQuery();
 
       while (chunkData.next()) {

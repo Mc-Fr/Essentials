@@ -52,7 +52,7 @@ public class Skills {
   }
 
   public static void loadFromDatabase() {
-    try (Connection jdrConnection = McFrConnection.getJdrConnection();){
+    try (Connection jdrConnection = McFrConnection.getConnection();){
       ResultSet skillData = jdrConnection.prepareStatement("SELECT name, displayName, baseAttribute, difficulty, category FROM Skills").executeQuery();
       
       while (skillData.next()) {

@@ -38,7 +38,7 @@ public class LoginListener {
     if (this.plugin.isServerLocked() && !e.getTargetUser().hasPermission("essentials.admin.log_when_lock")) {
       e.setCancelled(true);
     } else {
-      try (Connection jdrConnection = McFrConnection.getJdrConnection()) {
+      try (Connection jdrConnection = McFrConnection.getConnection()) {
         int userId = -1;
         PreparedStatement forumAccountId = jdrConnection
             .prepareStatement("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");

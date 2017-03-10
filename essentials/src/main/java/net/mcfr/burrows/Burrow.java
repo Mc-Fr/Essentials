@@ -118,7 +118,7 @@ public class Burrow {
    * Enregistre le terrier en base de données
    */
   private void registerInDatabase() {
-    try (Connection serverConnection = McFrConnection.getServerConnection()) {
+    try (Connection serverConnection = McFrConnection.getConnection()) {
       PreparedStatement insertQuery = serverConnection.prepareStatement(
           "INSERT INTO Burrow(id, name, world, timer, maxPopulation, entityType, lastEventTime`, `x`, `y`, `z`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
       insertQuery.setInt(1, this.id);
@@ -142,7 +142,7 @@ public class Burrow {
    * Marque un terrier comme détruit en base de données
    */
   private void deleteFromDatabase() {
-    try (Connection serverConnection = McFrConnection.getServerConnection()) {
+    try (Connection serverConnection = McFrConnection.getConnection()) {
       PreparedStatement deleteQuery = serverConnection.prepareStatement("UPDATE Burrow SET dead = 1 WHERE id = ?");
 
       deleteQuery.setInt(1, this.id);
@@ -156,7 +156,7 @@ public class Burrow {
    * Sauvegarde le nouvel état du terrier en base de données
    */
   private void saveInDatabase() {
-    try (Connection serverConnection = McFrConnection.getServerConnection()) {
+    try (Connection serverConnection = McFrConnection.getConnection()) {
       PreparedStatement updateQuery = serverConnection
           .prepareStatement("UPDATE Burrow SET name = ?, timer = ?, maxPopulation = ?, lastEventTime = ?, x = ?, y = ?, z = ? WHERE id = ?");
 
@@ -478,7 +478,7 @@ public class Burrow {
    */
   public static int getUnusedId() {
     int id = 0;
-    try (Connection serverConnection = McFrConnection.getServerConnection()) {
+    try (Connection serverConnection = McFrConnection.getConnection()) {
       ResultSet idData = serverConnection.prepareStatement("SELECT MAX(id)+1 FROM Burrow").executeQuery();
 
       if (idData.next()) {
@@ -518,7 +518,7 @@ public class Burrow {
    *         actifs
    */
   public static String loadFromDatabase() {
-    try (Connection serverConnection = McFrConnection.getServerConnection()) {
+    try (Connection serverConnection = McFrConnection.getConnection()) {
       ResultSet burrowData = serverConnection
           .prepareStatement("SELECT id, name, timer, maxPopulation, entity, lastEvent, world, x, y, z FROM AliveBurrows").executeQuery();
       Location<World> location;
