@@ -12,7 +12,7 @@ public class Fight {
   private McFrPlayer leader;
   private int index;
   private Set<Fighter> fighters;
-  private Set<Fighter> banFighters;
+  private Set<McFrPlayer> banFighters;
 
   public Fight(String id, McFrPlayer leader) {
     this.id = id;
@@ -22,11 +22,11 @@ public class Fight {
       AttributeRollResult f1Result = f1.getInitiativeRoll();
       AttributeRollResult f2Result = f2.getInitiativeRoll();
       if (f1Result.getMargin() == f2Result.getMargin()) {
-        if (f1Result.getScore() == f2Result.getScore()) {
-
-        }
+        if (f1Result.getScore() == f2Result.getScore())
+          return Long.compare(f1.getFightJoinTime().get(), f2.getFightJoinTime().get());
+        return Integer.compare(f2Result.getScore(), f1Result.getScore());
       }
-      return 0;
+      return Integer.compare(f2Result.getMargin(), f1Result.getMargin());
     });
   }
 

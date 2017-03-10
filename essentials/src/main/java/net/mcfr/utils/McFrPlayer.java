@@ -103,6 +103,8 @@ public class McFrPlayer implements Fighter {
   private Location<World> previousLocation;
   private long lastBreathTime;
   private long readDescriptionTime;
+  private Optional<Long> fightJoinTime;
+  private Optional<String> fight;
 
   public static void addPlayer(McFrPlayer player) {
     players.add(player);
@@ -627,5 +629,27 @@ public class McFrPlayer implements Fighter {
     if (serviceOpt.isPresent())
       return serviceOpt.get().attributeRoll(getPlayer(), Attributes.DEXTERITE, 0);
     throw new IllegalStateException("Roleplay Service is not available!");
+  }
+
+  @Override
+  public Optional<Long> getFightJoinTime() {
+    return this.fightJoinTime;
+  }
+
+  @Override
+  public Optional<String> getFight() {
+    return this.fight;
+  }
+
+  @Override
+  public void joinFight(String fight) {
+    this.fight = Optional.of(fight);
+    this.fightJoinTime = Optional.of(System.currentTimeMillis());
+  }
+
+  @Override
+  public void leaveFight(Optional<String> message) {
+    this.fight = Optional.empty();
+    this.fightJoinTime = Optional.empty();
   }
 }
