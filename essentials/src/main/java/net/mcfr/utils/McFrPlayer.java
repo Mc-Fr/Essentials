@@ -648,7 +648,7 @@ public class McFrPlayer implements Fighter {
   }
 
   @Override
-  public void leaveFight(Optional<String> message) {
+  public void leaveFight(Optional<Text> message) {
     this.fight = Optional.empty();
     this.fightJoinTime = Optional.empty();
   }

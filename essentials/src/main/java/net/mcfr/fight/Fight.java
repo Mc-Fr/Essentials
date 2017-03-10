@@ -1,7 +1,11 @@
 package net.mcfr.fight;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.roleplay.rollResults.AttributeRollResult;
 import net.mcfr.utils.McFrPlayer;
@@ -31,12 +35,16 @@ public class Fight {
   }
 
   public void stop() {
-
+    for (Fighter f : this.fighters) {
+      f.leaveFight(Optional.of(Text.of(TextColors.YELLOW, "Le combat est fini.")));
+    }
+    this.fighters.clear();
   }
 
   public boolean add(Fighter fighter) {
     if (!this.banFighters.contains(fighter)) {
       this.fighters.add(fighter);
+      fighter.joinFight(this.id);
       return true;
     }
     return false;
@@ -44,6 +52,7 @@ public class Fight {
 
   public void remove(Fighter fighter) {
     this.fighters.remove(fighter);
+    fighter.leaveFight(Optional.of(Text.of(TextColors.YELLOW, "Vous avez quitté le combat.")));
   }
 
   public void start() {
@@ -52,6 +61,7 @@ public class Fight {
 
   public void ban(McFrPlayer fighter) {
     this.fighters.remove(fighter);
+    fighter.leaveFight(Optional.of(Text.of(TextColors.YELLOW, "Vous avez été banni du combat.")));
     this.banFighters.add(fighter);
   }
 
