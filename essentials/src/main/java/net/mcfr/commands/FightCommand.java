@@ -29,7 +29,24 @@ public class FightCommand extends AbstractCommand {
             .description(Text.of("Commande du système de combat tour par tour."))
             .permission("essentials.command.fight")
             .executor(this)
-            .arguments(GenericArguments.allOf(GenericArguments.player(Text.of("joueur"))))
+            .children(getChildrenList(new Create(getPlugin()),
+                new Stop(getPlugin()),
+                new Join(getPlugin()),
+                new Start(getPlugin()),
+                new Leave(getPlugin()),
+                new Spectate(getPlugin()),
+                new Display(getPlugin()),
+                new Next(getPlugin()),
+                new Skip(getPlugin()),
+                new Interrupt(getPlugin()),
+                new Resume(getPlugin()),
+                new Lead(getPlugin()),
+                new NPF(getPlugin()),
+                new Kick(getPlugin()),
+                new Ban(getPlugin()),
+                new Move(getPlugin()),
+                new Turn(getPlugin()),
+                new Help(getPlugin())))
             .build();
     //#f:1
   }
@@ -52,12 +69,19 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return CommandSpec.builder().arguments(GenericArguments.string(Text.of("nom"))).build();
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Crée une nouvelle instance de combat en tour par tour."))
+          .permission("essentials.command.fight.create")
+          .arguments(GenericArguments.string(Text.of("nom")))
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "create" };
     }
   }
 
@@ -74,12 +98,18 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Ferme le combat (confirmation demandée)."))
+          .permission("essentials.command.fight.stop")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "stop" };
     }
   }
 
@@ -96,12 +126,19 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Permet de rejoindre le combat spécifié."))
+          .permission("essentials.command.fight.join")
+          .arguments(GenericArguments.string(Text.of("nom")))
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "join" };
     }
   }
 
@@ -118,12 +155,18 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Démarre le combat."))
+          .permission("essentials.command.fight.start")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "start" };
     }
   }
 
@@ -140,12 +183,18 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Permet de quitter le combat en cours (confirmation demandée)."))
+          .permission("essentials.command.fight.leave")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "leave" };
     }
   }
 
@@ -162,12 +211,18 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Permet de passer en mode spectateur ou de le quitter."))
+          .permission("essentials.command.fight.spectate")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "spectate" };
     }
   }
 
@@ -184,12 +239,18 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Affiche les informations MJ."))
+          .permission("essentials.command.fight.display")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "display" };
     }
   }
 
@@ -206,18 +267,24 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Met fin au tour en cours."))
+          .permission("essentials.command.fight.next")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "next" };
     }
   }
 
-  static class Wait extends AbstractCommand {
+  static class Skip extends AbstractCommand {
 
-    public Wait(Essentials plugin) {
+    public Skip(Essentials plugin) {
       super(plugin);
     }
 
@@ -228,12 +295,18 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Met votre tour en attente (reprendre avec /f resume ou /f interrupt)."))
+          .permission("essentials.command.fight.wait")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "wait" };
     }
   }
 
@@ -250,12 +323,18 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Interrompt le tour en cours et entame votre tour."))
+          .permission("essentials.command.fight.interrupt")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "interrupt" };
     }
   }
 
@@ -272,12 +351,18 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Reprend votre tour après le tour en cours."))
+          .permission("essentials.command.fight.resume")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "resume" };
     }
   }
 
@@ -294,12 +379,19 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Donne la maîtrise du combat à un autre joueur."))
+          .permission("essentials.command.fight.lead")
+          .arguments(GenericArguments.player(Text.of("joueur")))
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "lead" };
     }
   }
 
@@ -316,12 +408,18 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Permet de gérer les combattants fictifs."))
+          .permission("essentials.command.fight.npf")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "npf" };
     }
   }
 
@@ -338,12 +436,19 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Sors un joueur du combat (confirmation demandée)."))
+          .permission("essentials.command.fight.kick")
+          .arguments(GenericArguments.player(Text.of("joueur")))
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "kick" };
     }
   }
 
@@ -360,12 +465,19 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Bannis un joueur de ce combat (confirmation demandée)."))
+          .permission("essentials.command.fight.ban")
+          .arguments(GenericArguments.player(Text.of("joueur")))
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "ban" };
     }
   }
 
@@ -382,12 +494,19 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Déplace le tour d'un joueur."))
+          .permission("essentials.command.fight.move")
+          .arguments()
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "move" };
     }
   }
 
@@ -404,12 +523,19 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Passe le tour à un autre joueur."))
+          .permission("essentials.command.fight.turn")
+          .arguments()
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "turn" };
     }
   }
 
@@ -426,12 +552,18 @@ public class FightCommand extends AbstractCommand {
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      // #f:0
+      return CommandSpec.builder()
+          .description(Text.of("Affiche l'aide du système de combat tour par tour."))
+          .permission("essentials.command.fight.help")
+          .executor(this)
+          .build();
+      // #f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "help" };
     }
   }
 }
