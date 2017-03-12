@@ -257,7 +257,7 @@ public class McFrPlayer {
 
   public void setName(String name) {
     try (Connection serverConnection = McFrConnection.getConnection()) {
-      PreparedStatement changeName = serverConnection.prepareStatement("UPDATE Player SET name = ? WHERE pseudonym = ?");
+      PreparedStatement changeName = serverConnection.prepareStatement("UPDATE srv_player SET name = ? WHERE pseudonym = ?");
       changeName.setString(1, name);
       changeName.setString(2, this.player.getName());
       changeName.execute();
@@ -274,7 +274,7 @@ public class McFrPlayer {
   public void setDescription(String description) {
     try (Connection serverConnection = McFrConnection.getConnection()) {
 
-      PreparedStatement changeDescription = serverConnection.prepareStatement("UPDATE Player SET description = ? WHERE pseudonym = ?");
+      PreparedStatement changeDescription = serverConnection.prepareStatement("UPDATE srv_player SET description = ? WHERE pseudonym = ?");
       changeDescription.setString(1, description);
       changeDescription.setString(2, this.player.getName());
       changeDescription.execute();
@@ -315,7 +315,7 @@ public class McFrPlayer {
       this.traits.clear();
       Connection serverConnection = McFrConnection.getConnection();
       Connection jdrConnection = McFrConnection.getConnection();
-      PreparedStatement getPseudonym = serverConnection.prepareStatement("SELECT * FROM Player WHERE pseudonym = ?");
+      PreparedStatement getPseudonym = serverConnection.prepareStatement("SELECT * FROM srv_player WHERE pseudonym = ?");
       PreparedStatement getUserId = jdrConnection
           .prepareStatement("SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
       PreparedStatement getCharacterSheetId = jdrConnection
@@ -327,7 +327,7 @@ public class McFrPlayer {
       PreparedStatement getAdvantages = jdrConnection
           .prepareStatement("SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
       PreparedStatement registerPlayer = serverConnection
-          .prepareStatement("INSERT INTO Player(uuid, pseudonym, name, description, gender, race, deaths) VALUES (?,?,?,?,?,?,?)");
+          .prepareStatement("INSERT INTO srv_player(uuid, pseudonym, name, description, gender, race, deaths) VALUES (?,?,?,?,?,?,?)");
 
       getPseudonym.setString(1, this.player.getName());
       ResultSet playerData = getPseudonym.executeQuery();
@@ -578,7 +578,7 @@ public class McFrPlayer {
   public void incrementNumberOfDeaths() {
     this.deaths++;
     try (Connection serverConnection = McFrConnection.getConnection()) {
-      PreparedStatement incrementDeaths = serverConnection.prepareStatement("UPDATE Player SET deaths = ? WHERE pseudonym = ?");
+      PreparedStatement incrementDeaths = serverConnection.prepareStatement("UPDATE srv_player SET deaths = ? WHERE pseudonym = ?");
       incrementDeaths.setInt(1, this.deaths);
       incrementDeaths.setString(2, this.player.getName());
       incrementDeaths.execute();

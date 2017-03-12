@@ -65,13 +65,12 @@ public class BurrowListener {
 
   public static void saveInDatabase() {
     try (Connection serverConnection = McFrConnection.getConnection()) {
-      serverConnection.prepareStatement("DELETE FROM BurrowChunks").execute();
+      serverConnection.prepareStatement("DELETE FROM srv_burrow_chunks").execute();
       chunks.forEach((b, l) -> {
         try {
           Optional<Burrow> burrow = Burrow.getBurrowById(b);
           if (burrow.isPresent() && burrow.get().isBurrowAlive()) {
-            PreparedStatement saveQuery = serverConnection
-                .prepareStatement("INSERT INTO `BurrowChunks`(`burrowId`, `x`, `y`, `z`) VALUES (?, ?, ?, ?)");
+            PreparedStatement saveQuery = serverConnection.prepareStatement("INSERT INTO srv_burrow_chunks(burrowId, x, y, z) VALUES (?, ?, ?, ?)");
 
             l.forEach(p -> {
               try {
@@ -95,8 +94,8 @@ public class BurrowListener {
   }
 
   public static void loadFromDatabase() {
-    try (Connection serverConnection = McFrConnection.getConnection()){
-      ResultSet chunkData = serverConnection.prepareStatement("SELECT id, x, y, z FROM Chunks").executeQuery();
+    try (Connection serverConnection = McFrConnection.getConnection()) {
+      ResultSet chunkData = serverConnection.prepareStatement("SELECT id, x, y, z FROM chunks").executeQuery();
 
       while (chunkData.next()) {
         Vector3i position = new Vector3i(chunkData.getInt("x"), chunkData.getInt("y"), chunkData.getInt("z"));

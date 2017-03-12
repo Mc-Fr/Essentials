@@ -120,7 +120,7 @@ public class Burrow {
   private void registerInDatabase() {
     try (Connection serverConnection = McFrConnection.getConnection()) {
       PreparedStatement insertQuery = serverConnection.prepareStatement(
-          "INSERT INTO Burrow(id, name, world, timer, maxPopulation, entityType, lastEventTime`, `x`, `y`, `z`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+          "INSERT INTO srv_burrow(id, name, world, timer, maxPopulation, entityType, lastEventTime`, `x`, `y`, `z`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
       insertQuery.setInt(1, this.id);
       insertQuery.setString(2, this.name);
       insertQuery.setString(3, this.location.getExtent().getName());
@@ -143,7 +143,7 @@ public class Burrow {
    */
   private void deleteFromDatabase() {
     try (Connection serverConnection = McFrConnection.getConnection()) {
-      PreparedStatement deleteQuery = serverConnection.prepareStatement("UPDATE Burrow SET dead = 1 WHERE id = ?");
+      PreparedStatement deleteQuery = serverConnection.prepareStatement("UPDATE srv_burrow SET dead = 1 WHERE id = ?");
 
       deleteQuery.setInt(1, this.id);
       deleteQuery.execute();
@@ -158,7 +158,7 @@ public class Burrow {
   private void saveInDatabase() {
     try (Connection serverConnection = McFrConnection.getConnection()) {
       PreparedStatement updateQuery = serverConnection
-          .prepareStatement("UPDATE Burrow SET name = ?, timer = ?, maxPopulation = ?, lastEventTime = ?, x = ?, y = ?, z = ? WHERE id = ?");
+          .prepareStatement("UPDATE srv_burrow SET name = ?, timer = ?, maxPopulation = ?, lastEventTime = ?, x = ?, y = ?, z = ? WHERE id = ?");
 
       updateQuery.setString(1, this.name);
       updateQuery.setLong(2, this.delay);
@@ -307,8 +307,7 @@ public class Burrow {
   }
 
   /**
-   * Met à jour la visualisation d'un terrier pour tous les joueurs pouvant le
-   * voir
+   * Met à jour la visualisation d'un terrier pour tous les joueurs pouvant le voir
    * 
    * @param prevPosition
    *          Ancien emplacement du terrier
@@ -335,9 +334,8 @@ public class Burrow {
   }
 
   /**
-   * Crée un nouveau terrier avec les paramètes spécifiés. Le type de l'entité
-   * spécifié peut ne pas exister, auquel cas le terrier n'est pas créé et la
-   * méthode renvoie un optionnel vide.
+   * Crée un nouveau terrier avec les paramètes spécifiés. Le type de l'entité spécifié peut ne pas exister, auquel cas
+   * le terrier n'est pas créé et la méthode renvoie un optionnel vide.
    * 
    * @param id
    * @param name
@@ -363,9 +361,8 @@ public class Burrow {
   }
 
   /**
-   * Cherche le type d'entité correspondant à la classe d'entité fournie, puis
-   * crée le terrier avec les paramètres renseignés. Si le type d'entité n'est
-   * pas reconnu, le terrier n'est pas créé et un optionel vide est retourné.
+   * Cherche le type d'entité correspondant à la classe d'entité fournie, puis crée le terrier avec les paramètres
+   * renseignés. Si le type d'entité n'est pas reconnu, le terrier n'est pas créé et un optionel vide est retourné.
    * 
    * @param name
    * @param location
@@ -403,8 +400,7 @@ public class Burrow {
   }
 
   /**
-   * Détruit un terrier, les entités qui le composent et le marque comme détruit
-   * en base de données.
+   * Détruit un terrier, les entités qui le composent et le marque comme détruit en base de données.
    */
   public void removeBurrow() {
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.getMcFrPlayer(p).getSelectedBurrow().orElse(null) == this)
@@ -417,13 +413,11 @@ public class Burrow {
   }
 
   /**
-   * Renvoit un optionnel contenant s'il existe le terrier le plus proche de
-   * l'emplacement indiqué.
+   * Renvoit un optionnel contenant s'il existe le terrier le plus proche de l'emplacement indiqué.
    * 
    * @param searchLocation
    *          Emplacement de référence
-   * @return Optionnel contenant le terrier le plus proche du lieu de référence
-   *         s'il existe, vide sinon
+   * @return Optionnel contenant le terrier le plus proche du lieu de référence s'il existe, vide sinon
    */
   public static Optional<Burrow> getNearestBurrow(Location<World> searchLocation) {
     return burrows.stream().filter(b -> b.getLocation().getExtent().equals(searchLocation.getExtent()))
@@ -433,8 +427,8 @@ public class Burrow {
   /**
    * @param name
    *          Nom du terrier à chercher
-   * @return Optionnel contenant le premier terrier dont le nom correpond au nom
-   *         du terrier à chercher, vide s'il n'existe pas
+   * @return Optionnel contenant le premier terrier dont le nom correpond au nom du terrier à chercher, vide s'il
+   *         n'existe pas
    */
   public static Optional<Burrow> getBurrowByName(String name) {
     return burrows.stream().filter(b -> b.getName().equals(name)).findFirst();
@@ -443,8 +437,7 @@ public class Burrow {
   /**
    * @param id
    *          Numéro d'identification à chercher
-   * @return Optionnel contenant le premier terrier dont l'identifiant est celui
-   *         spécifié, vide s'il n'existe pas
+   * @return Optionnel contenant le premier terrier dont l'identifiant est celui spécifié, vide s'il n'existe pas
    */
   public static Optional<Burrow> getBurrowById(int id) {
     return burrows.stream().filter(b -> b.getId() == id).findFirst();
@@ -458,8 +451,7 @@ public class Burrow {
   }
 
   /**
-   * @return Vrai si le terrier est toujours mis à jour par le système, faux
-   *         sinon
+   * @return Vrai si le terrier est toujours mis à jour par le système, faux sinon
    */
   public boolean isBurrowAlive() {
     return burrows.contains(this);
@@ -473,13 +465,12 @@ public class Burrow {
   }
 
   /**
-   * @return Le plus petit entier non utilisé par les identifiants des terriers
-   *         existants
+   * @return Le plus petit entier non utilisé par les identifiants des terriers existants
    */
   public static int getUnusedId() {
     int id = 0;
     try (Connection serverConnection = McFrConnection.getConnection()) {
-      ResultSet idData = serverConnection.prepareStatement("SELECT MAX(id)+1 FROM Burrow").executeQuery();
+      ResultSet idData = serverConnection.prepareStatement("SELECT MAX(id)+1 FROM srv_burrow").executeQuery();
 
       if (idData.next()) {
         id = idData.getInt(1);
@@ -504,8 +495,7 @@ public class Burrow {
    * Rend tous les terriers invisibles pour un joueur.
    * 
    * @param player
-   *          Joueur pour lequel tous les terriers doivent être rendus
-   *          invisibles
+   *          Joueur pour lequel tous les terriers doivent être rendus invisibles
    */
   public static void setAllInvisible(Player player) {
     burrows.forEach(b -> b.setInvisible(player));
@@ -514,13 +504,12 @@ public class Burrow {
   /**
    * Charge les terriers contenus en base de données.
    * 
-   * @return Chaîne de caractère indiquant le nombre de terriers chargés et
-   *         actifs
+   * @return Chaîne de caractère indiquant le nombre de terriers chargés et actifs
    */
   public static String loadFromDatabase() {
     try (Connection serverConnection = McFrConnection.getConnection()) {
       ResultSet burrowData = serverConnection
-          .prepareStatement("SELECT id, name, timer, maxPopulation, entity, lastEvent, world, x, y, z FROM AliveBurrows").executeQuery();
+          .prepareStatement("SELECT id, name, timer, maxPopulation, entity, lastEvent, world, x, y, z FROM alive_burrows").executeQuery();
       Location<World> location;
       String worldName;
       String entityTypeName;
