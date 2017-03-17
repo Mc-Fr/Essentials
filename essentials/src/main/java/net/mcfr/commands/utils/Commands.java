@@ -23,6 +23,7 @@ import net.mcfr.commands.ReplyCommand;
 import net.mcfr.commands.RollCommand;
 import net.mcfr.commands.ServerLockCommand;
 import net.mcfr.commands.SpawnCommand;
+import net.mcfr.commands.SpectateCommand;
 import net.mcfr.commands.SpeedCommand;
 import net.mcfr.commands.SpyMpCommand;
 import net.mcfr.commands.TpCommand;
@@ -57,6 +58,7 @@ public enum Commands {
   ROLL(RollCommand.class),
   SERVERLOCK(ServerLockCommand.class),
   SPAWN(SpawnCommand.class),
+  SPECTATE(SpectateCommand.class),
   SPEED(SpeedCommand.class),
   SPYMP(SpyMpCommand.class),
   TP(TpCommand.class),

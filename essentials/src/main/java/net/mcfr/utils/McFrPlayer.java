@@ -490,6 +490,29 @@ public class McFrPlayer {
 
     return scores.stream().max((s1, s2) -> Integer.compare(s1, s2)).get();
   }
+  
+  /**
+   * Calcule la compétence de la liste fournie dans laquelle le personnage a le plus haut score effectif.
+   * (c'est à dire en comptant l'ajout des attributs et la gestion des interdépendances entre compétences)
+   * 
+   * @param skills Liste de compétences à comparer
+   * @return La compétence dans laquelle le personnage est le plus doué
+   */
+  public Skills getBestSkill(Skills... skills) {
+    Skills result = skills[0];
+    int maxSkillLevel = getSkillLevel(result, Optional.empty());
+    int currentSkillLevel;
+    
+    for (int i = 1; i < skills.length; i++) {
+      currentSkillLevel = getSkillLevel(skills[i], Optional.empty());
+      if (currentSkillLevel > maxSkillLevel) {
+        maxSkillLevel = currentSkillLevel;
+        result = skills[i];
+      }
+    }
+    
+    return result;
+  }
 
   public int getLanguageLevel(Language lang) {
     String langName = lang.getName();

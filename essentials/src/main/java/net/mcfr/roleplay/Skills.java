@@ -12,6 +12,7 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.ItemStack;
 
 import net.mcfr.utils.McFrConnection;
+import net.mcfr.utils.McFrPlayer;
 
 public class Skills {
   private static Map<String, Skills> skills = new HashMap<>();
@@ -97,38 +98,56 @@ public class Skills {
     return skills.get(name);
   }
 
+  /**
+   * Détermine la compétence de combat à utiliser par le joueur en fonction de l'item qu'il a en main principale.
+   * @param player Le joueur dont la compétence de combat est déterminée
+   * @return La compétence de combat à utiliser
+   */
   public static Skills getWeaponSkill(Player player) {
     Optional<ItemStack> optUsedWeapon = player.getItemInHand(HandTypes.MAIN_HAND);
+    McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
+    
     if (!optUsedWeapon.isPresent()) {
       optUsedWeapon = player.getItemInHand(HandTypes.OFF_HAND);
-      if (!optUsedWeapon.isPresent())
-        return skills.get("pugilat");
+      if (!optUsedWeapon.isPresent()) {
+        return mcFrPlayer.getBestSkill(combatSkills.get("pugilat"), combatSkills.get("lutte"), combatSkills.get("arts_martiaux"));
+      }
     }
 
     String usedWeaponName = optUsedWeapon.get().getItem().getName().toLowerCase();
+    if (usedWeaponName.contains("shield"))
+      return combatSkills.get("bouclier");
     if (usedWeaponName.contains("dagger"))
-      return skills.get("dague");
+      return combatSkills.get("dague");
     if (usedWeaponName.contains("rapier"))
-      return skills.get("rapiere");
+      return combatSkills.get("rapiere");
     if (usedWeaponName.contains("scimitar"))
-      return skills.get("sabre");
-    if (usedWeaponName.endsWith("sword"))
-      return skills.get("epee_courte");
+      return combatSkills.get("sabre");
     if (usedWeaponName.contains("bastard"))
-      return skills.get("epee_a_deux_mains");
-    if (usedWeaponName.contains("mace") || usedWeaponName.contains("war_hammer"))
-      return skills.get("hache/masse_a_une_main");
-    if (usedWeaponName.contains("battle_axe"))
-      return skills.get("hache/masse_a_deux_mains");
+      return combatSkills.get("epee_batarde");
+    if (usedWeaponName.contains("long_sword"))
+      return combatSkills.get("epee_a_deux_mains");
+    if (usedWeaponName.contains("sword"))
+      return combatSkills.get("epee_courte");
+    if (usedWeaponName.contains("flail"))
+      return combatSkills.get("fleau_a_une_main");
+    if (usedWeaponName.contains("whip"))
+      return combatSkills.get("fouet");
+    if (usedWeaponName.contains("battle_axe") || usedWeaponName.contains("war_hammer"))
+      return combatSkills.get("hache/masse_a_deux_mains");
+    if (usedWeaponName.contains("axe") || usedWeaponName.contains("mace"))
+      return combatSkills.get("hache/masse_a_une_main");
     if (usedWeaponName.contains("halberd"))
-      return skills.get("hallebarde");
+      return combatSkills.get("hallebarde");
     if (usedWeaponName.contains("spear") || usedWeaponName.contains("pointy"))
-      return skills.get("lance");
+      return combatSkills.get("lance");
     if (usedWeaponName.contains("bow"))
-      return skills.get("arc");
-    if (usedWeaponName.contains("boStaff"))
-      return skills.get("baton");
+      return combatSkills.get("arc");
+    if (usedWeaponName.contains("staff"))
+      return combatSkills.get("baton");
+    if (usedWeaponName.contains("gun"))
+      return combatSkills.get("armes_a_feu");
 
-    return skills.get("pugilat");
+    return mcFrPlayer.getBestSkill(combatSkills.get("pugilat"), combatSkills.get("lutte"), combatSkills.get("arts_martiaux"));
   }
 }
