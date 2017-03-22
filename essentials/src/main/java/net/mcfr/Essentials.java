@@ -28,7 +28,8 @@ import net.mcfr.babel.TribalWord;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.commands.utils.Commands;
 import net.mcfr.death.CareSystem;
-import net.mcfr.expedition.ExpeditionSystem;
+import net.mcfr.expedition.ExpeditionImp;
+import net.mcfr.expedition.ExpeditionService;
 import net.mcfr.listeners.BurrowListener;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.LoginListener;
@@ -71,6 +72,8 @@ public class Essentials {
 
     this.careSystem = new CareSystem();
     registerListeners();
+    
+    Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
 
     getLogger().info("McFrEssentials Plugin has loaded.");
   }
@@ -83,7 +86,6 @@ public class Essentials {
     Sponge.getEventManager().registerListeners(this, new PlayerListener());
     
     Sponge.getEventManager().registerListeners(this, this.careSystem);
-    Sponge.getEventManager().registerListeners(this, new ExpeditionSystem());
   }
 
   @Listener

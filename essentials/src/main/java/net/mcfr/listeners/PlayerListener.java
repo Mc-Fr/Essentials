@@ -17,6 +17,7 @@ import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
+import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
@@ -25,12 +26,23 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.chat.MessageData;
+import net.mcfr.expedition.ExpeditionService;
 import net.mcfr.roleplay.Skills;
 import net.mcfr.utils.McFrPlayer;
 
 public class PlayerListener {
   private final long LAST_BREATH_INVICIBILITY = 2000;
   private final long LAST_BREATH_DELAY = 15000;
+  
+  @Listener
+  public void onPlayerMove(MoveEntityEvent e, @First Player p) {
+    if (p != null) {
+      Optional<ExpeditionService> optExpeditionService = Sponge.getServiceManager().provide(ExpeditionService.class);
+      if (optExpeditionService.isPresent()) {
+        optExpeditionService.get().actualizePlayerState(p);
+      }
+    }
+  }
   
   @Listener
   public void onDamageEntity(DamageEntityEvent e) {
