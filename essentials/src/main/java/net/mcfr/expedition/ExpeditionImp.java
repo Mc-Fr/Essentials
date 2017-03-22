@@ -58,8 +58,10 @@ public class ExpeditionImp implements ExpeditionService {
       ResultSet areasData = connection.prepareStatement("SELECT name,x,y,z,radius,world FROM srv_safeareas").executeQuery();
 
       while (areasData.next()) {
+        System.out.println(areasData.getString(6));
         Optional<World> optWorld = Sponge.getServer().getWorld(areasData.getString(6));
         if (optWorld.isPresent()) {
+          System.out.println(areasData.getString(1));
           areas.add(new AuthorizedArea(areasData.getString(1),
               new Location<World>(optWorld.get(), areasData.getInt(2), areasData.getInt(3), areasData.getInt(4)), areasData.getInt(5)));
         }
@@ -75,7 +77,7 @@ public class ExpeditionImp implements ExpeditionService {
     States prevState = player.getExpeditionState();
     States nextState = getNextState(p.getLocation());
 
-    if (!p.hasPermission("essentials.leavearea") && !p.hasPermission("essentials.freefromarea")) {
+    if (!p.hasPermission("essentials.leavearea") && !p.hasPermission("essentials.freefromareas")) {
       if (nextState.ordinal() > prevState.ordinal()) {
         switch (nextState) {
         case ADVERT:

@@ -72,8 +72,6 @@ public class Essentials {
 
     this.careSystem = new CareSystem();
     registerListeners();
-    
-    Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
 
     getLogger().info("McFrEssentials Plugin has loaded.");
   }
@@ -111,6 +109,8 @@ public class Essentials {
             .interval(interval, TimeUnit.SECONDS).submit(this);
       });
     }
+    
+    Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
 
     Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load"))
         .delay(4, TimeUnit.SECONDS).submit(this);

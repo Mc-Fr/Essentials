@@ -55,7 +55,7 @@ public class AuthorizedArea {
 
   public void removeFromDatabase() {
     try (Connection connection = McFrConnection.getConnection()) {
-      PreparedStatement removeArea = connection.prepareStatement("DELETE FROM src_safeareas WHERE name = ?");
+      PreparedStatement removeArea = connection.prepareStatement("DELETE FROM srv_safeareas WHERE name = ?");
 
       removeArea.setString(1, this.name);
 
