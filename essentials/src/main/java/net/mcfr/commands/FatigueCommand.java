@@ -30,18 +30,18 @@ public class FatigueCommand extends AbstractCommand {
         player.getHealthState().addFatigue(player, addingValue);
 
         if (addingValue > 0) {
-          src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " a récupéré " + addingValue + "points de fatigue."));
-          player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez récupéré " + addingValue + "points de fatigue."));
+          src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " a récupéré " + addingValue + " points de fatigue."));
+          player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez récupéré " + addingValue + " points de fatigue."));
         } else {
-          src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " a perdu " + (-addingValue) + "points de fatigue."));
-          player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez perdu " + (-addingValue) + "points de fatigue."));
+          src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " a perdu " + (-addingValue) + " points de fatigue."));
+          player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez perdu " + (-addingValue) + " points de fatigue."));
         }
 
         player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Votre fatigue est de : " + player.getHealthState().getFatigueValue() + "/" + player.getHealthState().getMax()
             + ", malus de " + player.getHealthState().getFatigueMalus()));
       }
 
-      src.sendMessage(Text.of(TextColors.YELLOW, "Le niveau de fatigue de " + player.getName() + " est de : " + player.getHealthState().getFatigueValue() + "/"
+      src.sendMessage(Text.of(TextColors.YELLOW, "La fatigue de " + player.getName() + " est de : " + player.getHealthState().getFatigueValue() + "/"
           + player.getHealthState().getMax() + ", malus de " + player.getHealthState().getFatigueMalus()));
     } else {
       src.sendMessage(Text.of(TextColors.YELLOW, "Le joueur ciblé n'a pas de personnage."));
