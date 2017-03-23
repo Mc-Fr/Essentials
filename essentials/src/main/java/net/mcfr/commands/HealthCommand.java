@@ -27,7 +27,7 @@ public class HealthCommand extends AbstractCommand {
       if (player.hasCharacter()) {
         if (args.hasAny("ajout")) {
           int addingValue = args.<Integer>getOne("ajout").get();
-          player.getHealth().add(player, addingValue);
+          player.getHealthState().addHealth(player, addingValue);
 
           if (addingValue > 0) {
             src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez été soigné de " + addingValue + "points."));
@@ -36,8 +36,8 @@ public class HealthCommand extends AbstractCommand {
           }
         }
 
-        src.sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + player.getHealth().getValue() + "/" + player.getHealth().getMax()
-            + ", malus de " + player.getHealth().getMalus()));
+        src.sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + player.getHealthState().getHealthValue() + "/" + player.getHealthState().getMax()
+            + ", malus de " + player.getHealthState().getHealthMalus()));
       } else {
         src.sendMessage(Text.of(TextColors.YELLOW, "Vous n'avez pas de personnage."));
       }
@@ -78,7 +78,7 @@ public class HealthCommand extends AbstractCommand {
       if (player.hasCharacter()) {
         if (args.hasAny("ajout")) {
           int addingValue = args.<Integer>getOne("ajout").get();
-          player.getHealth().add(player, addingValue);
+          player.getHealthState().addHealth(player, addingValue);
 
           if (addingValue > 0) {
             src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez soigné " + player.getName() + " de " + addingValue + "points."));
@@ -88,12 +88,12 @@ public class HealthCommand extends AbstractCommand {
             player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez été blessé de " + (-addingValue) + "points."));
           }
 
-          player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + player.getHealth().getValue() + "/" + player.getHealth().getMax()
-              + ", malus de " + player.getHealth().getMalus()));
+          player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + player.getHealthState().getHealthValue() + "/" + player.getHealthState().getMax()
+              + ", malus de " + player.getHealthState().getHealthMalus()));
         }
 
-        src.sendMessage(Text.of(TextColors.YELLOW, "Le malus de santé de " + player.getName() + " est de : " + player.getHealth().getValue() + "/"
-            + player.getHealth().getMax() + ", malus de " + player.getHealth().getMalus()));
+        src.sendMessage(Text.of(TextColors.YELLOW, "Le niveau de santé de " + player.getName() + " est de : " + player.getHealthState().getHealthValue() + "/"
+            + player.getHealthState().getMax() + ", malus de " + player.getHealthState().getHealthMalus()));
       } else {
         src.sendMessage(Text.of(TextColors.YELLOW, "Le joueur ciblé n'a pas de personnage."));
       }

@@ -5,6 +5,7 @@ import net.mcfr.commands.BackCommand;
 import net.mcfr.commands.BurrowCommand;
 import net.mcfr.commands.DescCommand;
 import net.mcfr.commands.ExpeditionCommand;
+import net.mcfr.commands.FatigueCommand;
 import net.mcfr.commands.FlyCommand;
 import net.mcfr.commands.GmCommand;
 import net.mcfr.commands.GodCommand;
@@ -40,6 +41,7 @@ public enum Commands {
   BURROW(BurrowCommand.class),
   DESC(DescCommand.class),
   EXPEDITION(ExpeditionCommand.class),
+  FATIGUE(FatigueCommand.class),
   FLY(FlyCommand.class),
   GM(GmCommand.class),
   GOD(GodCommand.class),
