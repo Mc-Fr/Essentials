@@ -64,7 +64,6 @@ public class RolePlayImp implements RolePlayService {
     if (skill.getAttribute() == Attributes.DEXTERITE) {
       score -= mcFrPlayer.hasTrait("desordre_neurologique_spasmes_legers") ? 2 : 0;
       score -= mcFrPlayer.hasTrait("desordre_neurologique_spasmes_severes") ? 4 : 0;
-      score -= mcFrPlayer.getTraitLevel("doigt_en_moins");
     }
 
     int margin = score - roll;
