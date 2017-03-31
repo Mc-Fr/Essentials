@@ -110,7 +110,7 @@ public class Skills {
     if (!optUsedWeapon.isPresent()) {
       optUsedWeapon = player.getItemInHand(HandTypes.OFF_HAND);
       if (!optUsedWeapon.isPresent()) {
-        return mcFrPlayer.getBestSkill(combatSkills.get("pugilat"), combatSkills.get("lutte"), combatSkills.get("arts_martiaux"));
+        return mcFrPlayer.getBestSkill(combatSkills.get("pugilat"), combatSkills.get("lutte"), combatSkills.get("arts_martiaux"), combatSkills.get("attaque_innee"));
       }
     }
 

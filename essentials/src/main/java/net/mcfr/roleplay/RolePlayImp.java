@@ -143,7 +143,7 @@ public class RolePlayImp implements RolePlayService {
   }
 
   @Override
-  public DefenseRollResult defenseRoll(Player player, Defenses defense, int modifier) {
+  public DefenseRollResult defenseRoll(Player player, Defenses defense, int modifier, Optional<Skills> optSkill) {
     int roll = rollDice(3, 6);
     int score = 0;
     McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
@@ -161,10 +161,12 @@ public class RolePlayImp implements RolePlayService {
       break;
     case PARADE:
       Skills weaponSkill = Skills.getWeaponSkill(player);
+      if (optSkill.isPresent())
+        weaponSkill = optSkill.get();
       score = mcFrPlayer.getSkillLevel(weaponSkill, Optional.empty());
       score /= 2;
       score += 3;
-      if ((weaponSkill.getName().equals("pugilat") || weaponSkill.getName().equals("lutte"))
+      if ((weaponSkill.getName().equals("pugilat") || weaponSkill.getName().equals("lutte") || weaponSkill.getName().equals("arts_martiaux") || weaponSkill.getName().equals("attaque_innee"))
           && mcFrPlayer.hasTrait("parade_a_mains_nues_amelioree")) {
         score += 1;
       } else if (mcFrPlayer.hasTrait("parade_amelioree")) {

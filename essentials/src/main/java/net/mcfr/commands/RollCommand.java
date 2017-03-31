@@ -2,6 +2,8 @@ package net.mcfr.commands;
 
 import static org.spongepowered.api.text.format.TextColors.YELLOW;
 
+import java.util.Optional;
+
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
@@ -86,6 +88,9 @@ public class RollCommand extends AbstractCommand {
 
       String weaponString;
       switch (result.getSkill().getName()) {
+      case "arts_martiaux":
+        weaponString = "aux arts martiaux";
+        break;
       case "pugilat":
         weaponString = "aux poings";
         break;
@@ -99,6 +104,7 @@ public class RollCommand extends AbstractCommand {
       case "arc":
       case "epee_courte":
       case "epee_a_deux_mains":
+      case "attaque_innee":
         weaponString = "à l'" + displayName;
         break;
       default:
@@ -409,8 +415,14 @@ public class RollCommand extends AbstractCommand {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {        
         if (args.hasAny("type")) {
-          printResult(RollTypes.DEFENSE, Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src,
-              args.<Defenses>getOne("type").get(), args.<Integer>getOne("modificateur").orElse(0)));
+          Defenses type = args.<Defenses>getOne("type").get();
+          if (type.equals(Defenses.PARADE) && args.hasAny("compétence")) {
+            printResult(RollTypes.DEFENSE, Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src,
+                args.<Defenses>getOne("type").get(), args.<Integer>getOne("modificateur").orElse(0), Optional.of(args.<Skills>getOne("compétence").get())));
+          } else {
+            printResult(RollTypes.DEFENSE, Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src,
+                args.<Defenses>getOne("type").get(), args.<Integer>getOne("modificateur").orElse(0), Optional.empty()));
+          }
         } else {
           src.sendMessage(Text.of(TextColors.YELLOW, "------------------------ ROLL D ------------------------\n"
               + "Jet de défense :\n"
@@ -434,7 +446,8 @@ public class RollCommand extends AbstractCommand {
           .permission("essentials.command.roll.defense")
           .executor(this)
           .arguments(GenericArguments.optional(GenericArguments.enumValue(Text.of("type"), Defenses.class)),
-              GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))))
+              GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))),
+              GenericArguments.optional(GenericArguments.choices(Text.of("compétence"), Skills.getCombatSkills())))
           .build();
   //#f:1
     }

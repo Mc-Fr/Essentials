@@ -23,7 +23,7 @@ public interface RolePlayService {
 
   AttackRollResult attackRoll(Player player, int modifier, Optional<Skills> optSkill);
 
-  DefenseRollResult defenseRoll(Player player, Defenses defense, int modifier);
+  DefenseRollResult defenseRoll(Player player, Defenses defense, int modifier, Optional<Skills> optSkill);
 
   int rollDice(int times, int faces);
 
