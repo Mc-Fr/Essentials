@@ -14,7 +14,7 @@ public interface ExpeditionService {
   public List<AuthorizedArea> getAreas();
   
   /**
-   * Ajoute une zone sécurisée et l'enregistre en base de données*
+   * Ajoute une zone sécurisée et l'enregistre en base de données
    * @return Vrai si la zone a été créée, faux si une zone porte déjà ce nom
    */
   public boolean addArea(String name, Location<World> location, int radius);
@@ -25,7 +25,7 @@ public interface ExpeditionService {
   public void removeArea(AuthorizedArea area);
   
   /**
-   * Renvoie l'Authorized Area portant ce nom dans un Optional, ou un Optional vide
+   * Renvoie l'AuthorizedArea portant ce nom dans un Optional, ou un Optional vide
    */
   public Optional<AuthorizedArea> getAreaByName(String name);
   
@@ -42,12 +42,12 @@ public interface ExpeditionService {
   /**
    * Retourne l'état correspondant à l'emplacement renseigné en paramètre
    */
-  public States getNextState(Location<World> loc); //TODO : Passer en getStateAtLocation
+  public States getStateAtLocation(Location<World> loc);
   
   /**
    * Retourne l'état le plus sûr entre les deux états envoyés en paramètre
    */
-  public States getWeakest(States current, States next); //TODO : Passer en getSafest
+  public States getSafest(States current, States next);
   
   
 }

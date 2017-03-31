@@ -27,6 +27,10 @@ public class AuthorizedArea {
   public String getName() {
     return this.name;
   }
+  
+  public Location<World> getLocation() {
+    return this.location;
+  }
 
   public int getRadius() {
     return this.radius;

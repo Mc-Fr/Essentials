@@ -29,7 +29,7 @@ public class ExpeditionCommand extends AbstractCommand {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-    src.sendMessage(Text.of(TextColors.RED, "Merci de choisir l'une des actions suivantes : add, remove, list"));
+    src.sendMessage(Text.of(TextColors.RED, "Merci de choisir l'une des actions suivantes : add, remove, list, addarea, removearea, listareas"));
     return CommandResult.empty();
   }
 

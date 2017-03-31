@@ -4,13 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
+import net.mcfr.death.CareService;
 import net.mcfr.utils.McFrConnection;
 import net.mcfr.utils.McFrPlayer;
 
@@ -26,10 +29,15 @@ public class LoginListener {
     McFrPlayer player = new McFrPlayer(e.getTargetEntity());
     McFrPlayer.addPlayer(player);
     player.loadFromDataBase();
-    if (this.plugin.getCareSystem().isPlayerInSafeArea(player)) {
-      player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes dans une zone sécurisée."));
-    } else {
-      player.getPlayer().sendMessage(Text.of(TextColors.GOLD, "Attention, vous êtes encore dans une zone non sécurisée !"));
+    
+    Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
+    if (optCareService.isPresent()) {
+      optCareService.get().actualizePlayerState(player.getPlayer());
+      if (player.isInCareCenterEffectArea()) {
+        player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes dans une zone sécurisée."));
+      } else {
+        player.getPlayer().sendMessage(Text.of(TextColors.GOLD, "Attention, vous êtes encore dans une zone non sécurisée !"));
+      }
     }
   }
 

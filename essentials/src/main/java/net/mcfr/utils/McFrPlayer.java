@@ -299,25 +299,23 @@ public class McFrPlayer {
   }
 
   public void loadFromDataBase() {
-    try {
+    try (Connection connection = McFrConnection.getConnection()) {
       this.skills.clear();
       this.attributes.clear();
       this.traits.clear();
-      Connection serverConnection = McFrConnection.getConnection();
-      Connection jdrConnection = McFrConnection.getConnection();
-      PreparedStatement getPseudonym = serverConnection.prepareStatement("SELECT * FROM srv_player WHERE pseudonym = ?");
-      PreparedStatement getUserId = jdrConnection
+      PreparedStatement getPseudonym = connection.prepareStatement("SELECT * FROM srv_player WHERE pseudonym = ?");
+      PreparedStatement getUserId = connection
           .prepareStatement("SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
-      PreparedStatement getCharacterSheetId = jdrConnection
+      PreparedStatement getCharacterSheetId = connection
           .prepareStatement("SELECT id, health, fatigue FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
-      PreparedStatement getCharacterSheet = jdrConnection
+      PreparedStatement getCharacterSheet = connection
           .prepareStatement("SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement getAttributes = jdrConnection
+      PreparedStatement getAttributes = connection
           .prepareStatement("SELECT attribut, level FROM fiche_perso_personnage_attribut WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement getAdvantages = jdrConnection
+      PreparedStatement getAdvantages = connection
           .prepareStatement("SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement registerPlayer = serverConnection
-          .prepareStatement("INSERT INTO srv_player(uuid, pseudonym, name, description, gender, race, deaths) VALUES (?,?,?,?,?,?,?)");
+      PreparedStatement registerPlayer = connection
+          .prepareStatement("CALL addPlayer(?,?)");
 
       getPseudonym.setString(1, this.player.getName());
       ResultSet playerData = getPseudonym.executeQuery();
@@ -327,18 +325,13 @@ public class McFrPlayer {
         String description = playerData.getString(4);
         this.description = description == null ? Optional.empty() : Optional.of(description);
         this.deaths = playerData.getInt(7);
-      } else {
+      } else { 
         this.name = this.player.getName();
         this.description = Optional.of("Un nouveau colon");
         this.deaths = 0;
 
         registerPlayer.setString(1, this.player.getUniqueId().toString());
         registerPlayer.setString(2, this.name);
-        registerPlayer.setString(3, this.name);
-        registerPlayer.setString(4, this.description.get());
-        registerPlayer.setString(5, "M");
-        registerPlayer.setString(6, "human");
-        registerPlayer.setInt(7, this.deaths);
         registerPlayer.execute();
       }
       playerData.close();
@@ -410,8 +403,7 @@ public class McFrPlayer {
       }
       characterSheet.close();
 
-      serverConnection.close();
-      jdrConnection.close();
+      connection.close();
     } catch (SQLException e) {
       e.printStackTrace();
     }

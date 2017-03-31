@@ -3,6 +3,7 @@ package net.mcfr.commands.utils;
 import net.mcfr.commands.BabelCommand;
 import net.mcfr.commands.BackCommand;
 import net.mcfr.commands.BurrowCommand;
+import net.mcfr.commands.CareCenterCommand;
 import net.mcfr.commands.DescCommand;
 import net.mcfr.commands.ExpeditionCommand;
 import net.mcfr.commands.FatigueCommand;
@@ -39,6 +40,7 @@ public enum Commands {
   BABEL(BabelCommand.class),
   BACK(BackCommand.class),
   BURROW(BurrowCommand.class),
+  CARECENTER(CareCenterCommand.class),
   DESC(DescCommand.class),
   EXPEDITION(ExpeditionCommand.class),
   FATIGUE(FatigueCommand.class),

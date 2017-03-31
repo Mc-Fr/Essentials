@@ -16,8 +16,10 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
+import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.entity.InteractEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
+import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
@@ -26,6 +28,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.chat.MessageData;
+import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionService;
 import net.mcfr.roleplay.Skills;
 import net.mcfr.utils.McFrPlayer;
@@ -40,6 +43,10 @@ public class PlayerListener {
       Optional<ExpeditionService> optExpeditionService = Sponge.getServiceManager().provide(ExpeditionService.class);
       if (optExpeditionService.isPresent()) {
         optExpeditionService.get().actualizePlayerState(p);
+      }
+      Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
+      if (optCareService.isPresent()) {
+        optCareService.get().actualizePlayerState(p);
       }
     }
   }
@@ -84,6 +91,25 @@ public class PlayerListener {
         }
       }
 
+    }
+  }
+  
+  @Listener
+  public void onPlayerDeath(DestructEntityEvent.Death e) {
+    if (e.getTargetEntity() instanceof Player) {
+      Player player = (Player) e.getTargetEntity();
+      Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
+      if (optCareService.isPresent()) {
+        optCareService.get().computeDeath(player);
+      }
+    }
+  }
+  
+  @Listener
+  public void onPlayerRespawn(RespawnPlayerEvent e) {
+    Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
+    if (optCareService.isPresent()) {
+      optCareService.get().respawnPlayer(e);
     }
   }
   

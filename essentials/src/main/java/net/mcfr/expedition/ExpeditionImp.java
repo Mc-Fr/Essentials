@@ -32,7 +32,7 @@ public class ExpeditionImp implements ExpeditionService {
   
   @Override
   public boolean addArea(String name, Location<World> location, int radius) {
-    if (!areas.stream().filter(a -> a.getName().equals(name)).findAny().isPresent()) {
+    if (!getAreaByName(name).isPresent()) {
       AuthorizedArea newArea = new AuthorizedArea(name, location, radius);
       areas.add(newArea);
       newArea.registerInDatabase();
@@ -58,10 +58,8 @@ public class ExpeditionImp implements ExpeditionService {
       ResultSet areasData = connection.prepareStatement("SELECT name,x,y,z,radius,world FROM srv_safeareas").executeQuery();
 
       while (areasData.next()) {
-        System.out.println(areasData.getString(6));
         Optional<World> optWorld = Sponge.getServer().getWorld(areasData.getString(6));
         if (optWorld.isPresent()) {
-          System.out.println(areasData.getString(1));
           areas.add(new AuthorizedArea(areasData.getString(1),
               new Location<World>(optWorld.get(), areasData.getInt(2), areasData.getInt(3), areasData.getInt(4)), areasData.getInt(5)));
         }
@@ -75,7 +73,7 @@ public class ExpeditionImp implements ExpeditionService {
   public void actualizePlayerState(Player p) {
     McFrPlayer player = McFrPlayer.getMcFrPlayer(p);
     States prevState = player.getExpeditionState();
-    States nextState = getNextState(p.getLocation());
+    States nextState = getStateAtLocation(p.getLocation());
 
     if (!p.hasPermission("essentials.leavearea") && !p.hasPermission("essentials.freefromareas")) {
       if (nextState.ordinal() > prevState.ordinal()) {
@@ -106,7 +104,7 @@ public class ExpeditionImp implements ExpeditionService {
   }
 
   @Override
-  public States getNextState(Location<World> loc) {
+  public States getStateAtLocation(Location<World> loc) {
     current = States.TO_COMPUTE;
 
     areas.stream().filter(a -> a.getExtent().equals(loc.getExtent())).forEach(a -> {
@@ -118,15 +116,15 @@ public class ExpeditionImp implements ExpeditionService {
       int radius = a.getRadius();
 
       if (distance < radius) {
-        current = getWeakest(current, States.IN_AREA);
+        current = getSafest(current, States.IN_AREA);
       } else if (distance < radius + RADIUS_DELTA) {
-        current = getWeakest(current, States.ADVERT);
+        current = getSafest(current, States.ADVERT);
       } else if (distance < radius + 2 * RADIUS_DELTA) {
-        current = getWeakest(current, States.HURT1);
+        current = getSafest(current, States.HURT1);
       } else if (distance < radius + 3 * RADIUS_DELTA) {
-        current = getWeakest(current, States.HURT2);
+        current = getSafest(current, States.HURT2);
       } else if (distance < radius + 4 * RADIUS_DELTA) {
-        current = getWeakest(current, States.HURT3);
+        current = getSafest(current, States.HURT3);
       }
     });
 
@@ -134,7 +132,7 @@ public class ExpeditionImp implements ExpeditionService {
   }
 
   @Override
-  public States getWeakest(States current, States next) {
+  public States getSafest(States current, States next) {
     return current.ordinal() > next.ordinal() ? next : current;
   }
 }

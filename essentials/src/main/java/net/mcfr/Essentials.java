@@ -27,7 +27,8 @@ import com.google.inject.Inject;
 import net.mcfr.babel.TribalWord;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.commands.utils.Commands;
-import net.mcfr.death.CareSystem;
+import net.mcfr.death.CareImp;
+import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionImp;
 import net.mcfr.expedition.ExpeditionService;
 import net.mcfr.listeners.BurrowListener;
@@ -41,7 +42,6 @@ import net.mcfr.roleplay.RolePlayService;
 @Plugin(id = "essentials", name = "Essentials", version = "1.0", dependencies = @Dependency(id = "mcfr_b_i"))
 public class Essentials {
   private boolean serverLock;
-  private CareSystem careSystem;
 
   @Inject
   private Game game;
@@ -69,8 +69,7 @@ public class Essentials {
         e1.printStackTrace();
       }
     }
-
-    this.careSystem = new CareSystem();
+    
     registerListeners();
 
     getLogger().info("McFrEssentials Plugin has loaded.");
@@ -82,8 +81,6 @@ public class Essentials {
     Sponge.getEventManager().registerListeners(this, new LoginListener(this));
     Sponge.getEventManager().registerListeners(this, new NatureListener());
     Sponge.getEventManager().registerListeners(this, new PlayerListener());
-    
-    Sponge.getEventManager().registerListeners(this, this.careSystem);
   }
 
   @Listener
@@ -111,6 +108,7 @@ public class Essentials {
     }
     
     Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
+    Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
 
     Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load"))
         .delay(4, TimeUnit.SECONDS).submit(this);
@@ -123,9 +121,5 @@ public class Essentials {
 
   public boolean isServerLocked() {
     return this.serverLock;
-  }
-  
-  public CareSystem getCareSystem() {
-    return this.careSystem;
   }
 }
