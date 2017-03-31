@@ -39,17 +39,12 @@ public class RollCommand extends AbstractCommand {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-    src.sendMessage(Text.of(TextColors.YELLOW, "------------------------- ROLL -------------------------\n"
-        + "Cette commande vous permet de lancer des jets de dés.\n"
-        + "Utilisation : /roll at/c/a/d/e/p [paramètres]\n"
-        + "- at : jet d'attribut (for, dex, int, end)\n"
-        + "- c : jet de compétence (forge, course...)\n"
-        + "- a : jet d'attaque\n"
-        + "- d : jet de défense\n"
-        + "- e : jet d'encaissement\n"
-        + "- p : jet de perception\n"
-        + "Essayez l'une des commandes pour plus de précisions !\n"
-        + "--------------------------------------------------------------"));
+    src.sendMessage(Text.of(TextColors.YELLOW,
+        "------------------------- ROLL -------------------------\n" + "Cette commande vous permet de lancer des jets de dés.\n"
+            + "Utilisation : /roll at/c/a/d/e/p [paramètres]\n" + "- at : jet d'attribut (for, dex, int, end)\n"
+            + "- c : jet de compétence (forge, course...)\n" + "- a : jet d'attaque\n" + "- d : jet de défense\n" + "- e : jet d'encaissement\n"
+            + "- p : jet de perception\n" + "Essayez l'une des commandes pour plus de précisions !\n"
+            + "--------------------------------------------------------------"));
     return CommandResult.success();
   }
 
@@ -91,6 +86,7 @@ public class RollCommand extends AbstractCommand {
       break;
     case "armes_a_feu":
       weaponString += "à l'arme à feu";
+      break;
     case "sabre":
     case "baton":
       weaponString += "au " + displayName;
@@ -107,7 +103,7 @@ public class RollCommand extends AbstractCommand {
     }
     return weaponString;
   }
-  
+
   private static void printResult(RollTypes type, RollResult res) {
     Player player = res.getPlayer();
 
@@ -126,8 +122,13 @@ public class RollCommand extends AbstractCommand {
     case ATTRIBUTE: {
       AttributeRollResult result = (AttributeRollResult) res;
 
-      line1 = String.format("%s fait un jet de %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
-          result.getAttribute().getName(), result.getScore());
+      String attributeString = "de " + result.getAttribute().getName();
+      if (result.getAttribute().equals(Attributes.INTELLECT)) {
+        attributeString = "d'" + Attributes.INTELLECT.getName();
+      }
+
+      line1 = String.format("%s fait un jet " + attributeString + ", score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
+          result.getScore());
     }
       break;
     case DEFENSE: {
@@ -177,9 +178,9 @@ public class RollCommand extends AbstractCommand {
       }
 
       String alternateAttribute = result.getSkill().getAttribute().equals(result.getAttribute()) ? "" : " (" + result.getAttribute().getName() + ") ";
-      
-      line1 = String.format("%s fait un jet %s, score de %d" + result.getModifierString() + alternateAttribute, McFrPlayer.getMcFrPlayer(player).getName(),
-          skillDisplayName, result.getScore());
+
+      line1 = String.format("%s fait un jet %s, score de %d" + result.getModifierString() + alternateAttribute,
+          McFrPlayer.getMcFrPlayer(player).getName(), skillDisplayName, result.getScore());
     }
       break;
     }
@@ -205,18 +206,14 @@ public class RollCommand extends AbstractCommand {
       if (src instanceof Player) {
         if (args.hasAny("compétence")) {
           Skills skill = args.<Skills>getOne("compétence").get();
-          printResult(RollTypes.SKILL, Sponge.getServiceManager().provide(RolePlayService.class).get().skillRoll((Player) src,
-              skill, args.<Integer>getOne("modificateur").orElse(0), args.<Attributes>getOne("attribut")));
+          printResult(RollTypes.SKILL, Sponge.getServiceManager().provide(RolePlayService.class).get().skillRoll((Player) src, skill,
+              args.<Integer>getOne("modificateur").orElse(0), args.<Attributes>getOne("attribut")));
         } else {
-          src.sendMessage(Text.of(TextColors.YELLOW, "------------------------ ROLL C ------------------------\n"
-              + "Jet de compétence :\n"
-              + "/roll c [compétence] pour lancer un jet direct.\n"
-              + "   Exemple : /roll c chasse\n"
-              + "/roll c [compétence] [modificateur] pour lancer un jet modifié.\n"
-              + "   Exemple : /roll c chasse -2\n"
+          src.sendMessage(Text.of(TextColors.YELLOW, "------------------------ ROLL C ------------------------\n" + "Jet de compétence :\n"
+              + "/roll c [compétence] pour lancer un jet direct.\n" + "   Exemple : /roll c chasse\n"
+              + "/roll c [compétence] [modificateur] pour lancer un jet modifié.\n" + "   Exemple : /roll c chasse -2\n"
               + "/roll c [compétence] [modificateur] [attribut] pour lancer un jet modifié sur un attribut.\n"
-              + "   Exemple : /roll c chasse -2 FORCE\n"
-              + "N'hésitez pas à utiliser la touche TAB pour avoir les différentes valeurs possibles.\n"
+              + "   Exemple : /roll c chasse -2 FORCE\n" + "N'hésitez pas à utiliser la touche TAB pour avoir les différentes valeurs possibles.\n"
               + "--------------------------------------------------------------"));
         }
       } else {
@@ -257,15 +254,13 @@ public class RollCommand extends AbstractCommand {
       if (src instanceof Player) {
         if (args.hasAny("attribut")) {
           printResult(RollTypes.ATTRIBUTE, Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll((Player) src,
-              args.<Attributes>getOne("attribut").get(), args.<Integer>getOne("modificateur").orElse(0)));          
+              args.<Attributes>getOne("attribut").get(), args.<Integer>getOne("modificateur").orElse(0)));
         } else {
-          src.sendMessage(Text.of(TextColors.YELLOW, "------------------------ ROLL AT -----------------------\n"
-              + "Jet d'attribut :\n"
-              + "/roll at FORCE/DEXTERITE/INTELLECT/ENDURANCE\n"
-              + "Vous pouvez ajouter un modificateur.\n"
-              + "   Exemple : /roll at DEXTERITE -5\n"
-              + "N'hésitez pas à utiliser la touche TAB pour avoir les différentes valeurs possibles.\n"
-              + "--------------------------------------------------------------"));
+          src.sendMessage(Text.of(TextColors.YELLOW,
+              "------------------------ ROLL AT -----------------------\n" + "Jet d'attribut :\n" + "/roll at FORCE/DEXTERITE/INTELLECT/ENDURANCE\n"
+                  + "Vous pouvez ajouter un modificateur.\n" + "   Exemple : /roll at DEXTERITE -5\n"
+                  + "N'hésitez pas à utiliser la touche TAB pour avoir les différentes valeurs possibles.\n"
+                  + "--------------------------------------------------------------"));
         }
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
@@ -340,15 +335,13 @@ public class RollCommand extends AbstractCommand {
       if (src instanceof Player) {
         if (args.hasAny("sens")) {
           printResult(RollTypes.PERCEPTION, Sponge.getServiceManager().provide(RolePlayService.class).get().perceptionRoll((Player) src,
-              args.<Senses>getOne("sens").get(), args.<Integer>getOne("modificateur").orElse(0)));        
+              args.<Senses>getOne("sens").get(), args.<Integer>getOne("modificateur").orElse(0)));
         } else {
-          src.sendMessage(Text.of(TextColors.YELLOW, "------------------------ ROLL P ------------------------\n"
-              + "Jet de perception :\n"
-              + "/roll p OUIE/VUE/ODORAT/GOUT/TOUCHER\n"
-              + "Vous pouvez ajouter un modificateur.\n"
-              + "   Exemple : /roll p VUE -5\n"
-              + "N'hésitez pas à utiliser la touche TAB pour avoir les différentes valeurs possibles.\n"
-              + "--------------------------------------------------------------"));
+          src.sendMessage(Text.of(TextColors.YELLOW,
+              "------------------------ ROLL P ------------------------\n" + "Jet de perception :\n" + "/roll p OUIE/VUE/ODORAT/GOUT/TOUCHER\n"
+                  + "Vous pouvez ajouter un modificateur.\n" + "   Exemple : /roll p VUE -5\n"
+                  + "N'hésitez pas à utiliser la touche TAB pour avoir les différentes valeurs possibles.\n"
+                  + "--------------------------------------------------------------"));
         }
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
@@ -385,8 +378,8 @@ public class RollCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
-        printResult(RollTypes.ATTACK,
-            Sponge.getServiceManager().provide(RolePlayService.class).get().attackRoll((Player) src, args.<Integer>getOne("modificateur").orElse(0), args.<Skills>getOne("compétence")));
+        printResult(RollTypes.ATTACK, Sponge.getServiceManager().provide(RolePlayService.class).get().attackRoll((Player) src,
+            args.<Integer>getOne("modificateur").orElse(0), args.<Skills>getOne("compétence")));
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
       }
@@ -420,24 +413,23 @@ public class RollCommand extends AbstractCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-      if (src instanceof Player) {        
+      if (src instanceof Player) {
         if (args.hasAny("type")) {
           Defenses type = args.<Defenses>getOne("type").get();
           if (type.equals(Defenses.PARADE) && args.hasAny("compétence")) {
-            printResult(RollTypes.DEFENSE, Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src,
-                args.<Defenses>getOne("type").get(), args.<Integer>getOne("modificateur").orElse(0), Optional.of(args.<Skills>getOne("compétence").get())));
+            printResult(RollTypes.DEFENSE,
+                Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src, args.<Defenses>getOne("type").get(),
+                    args.<Integer>getOne("modificateur").orElse(0), Optional.of(args.<Skills>getOne("compétence").get())));
           } else {
             printResult(RollTypes.DEFENSE, Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src,
                 args.<Defenses>getOne("type").get(), args.<Integer>getOne("modificateur").orElse(0), Optional.empty()));
           }
         } else {
-          src.sendMessage(Text.of(TextColors.YELLOW, "------------------------ ROLL D ------------------------\n"
-              + "Jet de défense :\n"
-              + "/roll d ESQUIVE/PARADE/BLOCAGE\n"
-              + "Vous pouvez ajouter un modificateur.\n"
-              + "   Exemple : /roll d ESQUIVE -5\n"
-              + "N'hésitez pas à utiliser la touche TAB pour avoir les différentes valeurs possibles.\n"
-              + "--------------------------------------------------------------"));
+          src.sendMessage(Text.of(TextColors.YELLOW,
+              "------------------------ ROLL D ------------------------\n" + "Jet de défense :\n" + "/roll d ESQUIVE/PARADE/BLOCAGE\n"
+                  + "Vous pouvez ajouter un modificateur.\n" + "   Exemple : /roll d ESQUIVE -5\n"
+                  + "N'hésitez pas à utiliser la touche TAB pour avoir les différentes valeurs possibles.\n"
+                  + "--------------------------------------------------------------"));
         }
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
