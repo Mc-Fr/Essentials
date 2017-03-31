@@ -4,6 +4,7 @@ import net.mcfr.commands.BabelCommand;
 import net.mcfr.commands.BackCommand;
 import net.mcfr.commands.BurrowCommand;
 import net.mcfr.commands.CareCenterCommand;
+import net.mcfr.commands.DateCommand;
 import net.mcfr.commands.DescCommand;
 import net.mcfr.commands.ExpeditionCommand;
 import net.mcfr.commands.FatigueCommand;
@@ -14,6 +15,7 @@ import net.mcfr.commands.HealCommand;
 import net.mcfr.commands.HealthCommand;
 import net.mcfr.commands.HrpCommand;
 import net.mcfr.commands.ItemCommand;
+import net.mcfr.commands.MeteoCommand;
 import net.mcfr.commands.MoveNpcCommand;
 import net.mcfr.commands.MpCommand;
 import net.mcfr.commands.MuteCommand;
@@ -41,6 +43,7 @@ public enum Commands {
   BACK(BackCommand.class),
   BURROW(BurrowCommand.class),
   CARECENTER(CareCenterCommand.class),
+  DATE(DateCommand.class),
   DESC(DescCommand.class),
   EXPEDITION(ExpeditionCommand.class),
   FATIGUE(FatigueCommand.class),
@@ -51,6 +54,7 @@ public enum Commands {
   HEALTH(HealthCommand.class),
   HRP(HrpCommand.class),
   ITEM(ItemCommand.class),
+  METEO(MeteoCommand.class),
   MOVENPC(MoveNpcCommand.class),
   MP(MpCommand.class),
   MUTE(MuteCommand.class),
