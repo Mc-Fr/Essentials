@@ -151,18 +151,23 @@ public class RolePlayImp implements RolePlayService {
     switch (defense) {
     case BLOCAGE:
       Skills shieldSkill = Skills.getSkills().get("bouclier");
+      optSkill = Optional.of(shieldSkill);
       score = mcFrPlayer.getSkillLevel(shieldSkill, Optional.empty());
       score /= 2;
       score += 3;
       break;
     case ESQUIVE:
+      optSkill = Optional.empty();
       score = mcFrPlayer.getAttributePoints(Attributes.DEXTERITE) - 4;
       score += mcFrPlayer.hasTrait("esquive_amelioree") ? 1 : 0;
       break;
     case PARADE:
       Skills weaponSkill = Skills.getWeaponSkill(player);
-      if (optSkill.isPresent())
+      if (optSkill.isPresent()) {
         weaponSkill = optSkill.get();
+      } else {
+        optSkill = Optional.of(weaponSkill);
+      }
       score = mcFrPlayer.getSkillLevel(weaponSkill, Optional.empty());
       score /= 2;
       score += 3;
@@ -180,7 +185,7 @@ public class RolePlayImp implements RolePlayService {
     score += mcFrPlayer.hasTrait("reflexes_de_combat") ? 1 : 0;
 
     int margin = score - roll;
-    return new DefenseRollResult(player, defense, modifier, roll, score, margin);
+    return new DefenseRollResult(player, defense, optSkill, modifier, roll, score, margin);
   }
 
   @Override

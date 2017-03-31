@@ -76,6 +76,38 @@ public class RollCommand extends AbstractCommand {
     return new String[] { "roll" };
   }
 
+  private static String getWeaponString(Skills skill) {
+    String weaponString = " ";
+    String displayName = skill.getDisplayName();
+    switch (skill.getName()) {
+    case "arts_martiaux":
+      weaponString += "aux arts martiaux";
+      break;
+    case "pugilat":
+      weaponString += "aux poings";
+      break;
+    case "lutte":
+      weaponString += "à la lutte";
+      break;
+    case "armes_a_feu":
+      weaponString += "à l'arme à feu";
+    case "sabre":
+    case "baton":
+      weaponString += "au " + displayName;
+      break;
+    case "arc":
+    case "epee_courte":
+    case "epee_a_deux_mains":
+    case "attaque_innee":
+      weaponString += "à l'" + displayName;
+      break;
+    default:
+      weaponString += "à la " + displayName;
+      break;
+    }
+    return weaponString;
+  }
+  
   private static void printResult(RollTypes type, RollResult res) {
     Player player = res.getPlayer();
 
@@ -84,35 +116,10 @@ public class RollCommand extends AbstractCommand {
     switch (type) {
     case ATTACK: {
       AttackRollResult result = (AttackRollResult) res;
-      String displayName = result.getSkill().getDisplayName();
 
-      String weaponString;
-      switch (result.getSkill().getName()) {
-      case "arts_martiaux":
-        weaponString = "aux arts martiaux";
-        break;
-      case "pugilat":
-        weaponString = "aux poings";
-        break;
-      case "lutte":
-        weaponString = "à la lutte";
-        break;
-      case "sabre":
-      case "baton":
-        weaponString = "au " + displayName;
-        break;
-      case "arc":
-      case "epee_courte":
-      case "epee_a_deux_mains":
-      case "attaque_innee":
-        weaponString = "à l'" + displayName;
-        break;
-      default:
-        weaponString = "à la " + displayName;
-        break;
-      }
+      String weaponString = getWeaponString(result.getSkill());
 
-      line1 = String.format("%s attaque %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(), weaponString,
+      line1 = String.format("%s attaque%s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(), weaponString,
           result.getScore());
     }
       break;
@@ -129,7 +136,7 @@ public class RollCommand extends AbstractCommand {
       String defenseString = "";
       switch (result.getDefense().toString()) {
       case "PARADE":
-        defenseString = "une parade";
+        defenseString = "une parade" + (result.getSkill().isPresent() ? getWeaponString(result.getSkill().get()) : "");
         break;
       case "ESQUIVE":
         defenseString = "d'esquiver";
