@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -38,6 +39,8 @@ import net.mcfr.listeners.NatureListener;
 import net.mcfr.listeners.PlayerListener;
 import net.mcfr.roleplay.RolePlayImp;
 import net.mcfr.roleplay.RolePlayService;
+import net.mcfr.time.TimeImp;
+import net.mcfr.time.TimeService;
 
 @Plugin(id = "essentials", name = "Essentials", version = "1.0", dependencies = @Dependency(id = "mcfr_b_i"))
 public class Essentials {
@@ -69,12 +72,12 @@ public class Essentials {
         e1.printStackTrace();
       }
     }
-    
+
     registerListeners();
 
     getLogger().info("McFrEssentials Plugin has loaded.");
   }
-  
+
   private void registerListeners() {
     Sponge.getEventManager().registerListeners(this, new BurrowListener());
     Sponge.getEventManager().registerListeners(this, new CommandListener());
@@ -106,10 +109,16 @@ public class Essentials {
             .interval(interval, TimeUnit.SECONDS).submit(this);
       });
     }
-    
+
     Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
     Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
+    Sponge.getServiceManager().setProvider(this, TimeService.class, new TimeImp());
 
+    Sponge.getScheduler().createTaskBuilder().execute(() -> {
+      Optional<TimeService> optTimeService = Sponge.getServiceManager().provide(TimeService.class);
+      if (optTimeService.isPresent())
+        optTimeService.get().update();
+    }).intervalTicks(1).submit(this);
     Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load"))
         .delay(4, TimeUnit.SECONDS).submit(this);
     TribalWord.loadFromDatabase();
