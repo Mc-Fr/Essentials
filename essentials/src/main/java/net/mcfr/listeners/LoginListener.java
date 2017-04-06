@@ -38,6 +38,8 @@ public class LoginListener {
       } else {
         player.getPlayer().sendMessage(Text.of(TextColors.GOLD, "Attention, vous êtes encore dans une zone non sécurisée !"));
       }
+      Sponge.getCommandManager().process(player.getPlayer(), "date");
+      Sponge.getCommandManager().process(player.getPlayer(), "meteo");
     }
   }
 
