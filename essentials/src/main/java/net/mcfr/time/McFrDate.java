@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import net.mcfr.time.weather.Seasons;
+
 public class McFrDate {
   private static final long MS_IN_S = 1000;
   private static final long SECONDS_OFFSET = 1484848800;
@@ -60,6 +62,13 @@ public class McFrDate {
     this.actualize();
   }
   
+  public McFrDate(McFrDate other) {
+    this.day = other.day;
+    this.month = other.month;
+    this.year = other.year;
+    this.timeValue = new TimeValue(other.timeValue.get());
+  }
+  
   public void actualize() {
     long realMilliSeconds = Calendar.getInstance().getTime().getTime() - SECONDS_OFFSET * MS_IN_S;
     
@@ -107,6 +116,28 @@ public class McFrDate {
   
   public int getHour() {
     return (this.timeValue.get() / TICKS_IN_HOUR + 6) % (2 * HOURS_IN_HALF_DAY);
+  }
+  
+  public Seasons getSeason() {
+    if (this.month <= 3) {
+      return Seasons.SPRING;
+    } else if (this.month <= 7) {
+      return Seasons.SUMMER;
+    } else if (this.month <= 11) {
+      return Seasons.FALL;
+    } else {
+      return Seasons.WINTER;
+    }
+  }
+  
+  public boolean isWeatherDelayPassed(McFrDate current) {
+    long hours = ((this.year * MONTHS_IN_YEAR + this.month) * DAYS_IN_MONTH + this.day) * HOURS_IN_HALF_DAY * 2 + this.getHour();
+    long currentHours = ((current.year * MONTHS_IN_YEAR + current.month) * DAYS_IN_MONTH + current.day) * HOURS_IN_HALF_DAY * 2 + current.getHour();
+    return hours + 6 <= currentHours;
+  }
+  
+  public long getSeed() {
+    return ((this.year * MONTHS_IN_YEAR + this.month) * DAYS_IN_MONTH + this.day) * HOURS_IN_HALF_DAY * 2 + this.getHour() * 5000 + this.getHour() * 50;
   }
   
   @Override

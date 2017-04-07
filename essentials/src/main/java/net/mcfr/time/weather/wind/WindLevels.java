@@ -1,4 +1,4 @@
-package net.mcfr.time.weather;
+package net.mcfr.time.weather.wind;
 
 public enum WindLevels {
   NONE("Aucun vent"),

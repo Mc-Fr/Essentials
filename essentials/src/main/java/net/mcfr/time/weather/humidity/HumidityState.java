@@ -1,6 +1,9 @@
-package net.mcfr.time.weather;
+package net.mcfr.time.weather.humidity;
 
 import java.util.Map;
+import java.util.Random;
+
+import net.mcfr.time.weather.Seasons;
 
 public class HumidityState {
   private Seasons season;
@@ -17,8 +20,8 @@ public class HumidityState {
     return this.level;
   }
   
-  public HumidityState next() {
-    float rng = Weather.rand.nextFloat();
+  public HumidityState next(Random rand) {
+    float rng = rand.nextFloat();
     float cumulate = 0f;
     for (Map.Entry<HumidityLevels, Float> e : transitions.entrySet()) {
       cumulate += e.getValue();

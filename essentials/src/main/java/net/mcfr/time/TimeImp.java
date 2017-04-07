@@ -4,14 +4,18 @@ import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
 
+import net.mcfr.time.weather.Weather;
+
 public class TimeImp implements TimeService {
   
-  private McFrDate currentDate;
+  private McFrDate date;
+  private Weather weather;
   private Optional<TimeValue> freezedTime;
   
   public TimeImp() {
-    this.currentDate = new McFrDate();
+    this.date = new McFrDate();
     this.freezedTime = Optional.empty();
+    this.weather = new Weather(this.date);
     Sponge.getServer().getWorldProperties("world").get().setGameRule("doDaylightCycle", "false");
   }
   
@@ -22,8 +26,12 @@ public class TimeImp implements TimeService {
     if (isTimeFreezed()) {
       roleplayTime = this.freezedTime.get();
     } else {
-      this.currentDate.actualize();
+      this.date.actualize();
       roleplayTime = getRoleplayTime();
+      
+      if (this.weather.mustUpdate(this.date)) {
+        this.weather.updateWeather(this.date);
+      }
     }
     
     if (!getMinecraftTime().equals(roleplayTime)) {
@@ -36,12 +44,12 @@ public class TimeImp implements TimeService {
   }
   
   private TimeValue getRoleplayTime() {
-    return this.currentDate.getTimeValue();
+    return this.date.getTimeValue();
   }
   
   @Override
   public void freezeTime() {
-    freezeTime(this.currentDate.getTimeValue());
+    freezeTime(this.date.getTimeValue());
   }
   
   @Override
@@ -57,10 +65,15 @@ public class TimeImp implements TimeService {
   @Override
   public McFrDate getDate() {
     if (isTimeFreezed()) {
-      return new McFrDate(this.currentDate.getDay(), this.currentDate.getMonth(), this.currentDate.getYear(), this.freezedTime.get());
+      return new McFrDate(this.date.getDay(), this.date.getMonth(), this.date.getYear(), this.freezedTime.get());
     } else {
-      return this.currentDate;
+      return this.date;
     }
+  }
+  
+  @Override
+  public Weather getWeather() {
+    return this.weather;
   }
   
   @Override

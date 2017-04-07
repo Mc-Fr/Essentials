@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.mcfr.time.weather.humidity.HumidityLevels;
+import net.mcfr.time.weather.humidity.HumidityState;
+
 public enum Seasons {  
   SPRING(-5,
       HumidityLevels.SUNNY, HumidityLevels.CLOUDY, 0.7f,

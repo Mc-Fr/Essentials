@@ -12,12 +12,14 @@ public class HealthState {
   private int fatigueValue;
   private int endMax;
   private boolean isMalusReduced;
+  private boolean isMalusIncreased;
 
   public HealthState(int initValue) {
     this.healthValue = initValue;
     this.fatigueValue = initValue;
     this.endMax = initValue;
     this.isMalusReduced = false;
+    this.isMalusIncreased = false;
   }
 
   public int getHealthValue() {
@@ -37,6 +39,7 @@ public class HealthState {
     this.healthValue = Math.min(this.healthValue, this.endMax);
     this.fatigueValue = Math.min(this.fatigueValue, this.endMax);
     this.isMalusReduced = owner.hasTrait("haute_resistance_a_la_douleur");
+    this.isMalusReduced = owner.hasTrait("sensible_a_la_douleur");
   }
 
   private void save(McFrPlayer owner) {
@@ -83,7 +86,7 @@ public class HealthState {
   }
 
   public int getHealthMalus() {
-    return Math.min(this.healthValue - 2 * this.endMax / 3 + (this.isMalusReduced ? 2 : 0), 0);
+    return Math.min(this.healthValue - 2 * this.endMax / 3 + (this.isMalusReduced ? 2 : 0) - (this.isMalusIncreased ? 2 : 0), 0);
   }
   
   public int getFatigueMalus() {

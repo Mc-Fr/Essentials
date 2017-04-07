@@ -1,4 +1,6 @@
-package net.mcfr.time.weather;
+package net.mcfr.time.weather.wind;
+
+import java.util.Random;
 
 public class Wind {
   private WindLevels level;
@@ -9,12 +11,12 @@ public class Wind {
     this.orientation = 0;
   }
   
-  public void updateIntensity() {
-    this.level = WindLevels.values()[Weather.rand.nextInt(WindLevels.values().length)];
+  public void updateIntensity(Random rand) {
+    this.level = WindLevels.values()[rand.nextInt(WindLevels.values().length)];
   }
   
-  public void updateOrientation() {
-    this.orientation = (this.orientation + ((int) Math.floor(Weather.rand.nextFloat() * 30f)) - 15) % 360;
+  public void updateOrientation(Random rand) {
+    this.orientation = (this.orientation + ((int) Math.floor(rand.nextFloat() * 30f)) - 15) % 360;
   }
   
   public String getWindString(int altitude) {
@@ -76,5 +78,13 @@ public class Wind {
     }
     
     return result;
+  }
+  
+  public WindLevels getLevel() {
+    return this.level;
+  }
+  
+  public int getOrientation() {
+    return this.orientation;
   }
 }
