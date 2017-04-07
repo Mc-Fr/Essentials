@@ -27,7 +27,7 @@ public enum Seasons {
       HumidityLevels.HEAVY_RAIN, HumidityLevels.CLOUDY, 0.1f,
       
       HumidityLevels.STORM, HumidityLevels.SUNNY, 1f),
-  SUMMER(20,
+  SUMMER(10,
       HumidityLevels.SUNNY, HumidityLevels.SUNNY, 0.9f,
       HumidityLevels.SUNNY, HumidityLevels.CLOUDY, 0.1f,
       
@@ -53,7 +53,7 @@ public enum Seasons {
       
       HumidityLevels.HEAVY_RAIN, HumidityLevels.SUNNY, 0.6f,
       HumidityLevels.HEAVY_RAIN, HumidityLevels.CLOUDY, 0.4f),
-  WINTER(-20,
+  WINTER(-10,
       HumidityLevels.SUNNY, HumidityLevels.CLOUDY, 1f,
       
       HumidityLevels.CLOUDY, HumidityLevels.CLOUDY, 0.6f,

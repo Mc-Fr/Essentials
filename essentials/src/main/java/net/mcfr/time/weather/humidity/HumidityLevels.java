@@ -24,7 +24,7 @@ public enum HumidityLevels {
   
   private int temperatureModificator;
   private List<WeatherMessage> messages;
-
+ 
   private HumidityLevels(int temperatureModificator) {
     this.temperatureModificator = temperatureModificator;
     this.messages = new ArrayList<>();
