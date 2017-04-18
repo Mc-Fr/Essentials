@@ -29,12 +29,12 @@ public class ExpeditionImp implements ExpeditionService {
   public List<AuthorizedArea> getAreas() {
     return this.areas;
   }
-  
+
   @Override
   public boolean addArea(String name, Location<World> location, int radius) {
     if (!getAreaByName(name).isPresent()) {
       AuthorizedArea newArea = new AuthorizedArea(name, location, radius);
-      areas.add(newArea);
+      this.areas.add(newArea);
       newArea.registerInDatabase();
       return true;
     }
@@ -43,13 +43,13 @@ public class ExpeditionImp implements ExpeditionService {
 
   @Override
   public void removeArea(AuthorizedArea area) {
-    areas.remove(area);
+    this.areas.remove(area);
     area.removeFromDatabase();
   }
-  
+
   @Override
   public Optional<AuthorizedArea> getAreaByName(String name) {
-    return areas.stream().filter(a -> a.getName().equals(name)).findFirst();
+    return this.areas.stream().filter(a -> a.getName().equals(name)).findFirst();
   }
 
   @Override
@@ -60,8 +60,8 @@ public class ExpeditionImp implements ExpeditionService {
       while (areasData.next()) {
         Optional<World> optWorld = Sponge.getServer().getWorld(areasData.getString(6));
         if (optWorld.isPresent()) {
-          areas.add(new AuthorizedArea(areasData.getString(1),
-              new Location<World>(optWorld.get(), areasData.getInt(2), areasData.getInt(3), areasData.getInt(4)), areasData.getInt(5)));
+          this.areas.add(new AuthorizedArea(areasData.getString(1),
+              new Location<>(optWorld.get(), areasData.getInt(2), areasData.getInt(3), areasData.getInt(4)), areasData.getInt(5)));
         }
       }
     } catch (SQLException e) {
@@ -105,30 +105,30 @@ public class ExpeditionImp implements ExpeditionService {
 
   @Override
   public States getStateAtLocation(Location<World> loc) {
-    current = States.TO_COMPUTE;
+    this.current = States.TO_COMPUTE;
 
-    areas.stream().filter(a -> a.getExtent().equals(loc.getExtent())).forEach(a -> {
-      if (current.equals(States.TO_COMPUTE)) {
-        current = States.KILL;
+    this.areas.stream().filter(a -> a.getExtent().equals(loc.getExtent())).forEach(a -> {
+      if (this.current.equals(States.TO_COMPUTE)) {
+        this.current = States.KILL;
       }
 
       double distance = a.distance(loc);
       int radius = a.getRadius();
 
       if (distance < radius) {
-        current = getSafest(current, States.IN_AREA);
-      } else if (distance < radius + RADIUS_DELTA) {
-        current = getSafest(current, States.ADVERT);
-      } else if (distance < radius + 2 * RADIUS_DELTA) {
-        current = getSafest(current, States.HURT1);
-      } else if (distance < radius + 3 * RADIUS_DELTA) {
-        current = getSafest(current, States.HURT2);
-      } else if (distance < radius + 4 * RADIUS_DELTA) {
-        current = getSafest(current, States.HURT3);
+        this.current = getSafest(this.current, States.IN_AREA);
+      } else if (distance < radius + this.RADIUS_DELTA) {
+        this.current = getSafest(this.current, States.ADVERT);
+      } else if (distance < radius + 2 * this.RADIUS_DELTA) {
+        this.current = getSafest(this.current, States.HURT1);
+      } else if (distance < radius + 3 * this.RADIUS_DELTA) {
+        this.current = getSafest(this.current, States.HURT2);
+      } else if (distance < radius + 4 * this.RADIUS_DELTA) {
+        this.current = getSafest(this.current, States.HURT3);
       }
     });
 
-    return (current.equals(States.TO_COMPUTE) ? States.IN_AREA : current);
+    return this.current.equals(States.TO_COMPUTE) ? States.IN_AREA : this.current;
   }
 
   @Override

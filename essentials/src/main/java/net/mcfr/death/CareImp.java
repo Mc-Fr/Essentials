@@ -36,11 +36,11 @@ public class CareImp implements CareService {
   public List<CareCenter> getCenters() {
     return this.careCenters;
   }
-  
+
   @Override
   public Map<String, String> getFactionsMap() {
     Map<String, String> result = new HashMap<>();
-    for (String f : factions) {
+    for (String f : this.factions) {
       result.put(f, f);
     }
     return result;
@@ -48,9 +48,9 @@ public class CareImp implements CareService {
 
   @Override
   public boolean addCenter(String name, Location<World> location, int radius, String faction) {
-    if (!getCenterByName(name).isPresent() && factions.contains(faction)) {
+    if (!getCenterByName(name).isPresent() && this.factions.contains(faction)) {
       CareCenter newCenter = new CareCenter(name, location, radius, faction);
-      careCenters.add(newCenter);
+      this.careCenters.add(newCenter);
       newCenter.registerInDatabase();
       return true;
     }
@@ -59,13 +59,13 @@ public class CareImp implements CareService {
 
   @Override
   public void removeCenter(CareCenter center) {
-    careCenters.remove(center);
+    this.careCenters.remove(center);
     center.removeFromDatabase();
   }
 
   @Override
   public Optional<CareCenter> getCenterByName(String name) {
-    return careCenters.stream().filter(c -> c.getName().equals(name)).findFirst();
+    return this.careCenters.stream().filter(c -> c.getName().equals(name)).findFirst();
   }
 
   @Override
@@ -75,14 +75,14 @@ public class CareImp implements CareService {
       ResultSet factionsData = connection.prepareStatement("SELECT name FROM srv_factions").executeQuery();
 
       while (factionsData.next()) {
-        factions.add(factionsData.getString(1));
+        this.factions.add(factionsData.getString(1));
       }
 
       while (centersData.next()) {
         Optional<World> optWorld = Sponge.getServer().getWorld(centersData.getString(6));
         if (optWorld.isPresent()) {
-          careCenters.add(new CareCenter(centersData.getString(1),
-              new Location<World>(optWorld.get(), centersData.getInt(2), centersData.getInt(3), centersData.getInt(4)), centersData.getInt(5),
+          this.careCenters.add(new CareCenter(centersData.getString(1),
+              new Location<>(optWorld.get(), centersData.getInt(2), centersData.getInt(3), centersData.getInt(4)), centersData.getInt(5),
               centersData.getString(7)));
         }
       }
@@ -99,7 +99,7 @@ public class CareImp implements CareService {
     boolean isInCenterArea = false;
     boolean careCentersInWorld = false;
 
-    for (CareCenter careCenter : careCenters) {
+    for (CareCenter careCenter : this.careCenters) {
       if (careCenter.getLocation().getExtent().equals(location.getExtent())) {
         careCentersInWorld = true;
         if (careCenter.distance(location) < careCenter.getRadius()) {
@@ -157,7 +157,7 @@ public class CareImp implements CareService {
       }
     }
   }
-  
+
   @Override
   public void respawnPlayer(RespawnPlayerEvent e) {
     Optional<CareCenter> centerOpt = getBest(e.getTargetEntity().getLocation(), false);
@@ -169,13 +169,13 @@ public class CareImp implements CareService {
       e.setToTransform(transform.setLocation(newLocation));
     }
   }
-  
+
   @Override
   public Optional<CareCenter> getBest(Location<World> location, boolean inRange) {
     double currentValue = -1;
     Optional<CareCenter> optCareCenter = Optional.empty();
-    
-    for (CareCenter c : careCenters) {
+
+    for (CareCenter c : this.careCenters) {
       if (c.getLocation().getExtent().equals(location.getExtent())) {
         double value = c.distance(location) / c.getRadius();
         if ((!inRange || value < 1) && value > currentValue) {
@@ -184,10 +184,10 @@ public class CareImp implements CareService {
         }
       }
     }
-    
+
     return optCareCenter;
   }
-  
+
   private int computeModifier(McFrPlayer player) {
     int modifier = 0;
     modifier += player.hasTrait("difficile_a_tuer") ? 1 : 0;
