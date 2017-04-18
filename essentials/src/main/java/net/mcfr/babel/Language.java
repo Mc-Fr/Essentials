@@ -61,8 +61,8 @@ public class Language {
   }
 
   /**
-   * Charge les langues depuis la base de données. Si aucun symbole n'est défini
-   * pour une langue, quatre sont ajoutés par défaut.
+   * Charge les langues depuis la base de données. Si aucun symbole n'est défini pour une langue, quatre sont ajoutés
+   * par défaut.
    */
   public static void loadFromDatabase() {
     try (Connection jdrConnection = McFrConnection.getConnection()) {
@@ -72,8 +72,7 @@ public class Language {
         String langDisplayName = langData.getString(2);
         String langAlias = langData.getString(3);
 
-        PreparedStatement loadLanguages = jdrConnection
-            .prepareStatement("SELECT symbol FROM fiche_perso_langue_symbole WHERE lang = ?"); // TODO Passer sur un curseur SQL.
+        PreparedStatement loadLanguages = jdrConnection.prepareStatement("SELECT symbol FROM fiche_perso_langue_symbole WHERE lang = ?"); // TODO Passer sur un curseur SQL.
 
         loadLanguages.setString(1, langName);
         ResultSet symbolsData = loadLanguages.executeQuery();
@@ -157,8 +156,7 @@ public class Language {
   }
 
   /**
-   * Transforme un mot lettre par lettre. Chaque lettre a une certaine chance
-   * d'être hachée.
+   * Transforme un mot lettre par lettre. Chaque lettre a une certaine chance d'être hachée.
    * 
    * @param word
    *          le mot à hacher
@@ -201,11 +199,7 @@ public class Language {
       value = -0.6F * wordLength + 4;
       break;
     case 2:
-      if (this.alias.equals("commun")) {
-        value = -0.8F * wordLength + 12.0F;
-      } else {
-        value = -0.8F * wordLength + 8.5F;
-      }
+      value = -0.8F * wordLength + (this.alias.equals("commun") ? 12 : 8.5);
       break;
     default:
       return 0.0F;
