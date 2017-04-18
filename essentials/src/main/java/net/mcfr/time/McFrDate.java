@@ -110,7 +110,7 @@ public class McFrDate {
   }
 
   public long getSeed() {
-    return ((this.year * MONTHS_IN_YEAR + this.month) * DAYS_IN_MONTH + this.day) * HOURS_IN_HALF_DAY * 2 + getHour() * 5000 + getHour() * 50;
+    return ((this.year * MONTHS_IN_YEAR + this.month) * DAYS_IN_MONTH + this.day) * HOURS_IN_HALF_DAY * 2 + 2 * getHour() / HOURS_IN_HALF_DAY;
   }
 
   @Override

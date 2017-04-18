@@ -55,7 +55,7 @@ public class Weather {
     int localTemperature = this.temperature - (altitude - 80) / 4 + biomeGenre.getTemperatureModificator(hour);
 
     StringJoiner result = new StringJoiner(" * ");
-    result.add(this.humidityState.getLevel().getWeatherString(biomeGenre, this.season, hour, this.wind, this.rand));
+    result.add(this.humidityState.getLevel().getWeatherString(biomeGenre, this.season, hour, this.wind, new Random(this.lastUpdate.getSeed())));
     result.add(this.wind.getWindString(altitude));
     result.add(localTemperature + "°C");
     return "* " + result + " *";

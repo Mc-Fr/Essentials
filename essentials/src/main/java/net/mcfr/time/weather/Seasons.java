@@ -1,5 +1,11 @@
 package net.mcfr.time.weather;
 
+import static net.mcfr.time.weather.humidity.HumidityLevels.CLOUDY;
+import static net.mcfr.time.weather.humidity.HumidityLevels.HEAVY_RAIN;
+import static net.mcfr.time.weather.humidity.HumidityLevels.STORM;
+import static net.mcfr.time.weather.humidity.HumidityLevels.SUNNY;
+import static net.mcfr.time.weather.humidity.HumidityLevels.THIN_RAIN;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,66 +16,66 @@ import net.mcfr.time.weather.humidity.HumidityState;
 
 public enum Seasons {  
   SPRING(-5,
-      HumidityLevels.SUNNY, HumidityLevels.CLOUDY, 0.7f,
-      HumidityLevels.SUNNY, HumidityLevels.THIN_RAIN, 0.3f,
+      SUNNY, CLOUDY, 0.7f,
+      SUNNY, THIN_RAIN, 0.3f,
       
-      HumidityLevels.CLOUDY, HumidityLevels.CLOUDY, 0.2f,
-      HumidityLevels.CLOUDY, HumidityLevels.THIN_RAIN, 0.3f,
-      HumidityLevels.CLOUDY, HumidityLevels.HEAVY_RAIN, 0.4f,
-      HumidityLevels.CLOUDY, HumidityLevels.STORM, 0.1f,
+      CLOUDY, CLOUDY, 0.2f,
+      CLOUDY, THIN_RAIN, 0.3f,
+      CLOUDY, HEAVY_RAIN, 0.4f,
+      CLOUDY, STORM, 0.1f,
       
-      HumidityLevels.THIN_RAIN, HumidityLevels.THIN_RAIN, 0.6f,
-      HumidityLevels.THIN_RAIN, HumidityLevels.SUNNY, 0.2f,
-      HumidityLevels.THIN_RAIN, HumidityLevels.CLOUDY, 0.2f,
+      THIN_RAIN, THIN_RAIN, 0.6f,
+      THIN_RAIN, SUNNY, 0.2f,
+      THIN_RAIN, CLOUDY, 0.2f,
       
-      HumidityLevels.HEAVY_RAIN, HumidityLevels.HEAVY_RAIN, 0.5f,
-      HumidityLevels.HEAVY_RAIN, HumidityLevels.SUNNY, 0.4f,
-      HumidityLevels.HEAVY_RAIN, HumidityLevels.CLOUDY, 0.1f,
+      HEAVY_RAIN, HEAVY_RAIN, 0.5f,
+      HEAVY_RAIN, SUNNY, 0.4f,
+      HEAVY_RAIN, CLOUDY, 0.1f,
       
-      HumidityLevels.STORM, HumidityLevels.SUNNY, 1f),
+      STORM, SUNNY, 1f),
   SUMMER(10,
-      HumidityLevels.SUNNY, HumidityLevels.SUNNY, 0.9f,
-      HumidityLevels.SUNNY, HumidityLevels.CLOUDY, 0.1f,
+      SUNNY, SUNNY, 0.9f,
+      SUNNY, CLOUDY, 0.1f,
       
-      HumidityLevels.CLOUDY, HumidityLevels.CLOUDY, 0.1f,
-      HumidityLevels.CLOUDY, HumidityLevels.HEAVY_RAIN, 0.8f,
-      HumidityLevels.CLOUDY, HumidityLevels.STORM, 0.1f,
+      CLOUDY, CLOUDY, 0.1f,
+      CLOUDY, HEAVY_RAIN, 0.8f,
+      CLOUDY, STORM, 0.1f,
       
-      HumidityLevels.HEAVY_RAIN, HumidityLevels.HEAVY_RAIN, 0.3f,
-      HumidityLevels.HEAVY_RAIN, HumidityLevels.SUNNY, 0.7f,
+      HEAVY_RAIN, HEAVY_RAIN, 0.3f,
+      HEAVY_RAIN, SUNNY, 0.7f,
       
-      HumidityLevels.STORM, HumidityLevels.SUNNY, 1f),
+      STORM, SUNNY, 1f),
   FALL(5,
-      HumidityLevels.SUNNY, HumidityLevels.SUNNY, 0.3f,
-      HumidityLevels.SUNNY, HumidityLevels.THIN_RAIN, 0.7f,
+      SUNNY, SUNNY, 0.3f,
+      SUNNY, THIN_RAIN, 0.7f,
       
-      HumidityLevels.CLOUDY, HumidityLevels.CLOUDY, 0.7f,
-      HumidityLevels.CLOUDY, HumidityLevels.THIN_RAIN, 0.2f,
-      HumidityLevels.CLOUDY, HumidityLevels.HEAVY_RAIN, 0.1f,
+      CLOUDY, CLOUDY, 0.7f,
+      CLOUDY, THIN_RAIN, 0.2f,
+      CLOUDY, HEAVY_RAIN, 0.1f,
       
-      HumidityLevels.THIN_RAIN, HumidityLevels.HEAVY_RAIN, 0.2f,
-      HumidityLevels.THIN_RAIN, HumidityLevels.SUNNY, 0.3f,
-      HumidityLevels.THIN_RAIN, HumidityLevels.CLOUDY, 0.5f,
+      THIN_RAIN, HEAVY_RAIN, 0.2f,
+      THIN_RAIN, SUNNY, 0.3f,
+      THIN_RAIN, CLOUDY, 0.5f,
       
-      HumidityLevels.HEAVY_RAIN, HumidityLevels.SUNNY, 0.6f,
-      HumidityLevels.HEAVY_RAIN, HumidityLevels.CLOUDY, 0.4f),
+      HEAVY_RAIN, SUNNY, 0.6f,
+      HEAVY_RAIN, CLOUDY, 0.4f),
   WINTER(-10,
-      HumidityLevels.SUNNY, HumidityLevels.CLOUDY, 1f,
+      SUNNY, CLOUDY, 1f,
       
-      HumidityLevels.CLOUDY, HumidityLevels.CLOUDY, 0.6f,
-      HumidityLevels.CLOUDY, HumidityLevels.THIN_RAIN, 0.2f,
-      HumidityLevels.CLOUDY, HumidityLevels.HEAVY_RAIN, 0.2f,
+      CLOUDY, CLOUDY, 0.6f,
+      CLOUDY, THIN_RAIN, 0.2f,
+      CLOUDY, HEAVY_RAIN, 0.2f,
       
-      HumidityLevels.THIN_RAIN, HumidityLevels.THIN_RAIN, 0.3f,
-      HumidityLevels.THIN_RAIN, HumidityLevels.HEAVY_RAIN, 0.2f,
-      HumidityLevels.THIN_RAIN, HumidityLevels.STORM, 0.1f,
-      HumidityLevels.THIN_RAIN, HumidityLevels.CLOUDY, 0.4f,
+      THIN_RAIN, THIN_RAIN, 0.3f,
+      THIN_RAIN, HEAVY_RAIN, 0.2f,
+      THIN_RAIN, STORM, 0.1f,
+      THIN_RAIN, CLOUDY, 0.4f,
       
-      HumidityLevels.HEAVY_RAIN, HumidityLevels.HEAVY_RAIN, 0.1f,
-      HumidityLevels.HEAVY_RAIN, HumidityLevels.SUNNY, 0.2f,
-      HumidityLevels.HEAVY_RAIN, HumidityLevels.CLOUDY, 0.7f,
+      HEAVY_RAIN, HEAVY_RAIN, 0.1f,
+      HEAVY_RAIN, SUNNY, 0.2f,
+      HEAVY_RAIN, CLOUDY, 0.7f,
       
-      HumidityLevels.STORM, HumidityLevels.SUNNY, 1f);
+      STORM, SUNNY, 1f);
   
   private HumidityState[] humidityStates;
   private int temperatureModificator;

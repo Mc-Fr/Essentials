@@ -1,5 +1,65 @@
 package net.mcfr.time.weather;
 
+import static org.spongepowered.api.world.biome.BiomeTypes.BEACH;
+import static org.spongepowered.api.world.biome.BiomeTypes.BIRCH_FOREST;
+import static org.spongepowered.api.world.biome.BiomeTypes.BIRCH_FOREST_HILLS;
+import static org.spongepowered.api.world.biome.BiomeTypes.BIRCH_FOREST_HILLS_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.BIRCH_FOREST_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.COLD_BEACH;
+import static org.spongepowered.api.world.biome.BiomeTypes.COLD_TAIGA;
+import static org.spongepowered.api.world.biome.BiomeTypes.COLD_TAIGA_HILLS;
+import static org.spongepowered.api.world.biome.BiomeTypes.COLD_TAIGA_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.DEEP_OCEAN;
+import static org.spongepowered.api.world.biome.BiomeTypes.DESERT_HILLS;
+import static org.spongepowered.api.world.biome.BiomeTypes.DESERT_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.EXTREME_HILLS;
+import static org.spongepowered.api.world.biome.BiomeTypes.EXTREME_HILLS_EDGE;
+import static org.spongepowered.api.world.biome.BiomeTypes.EXTREME_HILLS_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.EXTREME_HILLS_PLUS;
+import static org.spongepowered.api.world.biome.BiomeTypes.EXTREME_HILLS_PLUS_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.FLOWER_FOREST;
+import static org.spongepowered.api.world.biome.BiomeTypes.FOREST_HILLS;
+import static org.spongepowered.api.world.biome.BiomeTypes.FROZEN_OCEAN;
+import static org.spongepowered.api.world.biome.BiomeTypes.FROZEN_RIVER;
+import static org.spongepowered.api.world.biome.BiomeTypes.HELL;
+import static org.spongepowered.api.world.biome.BiomeTypes.ICE_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.ICE_PLAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.ICE_PLAINS_SPIKES;
+import static org.spongepowered.api.world.biome.BiomeTypes.JUNGLE;
+import static org.spongepowered.api.world.biome.BiomeTypes.JUNGLE_EDGE;
+import static org.spongepowered.api.world.biome.BiomeTypes.JUNGLE_EDGE_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.JUNGLE_HILLS;
+import static org.spongepowered.api.world.biome.BiomeTypes.JUNGLE_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.MEGA_SPRUCE_TAIGA;
+import static org.spongepowered.api.world.biome.BiomeTypes.MEGA_SPRUCE_TAIGA_HILLS;
+import static org.spongepowered.api.world.biome.BiomeTypes.MEGA_TAIGA;
+import static org.spongepowered.api.world.biome.BiomeTypes.MEGA_TAIGA_HILLS;
+import static org.spongepowered.api.world.biome.BiomeTypes.MESA;
+import static org.spongepowered.api.world.biome.BiomeTypes.MESA_BRYCE;
+import static org.spongepowered.api.world.biome.BiomeTypes.MESA_PLATEAU;
+import static org.spongepowered.api.world.biome.BiomeTypes.MESA_PLATEAU_FOREST;
+import static org.spongepowered.api.world.biome.BiomeTypes.MESA_PLATEAU_FOREST_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.MESA_PLATEAU_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.MUSHROOM_ISLAND;
+import static org.spongepowered.api.world.biome.BiomeTypes.MUSHROOM_ISLAND_SHORE;
+import static org.spongepowered.api.world.biome.BiomeTypes.PLAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.RIVER;
+import static org.spongepowered.api.world.biome.BiomeTypes.ROOFED_FOREST;
+import static org.spongepowered.api.world.biome.BiomeTypes.ROOFED_FOREST_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.SAVANNA;
+import static org.spongepowered.api.world.biome.BiomeTypes.SAVANNA_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.SAVANNA_PLATEAU;
+import static org.spongepowered.api.world.biome.BiomeTypes.SAVANNA_PLATEAU_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.SKY;
+import static org.spongepowered.api.world.biome.BiomeTypes.STONE_BEACH;
+import static org.spongepowered.api.world.biome.BiomeTypes.SUNFLOWER_PLAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.SWAMPLAND;
+import static org.spongepowered.api.world.biome.BiomeTypes.SWAMPLAND_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.TAIGA;
+import static org.spongepowered.api.world.biome.BiomeTypes.TAIGA_HILLS;
+import static org.spongepowered.api.world.biome.BiomeTypes.TAIGA_MOUNTAINS;
+import static org.spongepowered.api.world.biome.BiomeTypes.VOID;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,23 +68,23 @@ import org.spongepowered.api.world.biome.BiomeTypes;
 
 public enum BiomeGenres {
   // #f:0
-  PLAIN(0, 5, BiomeTypes.BEACH, BiomeTypes.FROZEN_RIVER, BiomeTypes.MUSHROOM_ISLAND, BiomeTypes.MUSHROOM_ISLAND_SHORE,
-      BiomeTypes.PLAINS, BiomeTypes.RIVER, BiomeTypes.SWAMPLAND, BiomeTypes.SWAMPLAND_MOUNTAINS,
-      BiomeTypes.SAVANNA, BiomeTypes.SAVANNA_MOUNTAINS, BiomeTypes.SAVANNA_PLATEAU, BiomeTypes.SAVANNA_PLATEAU_MOUNTAINS,
-      BiomeTypes.STONE_BEACH, BiomeTypes.SUNFLOWER_PLAINS),
-  FOREST(5, 5, BiomeTypes.BIRCH_FOREST, BiomeTypes.BIRCH_FOREST_HILLS, BiomeTypes.BIRCH_FOREST_HILLS_MOUNTAINS, BiomeTypes.BIRCH_FOREST_MOUNTAINS,
-      BiomeTypes.FLOWER_FOREST, BiomeTypes.FOREST, BiomeTypes.FOREST_HILLS, BiomeTypes.JUNGLE,
-      BiomeTypes.JUNGLE_EDGE, BiomeTypes.JUNGLE_EDGE_MOUNTAINS, BiomeTypes.JUNGLE_HILLS, BiomeTypes.JUNGLE_MOUNTAINS,
-      BiomeTypes.ROOFED_FOREST, BiomeTypes.ROOFED_FOREST_MOUNTAINS),
-  OCEAN(-3, 5, BiomeTypes.DEEP_OCEAN, BiomeTypes.FROZEN_OCEAN, BiomeTypes.SKY, BiomeTypes.VOID, BiomeTypes.HELL),
-  DESERT(20, 10, BiomeTypes.DESERT, BiomeTypes.DESERT_HILLS, BiomeTypes.DESERT_MOUNTAINS, BiomeTypes.MESA,
-      BiomeTypes.MESA_BRYCE, BiomeTypes.MESA_PLATEAU, BiomeTypes.MESA_PLATEAU_FOREST, BiomeTypes.MESA_PLATEAU_FOREST_MOUNTAINS,
-      BiomeTypes.MESA_PLATEAU_MOUNTAINS),
-  SNOWY(-7, 3, BiomeTypes.COLD_BEACH, BiomeTypes.COLD_TAIGA, BiomeTypes.COLD_TAIGA_HILLS, BiomeTypes.COLD_TAIGA_MOUNTAINS,
-      BiomeTypes.EXTREME_HILLS, BiomeTypes.EXTREME_HILLS_EDGE, BiomeTypes.EXTREME_HILLS_MOUNTAINS, BiomeTypes.EXTREME_HILLS_PLUS,
-      BiomeTypes.EXTREME_HILLS_PLUS_MOUNTAINS, BiomeTypes.ICE_MOUNTAINS, BiomeTypes.ICE_PLAINS, BiomeTypes.ICE_PLAINS_SPIKES,
-      BiomeTypes.MEGA_TAIGA, BiomeTypes.MEGA_TAIGA_HILLS, BiomeTypes.MEGA_SPRUCE_TAIGA, BiomeTypes.MEGA_SPRUCE_TAIGA_HILLS,
-      BiomeTypes.TAIGA, BiomeTypes.TAIGA_HILLS, BiomeTypes.TAIGA_MOUNTAINS);
+  PLAIN(0, 5, BEACH, FROZEN_RIVER, MUSHROOM_ISLAND, MUSHROOM_ISLAND_SHORE,
+      PLAINS, RIVER, SWAMPLAND, SWAMPLAND_MOUNTAINS,
+      SAVANNA, SAVANNA_MOUNTAINS, SAVANNA_PLATEAU, SAVANNA_PLATEAU_MOUNTAINS,
+      STONE_BEACH, SUNFLOWER_PLAINS),
+  FOREST(5, 5, BIRCH_FOREST, BIRCH_FOREST_HILLS, BIRCH_FOREST_HILLS_MOUNTAINS, BIRCH_FOREST_MOUNTAINS,
+      FLOWER_FOREST, BiomeTypes.FOREST, FOREST_HILLS, JUNGLE,
+      JUNGLE_EDGE, JUNGLE_EDGE_MOUNTAINS, JUNGLE_HILLS, JUNGLE_MOUNTAINS,
+      ROOFED_FOREST, ROOFED_FOREST_MOUNTAINS),
+  OCEAN(-3, 5, DEEP_OCEAN, FROZEN_OCEAN, SKY, VOID, HELL),
+  DESERT(20, 10, BiomeTypes.DESERT, DESERT_HILLS, DESERT_MOUNTAINS, MESA,
+      MESA_BRYCE, MESA_PLATEAU, MESA_PLATEAU_FOREST, MESA_PLATEAU_FOREST_MOUNTAINS,
+      MESA_PLATEAU_MOUNTAINS),
+  SNOWY(-7, 3, COLD_BEACH, COLD_TAIGA, COLD_TAIGA_HILLS, COLD_TAIGA_MOUNTAINS,
+      EXTREME_HILLS, EXTREME_HILLS_EDGE, EXTREME_HILLS_MOUNTAINS, EXTREME_HILLS_PLUS,
+      EXTREME_HILLS_PLUS_MOUNTAINS, ICE_MOUNTAINS, ICE_PLAINS, ICE_PLAINS_SPIKES,
+      MEGA_TAIGA, MEGA_TAIGA_HILLS, MEGA_SPRUCE_TAIGA, MEGA_SPRUCE_TAIGA_HILLS,
+      TAIGA, TAIGA_HILLS, TAIGA_MOUNTAINS);
   // #f:1
 
   private List<BiomeType> biomes;
