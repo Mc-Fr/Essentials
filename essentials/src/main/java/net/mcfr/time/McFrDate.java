@@ -1,8 +1,6 @@
 package net.mcfr.time;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import net.mcfr.time.weather.Seasons;
 
@@ -11,39 +9,39 @@ public class McFrDate {
   private static final long SECONDS_OFFSET = 1484848800;
   private static final McFrDate INITIAL_DATE = new McFrDate(1, 1, 1420, new TimeValue(0));
   private static final float MEAN_DAY_PROPORTION = 0.8333333f;
-  private static final List<String> MONTHS_NAMES = new ArrayList<>();
+  private static final String[] MONTHS_NAMES = new String[16];
   
   static {
     // Printemps
-    MONTHS_NAMES.add("Emeral");
-    MONTHS_NAMES.add("Carminal");
-    MONTHS_NAMES.add("Roséal");
-    MONTHS_NAMES.add("Auréal");
+    MONTHS_NAMES[0] = "Emeral";
+    MONTHS_NAMES[1] = "Carminal";
+    MONTHS_NAMES[2] = "Roséal";
+    MONTHS_NAMES[3] = "Auréal";
     
     // Été
-    MONTHS_NAMES.add("Ambridor");
-    MONTHS_NAMES.add("Oridor");
-    MONTHS_NAMES.add("Mercuridor");
-    MONTHS_NAMES.add("Pyridor");
+    MONTHS_NAMES[4] = "Ambridor";
+    MONTHS_NAMES[5] = "Oridor";
+    MONTHS_NAMES[6] = "Mercuridor";
+    MONTHS_NAMES[7] = "Pyridor";
     
     // Automne
-    MONTHS_NAMES.add("Cendraire");
-    MONTHS_NAMES.add("Cyanaire");
-    MONTHS_NAMES.add("Pourpraire");
-    MONTHS_NAMES.add("Anthraire");
+    MONTHS_NAMES[8] = "Cendraire";
+    MONTHS_NAMES[9] = "Cyanaire";
+    MONTHS_NAMES[10] = "Pourpraire";
+    MONTHS_NAMES[11] = "Anthraire";
     
     // Hiver
-    MONTHS_NAMES.add("Mauvose");
-    MONTHS_NAMES.add("Sombrose");
-    MONTHS_NAMES.add("Lazurose");
-    MONTHS_NAMES.add("Fumose");
+    MONTHS_NAMES[12] = "Mauvose";
+    MONTHS_NAMES[13] = "Sombrose";
+    MONTHS_NAMES[14] = "Lazurose";
+    MONTHS_NAMES[15] = "Fumose";
   }
   
   private static final long SECONDS_IN_DAY = 14400;
   private static final int HOURS_IN_HALF_DAY = 12;
   private static final int TICKS_IN_HOUR = 1000;
   private static final int DAYS_IN_MONTH = 42;
-  private static final int MONTHS_IN_YEAR = MONTHS_NAMES.size();
+  private static final int MONTHS_IN_YEAR = MONTHS_NAMES.length;
   
   private int year;
   private int month;
@@ -142,6 +140,6 @@ public class McFrDate {
   
   @Override
   public String toString() {
-    return this.day + " " + MONTHS_NAMES.get(this.month - 1) + " " + this.year + " - " + this.getHour() + "h";
+    return this.day + " " + MONTHS_NAMES[this.month - 1] + " " + this.year + " - " + this.getHour() + "h";
   }
 }
