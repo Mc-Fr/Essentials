@@ -60,7 +60,7 @@ import static org.spongepowered.api.world.biome.BiomeTypes.TAIGA_HILLS;
 import static org.spongepowered.api.world.biome.BiomeTypes.TAIGA_MOUNTAINS;
 import static org.spongepowered.api.world.biome.BiomeTypes.VOID;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.spongepowered.api.world.biome.BiomeType;
@@ -94,24 +94,15 @@ public enum BiomeGenres {
   private BiomeGenres(int tempBonus, int tempVar, BiomeType... biomes) {
     this.temperatureBonus = tempBonus;
     this.temperatureVariation = tempVar;
-    
-    this.biomes = new ArrayList<>();
 
-    for (BiomeType biome : biomes) {
-      this.biomes.add(biome);
-    }
+    this.biomes = Arrays.asList(biomes);
   }
-  
+
   public int getTemperatureModificator(int hour) {
-    return this.temperatureBonus + (int) Math.floor(1f * this.temperatureVariation * Math.sin(2*Math.PI*(hour - 9)/24f));
+    return this.temperatureBonus + (int) Math.floor(1f * this.temperatureVariation * Math.sin(2 * Math.PI * (hour - 9) / 24f));
   }
-  
+
   public static BiomeGenres getGenreByBiome(BiomeType biome) {
-    for (BiomeGenres genre : BiomeGenres.values()) {
-      if (genre.biomes.contains(biome)) {
-        return genre;
-      }
-    }
-    return SNOWY;
+    return Arrays.stream(values()).filter(g -> g.biomes.contains(biome)).findFirst().orElse(SNOWY);
   }
 }

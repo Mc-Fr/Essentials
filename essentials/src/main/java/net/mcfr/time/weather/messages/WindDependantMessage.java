@@ -36,16 +36,16 @@ public class WindDependantMessage extends WeatherMessage {
   }
   
   @Override
-  public boolean isAcurate(BiomeGenres biome, Seasons season, int hour, Wind wind) {
+  public boolean isAccurate(BiomeGenres biome, Seasons season, int hour, Wind wind) {
     if (this.minLevel.ordinal() > wind.getLevel().ordinal() || this.maxLevel.ordinal() < wind.getLevel().ordinal())
       return false;
     
     if (this.minOrientation < this.maxOrientation)
       if (wind.getOrientation() >= this.minOrientation && wind.getOrientation() <= this.maxOrientation)
-        return super.isAcurate(biome, season, hour, wind);
+        return super.isAccurate(biome, season, hour, wind);
     else
       if ((wind.getOrientation() >= this.minOrientation || wind.getOrientation() <= this.maxOrientation))
-        return super.isAcurate(biome, season, hour, wind);
+        return super.isAccurate(biome, season, hour, wind);
     
     return false;
   }
