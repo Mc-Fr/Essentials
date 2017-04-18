@@ -168,7 +168,7 @@ public enum HumidityLevels {
   }
 
   public String getWeatherString(BiomeGenres biomeGenre, Seasons season, int hour, Wind wind, Random rand) {
-    WeatherMessage[] availableMessages = this.messages.stream().filter(m -> m.isAcurate(biomeGenre, season, hour, wind))
+    WeatherMessage[] availableMessages = this.messages.stream().filter(m -> m.isAccurate(biomeGenre, season, hour, wind))
         .toArray(WeatherMessage[]::new);
     if (availableMessages.length > 0)
       return availableMessages[rand.nextInt(availableMessages.length)].toString();
