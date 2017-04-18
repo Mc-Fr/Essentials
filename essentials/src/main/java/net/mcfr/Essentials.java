@@ -89,6 +89,9 @@ public class Essentials {
   @Listener
   public void onPreInit(GamePreInitializationEvent e) {
     Sponge.getServiceManager().setProvider(this, RolePlayService.class, new RolePlayImp());
+    Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
+    Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
+    Sponge.getServiceManager().setProvider(this, TimeService.class, new TimeImp());
   }
 
   @Listener
@@ -109,16 +112,11 @@ public class Essentials {
             .interval(interval, TimeUnit.SECONDS).submit(this);
       });
     }
-
-    Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
-    Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
-    Sponge.getServiceManager().setProvider(this, TimeService.class, new TimeImp());
-
-    Sponge.getScheduler().createTaskBuilder().execute(() -> {
-      Optional<TimeService> optTimeService = Sponge.getServiceManager().provide(TimeService.class);
-      if (optTimeService.isPresent())
-        optTimeService.get().update();
-    }).intervalTicks(1).submit(this);
+    
+    Optional<TimeService> optTimeService = Sponge.getServiceManager().provide(TimeService.class);
+    if (optTimeService.isPresent())
+      Sponge.getScheduler().createTaskBuilder().execute(() -> optTimeService.get().update()).intervalTicks(1).submit(this);
+    
     Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load"))
         .delay(4, TimeUnit.SECONDS).submit(this);
     TribalWord.loadFromDatabase();
