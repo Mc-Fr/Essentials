@@ -1,5 +1,8 @@
 package net.mcfr.time.weather.humidity;
 
+import static net.mcfr.time.weather.BiomeGenres.*;
+import static net.mcfr.time.weather.Seasons.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,17 +22,6 @@ public enum HumidityLevels {
   STORM(-14);
 
   static {
-    BiomeGenres PLAIN = BiomeGenres.PLAIN;
-    BiomeGenres FOREST = BiomeGenres.FOREST;
-    BiomeGenres DESERT = BiomeGenres.DESERT;
-    BiomeGenres OCEAN = BiomeGenres.OCEAN;
-    BiomeGenres SNOWY = BiomeGenres.SNOWY;
-    
-    Seasons SPRING = Seasons.SPRING;
-    Seasons SUMMER = Seasons.SUMMER;
-    Seasons FALL = Seasons.FALL;
-    Seasons WINTER = Seasons.WINTER;
-    
     // #f:0
     
     // Forêt, Printemps
