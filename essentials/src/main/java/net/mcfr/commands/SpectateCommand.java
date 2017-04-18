@@ -45,7 +45,7 @@ public class SpectateCommand extends AbstractCommand {
   
   @Override
   public String[] getAliases() {
-    return new String[] { "spectate" };
+    return new String[] { "spectate", "spec" };
   }
 }
 
