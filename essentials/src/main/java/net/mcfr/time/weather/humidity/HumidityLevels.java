@@ -158,28 +158,28 @@ public enum HumidityLevels {
     
     // #f:1
   }
-  
+
   private int temperatureModificator;
   private List<WeatherMessage> messages;
- 
+
   private HumidityLevels(int temperatureModificator) {
     this.temperatureModificator = temperatureModificator;
     this.messages = new ArrayList<>();
   }
-  
+
   private void addMessage(WeatherMessage message) {
     this.messages.add(message);
   }
-  
+
   public int getTemperatureModificator() {
     return this.temperatureModificator;
   }
-  
+
   public String getWeatherString(BiomeGenres biomeGenre, Seasons season, int hour, Wind wind, Random rand) {
-    WeatherMessage[] availableMessages = this.messages.stream().filter(m -> m.isAcurate(biomeGenre, season, hour, wind)).toArray(WeatherMessage[]::new);
-    if (availableMessages.length > 0) {
+    WeatherMessage[] availableMessages = this.messages.stream().filter(m -> m.isAcurate(biomeGenre, season, hour, wind))
+        .toArray(WeatherMessage[]::new);
+    if (availableMessages.length > 0)
       return availableMessages[rand.nextInt(availableMessages.length)].toString();
-    }
     return "";
   }
 }
