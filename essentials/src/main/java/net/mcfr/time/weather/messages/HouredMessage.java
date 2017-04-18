@@ -8,8 +8,8 @@ public class HouredMessage extends WeatherMessage {
   private int minHour;
   private int maxHour;
 
-  public HouredMessage(String message, Seasons season, int minHour, int maxHour) {
-    super(message, season);
+  public HouredMessage(String message, Seasons season, BiomeGenres biome, int minHour, int maxHour) {
+    super(message, season, biome);
     this.minHour = minHour;
     this.maxHour = maxHour;
   }

@@ -11,28 +11,28 @@ public class WindDependantMessage extends WeatherMessage {
   private int minOrientation;
   private int maxOrientation;
 
-  public WindDependantMessage(String message, Seasons season, WindLevels minLevel, WindLevels maxLevel, int minOrient, int maxOrient) {
-    super(message, season);
+  public WindDependantMessage(String message, Seasons season, BiomeGenres biome, WindLevels minLevel, WindLevels maxLevel, int minOrient, int maxOrient) {
+    super(message, season, biome);
     this.minLevel = minLevel;
     this.maxLevel = maxLevel;
     this.minOrientation = minOrient;
     this.maxOrientation = maxOrient;
   }
   
-  public WindDependantMessage(String message, Seasons season, WindLevels minLevel, WindLevels maxLevel) {
-    this(message, season, minLevel, maxLevel, 0, 379);
+  public WindDependantMessage(String message, Seasons season, BiomeGenres biome, WindLevels minLevel, WindLevels maxLevel) {
+    this(message, season, biome, minLevel, maxLevel, 0, 379);
   }
   
-  public WindDependantMessage(String message, Seasons season, WindLevels minLevel) {
-    this(message, season, minLevel, WindLevels.MAD);
+  public WindDependantMessage(String message, Seasons season, BiomeGenres biome, WindLevels minLevel) {
+    this(message, season, biome, minLevel, WindLevels.MAD);
   }
   
-  public WindDependantMessage(String message, Seasons season, WindLevels minLevel, int minOrient, int maxOrient) {
-    this(message, season, minLevel, WindLevels.MAD, minOrient, maxOrient);
+  public WindDependantMessage(String message, Seasons season, BiomeGenres biome, WindLevels minLevel, int minOrient, int maxOrient) {
+    this(message, season, biome, minLevel, WindLevels.MAD, minOrient, maxOrient);
   }
   
-  public WindDependantMessage(String message, Seasons season, int minOrient, int maxOrient) {
-    this(message, season, WindLevels.NONE, minOrient, maxOrient);
+  public WindDependantMessage(String message, Seasons season, BiomeGenres biome, int minOrient, int maxOrient) {
+    this(message, season, biome, WindLevels.NONE, minOrient, maxOrient);
   }
   
   @Override

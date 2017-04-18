@@ -36,10 +36,6 @@ public class RolePlayImp implements RolePlayService {
     case "evasion":
       score += mcFrPlayer.hasTrait("souplesse") ? 3 : 0;
       break;
-    case "force_mentale":
-      score += mcFrPlayer.getTraitLevel("resistance_a_la_magie");
-      score -= mcFrPlayer.getTraitLevel("sensibilite_accrue_a_la_magie");
-      break;
     case "connaissance_de_callac":
     case "connaissance_de_dromorth":
     case "connaissance_de_la_loi":

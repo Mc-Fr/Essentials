@@ -27,7 +27,7 @@ public class MeteoCommand extends AbstractCommand {
     Optional<TimeService> optTimeService = Sponge.getServiceManager().provide(TimeService.class);
     if (optTimeService.isPresent()) {
       Weather weather = optTimeService.get().getWeather();
-      // src.sendMessage(Text.of(TextColors.BLUE, "* " + weather.getWeatherString(biome, altitude) + " *"));
+      src.sendMessage(Text.of(TextColors.BLUE, "* " + weather.getWeatherString() + " *"));
     } else {
       src.sendMessage(Text.of(TextColors.RED, "Le système de gestion du temps n'a pas été correctement chargé."));
     }
