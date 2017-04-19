@@ -11,11 +11,12 @@ public class WeatherMessage {
   
   public WeatherMessage(String message, Seasons season, BiomeGenres biome) {
     this.message = message;
+    this.season = season;
     this.biome = biome;
   }
   
-  public boolean isAccurate(BiomeGenres biome, Seasons season, int hour, Wind wind) {
-    return this.season.equals(season) && this.biome.equals(biome);
+  public boolean isAccurate(BiomeGenres biomeIn, Seasons seasonIn, int hour, Wind wind) {
+    return this.season.equals(seasonIn) && this.biome.equals(biomeIn);
   }
   
   @Override

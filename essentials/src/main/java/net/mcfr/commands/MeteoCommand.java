@@ -14,6 +14,8 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import com.flowpowered.math.vector.Vector3i;
+
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.time.TimeService;
@@ -34,7 +36,7 @@ public class MeteoCommand extends AbstractCommand {
         Weather weather = optTimeService.get().getWeather();
         Location<World> loc = player.getLocation();
         player.sendMessage(Text.of(TextColors.BLUE,
-            weather.getWeatherString(loc.getExtent().getBiome(loc.getBlockPosition()), loc.getBlockY(), optTimeService.get().getDate())));
+            weather.getWeatherString(loc.getExtent().getBiome(new Vector3i(loc.getBlockX(), 0, loc.getBlockZ())), loc.getBlockY(), optTimeService.get().getDate())));
       } else {
         player.sendMessage(Text.of(TextColors.RED, "Le système de gestion du temps n'a pas été correctement chargé."));
       }

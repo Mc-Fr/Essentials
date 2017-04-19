@@ -117,6 +117,8 @@ public class Essentials {
     if (optTimeService.isPresent())
       Sponge.getScheduler().createTaskBuilder().execute(() -> optTimeService.get().update()).intervalTicks(1).submit(this);
     
+    Sponge.getServer().getWorldProperties("world").get().setGameRule("doDaylightCycle", "false");
+    
     Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load"))
         .delay(4, TimeUnit.SECONDS).submit(this);
     TribalWord.loadFromDatabase();

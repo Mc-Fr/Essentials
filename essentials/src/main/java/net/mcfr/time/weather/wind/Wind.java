@@ -22,59 +22,64 @@ public class Wind {
   public String getWindString(int altitude) {
     String result = "";
     
-    result += altitude > 100 ? WindLevels.getSuperior(this.level) : this.level;
-    result += ", ";
+    WindLevels level = altitude > 100 ? WindLevels.getSuperior(this.level) : this.level;
     
-    int section = (int) Math.floor(this.orientation / 22.5f);
-    switch (section) {
-    case 0:
-      result += "N";
-      break;
-    case 1:
-      result += "NNE";
-      break;
-    case 2:
-      result += "NE";
-      break;
-    case 3:
-      result += "ENE";
-      break;
-    case 4:
-      result += "E";
-      break;
-    case 5:
-      result += "ESE";
-      break;
-    case 6:
-      result += "SE";
-      break;
-    case 7:
-      result += "SSE";
-      break;
-    case 8:
-      result += "S";
-      break;
-    case 9:
-      result += "SSO";
-      break;
-    case 10:
-      result += "SO";
-      break;
-    case 11:
-      result += "OSO";
-      break;
-    case 12:
-      result += "O";
-      break;
-    case 13:
-      result += "ONO";
-      break;
-    case 14:
-      result += "NO";
-      break;
-    case 15:
-      result += "NNO";
-      break;
+    result += level;
+    
+    if (level.equals(WindLevels.NONE)) {
+      result += ", ";
+      
+      int section = (int) Math.floor(this.orientation / 22.5f);
+      switch (section) {
+      case 0:
+        result += "N";
+        break;
+      case 1:
+        result += "NNE";
+        break;
+      case 2:
+        result += "NE";
+        break;
+      case 3:
+        result += "ENE";
+        break;
+      case 4:
+        result += "E";
+        break;
+      case 5:
+        result += "ESE";
+        break;
+      case 6:
+        result += "SE";
+        break;
+      case 7:
+        result += "SSE";
+        break;
+      case 8:
+        result += "S";
+        break;
+      case 9:
+        result += "SSO";
+        break;
+      case 10:
+        result += "SO";
+        break;
+      case 11:
+        result += "OSO";
+        break;
+      case 12:
+        result += "O";
+        break;
+      case 13:
+        result += "ONO";
+        break;
+      case 14:
+        result += "NO";
+        break;
+      case 15:
+        result += "NNO";
+        break;
+      }
     }
     
     return result;

@@ -1,7 +1,11 @@
 package net.mcfr.time.weather.humidity;
 
-import static net.mcfr.time.weather.BiomeGenres.*;
-import static net.mcfr.time.weather.Seasons.*;
+import static net.mcfr.time.weather.BiomeGenres.DESERT;
+import static net.mcfr.time.weather.BiomeGenres.FOREST;
+import static net.mcfr.time.weather.Seasons.FALL;
+import static net.mcfr.time.weather.Seasons.SPRING;
+import static net.mcfr.time.weather.Seasons.SUMMER;
+import static net.mcfr.time.weather.Seasons.WINTER;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,11 +171,17 @@ public enum HumidityLevels {
     return this.temperatureModificator;
   }
 
-  public String getWeatherString(BiomeGenres biomeGenre, Seasons season, int hour, Wind wind, Random rand) {
-    WeatherMessage[] availableMessages = this.messages.stream().filter(m -> m.isAccurate(biomeGenre, season, hour, wind))
-        .toArray(WeatherMessage[]::new);
-    if (availableMessages.length > 0)
-      return availableMessages[rand.nextInt(availableMessages.length)].toString();
+  public String getWeatherString(BiomeGenres biomeGenre, Seasons season, int hour, Wind wind, Random rand) {    
+    List<WeatherMessage> availableMessages = new ArrayList<>();
+    for (WeatherMessage message : this.messages) {
+      if (message.isAccurate(biomeGenre, season, hour, wind)) {
+        availableMessages.add(message);
+      }
+    }
+    
+    if (availableMessages.size() > 0) {
+      return availableMessages.get(rand.nextInt(availableMessages.size())).toString();
+    }
     return "";
   }
 }

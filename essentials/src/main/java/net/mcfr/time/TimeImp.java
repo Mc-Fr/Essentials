@@ -16,7 +16,6 @@ public class TimeImp implements TimeService {
     this.date = new McFrDate();
     this.freezedTime = Optional.empty();
     this.weather = new Weather(this.date);
-    Sponge.getServer().getWorldProperties("world").get().setGameRule("doDaylightCycle", "false");
   }
   
   @Override
