@@ -82,8 +82,6 @@ public class McFrPlayer {
   private Location<World> previousLocation;
   private long lastBreathTime;
   private long readDescriptionTime;
-  
-  private int trollDate; //NOTE : remove
 
   public static void addPlayer(McFrPlayer player) {
     players.add(player);
@@ -135,16 +133,6 @@ public class McFrPlayer {
     this.lastBreathTime = 0;
     this.readDescriptionTime = 0;
     this.healthState = new HealthState(100);
-    
-    this.trollDate = 0; //NOTE : remove
-  }
-  
-  public void increaseTrollDate() { //NOTE : remove
-    this.trollDate++;
-  }
-  
-  public int getTrollDate() { //NOTE : remove
-    return this.trollDate;
   }
 
   public Player getPlayer() {
