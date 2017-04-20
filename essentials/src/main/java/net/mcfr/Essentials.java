@@ -12,7 +12,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
-import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
@@ -69,12 +69,12 @@ public class Essentials {
         e1.printStackTrace();
       }
     }
-    
+
     registerListeners();
 
     getLogger().info("McFrEssentials Plugin has loaded.");
   }
-  
+
   private void registerListeners() {
     Sponge.getEventManager().registerListeners(this, new BurrowListener());
     Sponge.getEventManager().registerListeners(this, new CommandListener());
@@ -84,8 +84,10 @@ public class Essentials {
   }
 
   @Listener
-  public void onPreInit(GamePreInitializationEvent e) {
+  public void onPostInit(GamePostInitializationEvent e) {
     Sponge.getServiceManager().setProvider(this, RolePlayService.class, new RolePlayImp());
+    Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
+    Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
   }
 
   @Listener
@@ -106,9 +108,6 @@ public class Essentials {
             .interval(interval, TimeUnit.SECONDS).submit(this);
       });
     }
-    
-    Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
-    Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
 
     Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load"))
         .delay(4, TimeUnit.SECONDS).submit(this);
