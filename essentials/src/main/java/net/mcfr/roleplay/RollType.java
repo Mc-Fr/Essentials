@@ -1,6 +1,6 @@
 package net.mcfr.roleplay;
 
-public enum RollTypes {
+public enum RollType {
   SKILL,
   ATTRIBUTE,
   RESISTANCE,

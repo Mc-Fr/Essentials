@@ -1,6 +1,6 @@
 package net.mcfr.commands;
 
-import static org.spongepowered.api.text.format.TextColors.YELLOW;
+import static org.spongepowered.api.text.format.TextColors.*;
 
 import java.util.Optional;
 
@@ -17,12 +17,12 @@ import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
-import net.mcfr.roleplay.Attributes;
-import net.mcfr.roleplay.Defenses;
+import net.mcfr.roleplay.Attribute;
+import net.mcfr.roleplay.Defense;
 import net.mcfr.roleplay.RolePlayService;
-import net.mcfr.roleplay.RollTypes;
-import net.mcfr.roleplay.Senses;
-import net.mcfr.roleplay.Skills;
+import net.mcfr.roleplay.RollType;
+import net.mcfr.roleplay.Sense;
+import net.mcfr.roleplay.Skill;
 import net.mcfr.roleplay.rollResults.AttackRollResult;
 import net.mcfr.roleplay.rollResults.AttributeRollResult;
 import net.mcfr.roleplay.rollResults.DefenseRollResult;
@@ -55,12 +55,12 @@ public class RollCommand extends AbstractCommand {
             .description(Text.of("Permet de faire des jets de dés."))
             .permission("essentials.command.roll")
             .executor(this)
-            .children(getChildrenList(new Skill(getPlugin()),
-                new Attribute(getPlugin()),
+            .children(getChildrenList(new SkillCommand(getPlugin()),
+                new AttributeCommand(getPlugin()),
                 new Resistance(getPlugin()),
                 new Perception(getPlugin()),
                 new Attack(getPlugin()),
-                new Defense(getPlugin()),
+                new DefenseCommand(getPlugin()),
                 new None(getPlugin())))
             .build();
     //#f:1
@@ -71,7 +71,7 @@ public class RollCommand extends AbstractCommand {
     return new String[] { "roll" };
   }
 
-  private static String getWeaponString(Skills skill) {
+  private static String getWeaponString(Skill skill) {
     String weaponString = " ";
     String displayName = skill.getDisplayName();
     switch (skill.getName()) {
@@ -104,7 +104,7 @@ public class RollCommand extends AbstractCommand {
     return weaponString;
   }
 
-  private static void printResult(RollTypes type, RollResult res) {
+  private static void printResult(RollType type, RollResult res) {
     Player player = res.getPlayer();
 
     String line1 = "";
@@ -123,12 +123,12 @@ public class RollCommand extends AbstractCommand {
       AttributeRollResult result = (AttributeRollResult) res;
 
       String attributeString = "de " + result.getAttribute().getName();
-      if (result.getAttribute().equals(Attributes.INTELLECT)) {
-        attributeString = "d'" + Attributes.INTELLECT.getName();
+      if (result.getAttribute().equals(Attribute.INTELLECT)) {
+        attributeString = "d'" + Attribute.INTELLECT.getName();
       }
 
-      line1 = String.format("%s fait un jet " + attributeString + ", score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
-          result.getScore());
+      line1 = String.format("%s fait un jet " + attributeString + ", score de %d" + result.getModifierString(),
+          McFrPlayer.getMcFrPlayer(player).getName(), result.getScore());
     }
       break;
     case DEFENSE: {
@@ -195,9 +195,9 @@ public class RollCommand extends AbstractCommand {
     // chaine de caractère correspondant à un niveau de chat.
   }
 
-  static class Skill extends AbstractCommand {
+  static class SkillCommand extends AbstractCommand {
 
-    public Skill(Essentials plugin) {
+    public SkillCommand(Essentials plugin) {
       super(plugin);
     }
 
@@ -205,9 +205,9 @@ public class RollCommand extends AbstractCommand {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
         if (args.hasAny("compétence")) {
-          Skills skill = args.<Skills>getOne("compétence").get();
-          printResult(RollTypes.SKILL, Sponge.getServiceManager().provide(RolePlayService.class).get().skillRoll((Player) src, skill,
-              args.<Integer>getOne("modificateur").orElse(0), args.<Attributes>getOne("attribut")));
+          Skill skill = args.<Skill>getOne("compétence").get();
+          printResult(RollType.SKILL, Sponge.getServiceManager().provide(RolePlayService.class).get().skillRoll((Player) src, skill,
+              args.<Integer>getOne("modificateur").orElse(0), args.<Attribute>getOne("attribut")));
         } else {
           src.sendMessage(Text.of(TextColors.YELLOW, "------------------------ ROLL C ------------------------\n" + "Jet de compétence :\n"
               + "/roll c [compétence] pour lancer un jet direct.\n" + "   Exemple : /roll c chasse\n"
@@ -229,9 +229,9 @@ public class RollCommand extends AbstractCommand {
               .description(Text.of("Fait un jet de compétence."))
               .permission("essentials.command.roll.skill")
               .executor(this)
-              .arguments(GenericArguments.optional(GenericArguments.choices(Text.of("compétence"), Skills.getSkills())),
+              .arguments(GenericArguments.optional(GenericArguments.choices(Text.of("compétence"), Skill.getSkills())),
                          GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))),
-                         GenericArguments.optional(GenericArguments.enumValue(Text.of("attribut"), Attributes.class)))
+                         GenericArguments.optional(GenericArguments.enumValue(Text.of("attribut"), Attribute.class)))
               .build();
       //#f:1
     }
@@ -243,9 +243,9 @@ public class RollCommand extends AbstractCommand {
 
   }
 
-  static class Attribute extends AbstractCommand {
+  static class AttributeCommand extends AbstractCommand {
 
-    public Attribute(Essentials plugin) {
+    public AttributeCommand(Essentials plugin) {
       super(plugin);
     }
 
@@ -253,8 +253,8 @@ public class RollCommand extends AbstractCommand {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
         if (args.hasAny("attribut")) {
-          printResult(RollTypes.ATTRIBUTE, Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll((Player) src,
-              args.<Attributes>getOne("attribut").get(), args.<Integer>getOne("modificateur").orElse(0)));
+          printResult(RollType.ATTRIBUTE, Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll((Player) src,
+              args.<Attribute>getOne("attribut").get(), args.<Integer>getOne("modificateur").orElse(0)));
         } else {
           src.sendMessage(Text.of(TextColors.YELLOW,
               "------------------------ ROLL AT -----------------------\n" + "Jet d'attribut :\n" + "/roll at FORCE/DEXTERITE/INTELLECT/ENDURANCE\n"
@@ -275,7 +275,7 @@ public class RollCommand extends AbstractCommand {
               .description(Text.of("Fait un jet d'attribut."))
               .permission("essentials.command.roll.attribute")
               .executor(this)
-              .arguments(GenericArguments.optional(GenericArguments.enumValue(Text.of("attribut"), Attributes.class)),
+              .arguments(GenericArguments.optional(GenericArguments.enumValue(Text.of("attribut"), Attribute.class)),
                          GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))))
               .build();
       //#f:1
@@ -297,7 +297,7 @@ public class RollCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
-        printResult(RollTypes.RESISTANCE, Sponge.getServiceManager().provide(RolePlayService.class).get().resistanceRoll((Player) src,
+        printResult(RollType.RESISTANCE, Sponge.getServiceManager().provide(RolePlayService.class).get().resistanceRoll((Player) src,
             args.<Integer>getOne("modificateur").orElse(0)));
 
       } else {
@@ -334,8 +334,8 @@ public class RollCommand extends AbstractCommand {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
         if (args.hasAny("sens")) {
-          printResult(RollTypes.PERCEPTION, Sponge.getServiceManager().provide(RolePlayService.class).get().perceptionRoll((Player) src,
-              args.<Senses>getOne("sens").get(), args.<Integer>getOne("modificateur").orElse(0)));
+          printResult(RollType.PERCEPTION, Sponge.getServiceManager().provide(RolePlayService.class).get().perceptionRoll((Player) src,
+              args.<Sense>getOne("sens").get(), args.<Integer>getOne("modificateur").orElse(0)));
         } else {
           src.sendMessage(Text.of(TextColors.YELLOW,
               "------------------------ ROLL P ------------------------\n" + "Jet de perception :\n" + "/roll p OUIE/VUE/ODORAT/GOUT/TOUCHER\n"
@@ -356,7 +356,7 @@ public class RollCommand extends AbstractCommand {
             .description(Text.of("Fait un jet de perception."))
             .permission("essentials.command.roll.perception")
             .executor(this)
-            .arguments(GenericArguments.optional(GenericArguments.enumValue(Text.of("sens"), Senses.class)),
+            .arguments(GenericArguments.optional(GenericArguments.enumValue(Text.of("sens"), Sense.class)),
                 GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))))
             .build();
     //#f:1
@@ -378,8 +378,8 @@ public class RollCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
-        printResult(RollTypes.ATTACK, Sponge.getServiceManager().provide(RolePlayService.class).get().attackRoll((Player) src,
-            args.<Integer>getOne("modificateur").orElse(0), args.<Skills>getOne("compétence")));
+        printResult(RollType.ATTACK, Sponge.getServiceManager().provide(RolePlayService.class).get().attackRoll((Player) src,
+            args.<Integer>getOne("modificateur").orElse(0), args.<Skill>getOne("compétence")));
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
       }
@@ -394,7 +394,7 @@ public class RollCommand extends AbstractCommand {
               .permission("essentials.command.roll.attack")
               .executor(this)
               .arguments(GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))),
-                  GenericArguments.optional(GenericArguments.choices(Text.of("compétence"), Skills.getCombatSkills())))
+                  GenericArguments.optional(GenericArguments.choices(Text.of("compétence"), Skill.getCombatSkills())))
               .build();
       //#f:1
     }
@@ -406,8 +406,8 @@ public class RollCommand extends AbstractCommand {
 
   }
 
-  static class Defense extends AbstractCommand {
-    public Defense(Essentials plugin) {
+  static class DefenseCommand extends AbstractCommand {
+    public DefenseCommand(Essentials plugin) {
       super(plugin);
     }
 
@@ -415,14 +415,14 @@ public class RollCommand extends AbstractCommand {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
         if (args.hasAny("type")) {
-          Defenses type = args.<Defenses>getOne("type").get();
-          if (type.equals(Defenses.PARADE) && args.hasAny("compétence")) {
-            printResult(RollTypes.DEFENSE,
-                Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src, args.<Defenses>getOne("type").get(),
-                    args.<Integer>getOne("modificateur").orElse(0), Optional.of(args.<Skills>getOne("compétence").get())));
+          Defense type = args.<Defense>getOne("type").get();
+          if (type.equals(Defense.PARADE) && args.hasAny("compétence")) {
+            printResult(RollType.DEFENSE,
+                Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src, args.<Defense>getOne("type").get(),
+                    args.<Integer>getOne("modificateur").orElse(0), Optional.of(args.<Skill>getOne("compétence").get())));
           } else {
-            printResult(RollTypes.DEFENSE, Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src,
-                args.<Defenses>getOne("type").get(), args.<Integer>getOne("modificateur").orElse(0), Optional.empty()));
+            printResult(RollType.DEFENSE, Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src,
+                args.<Defense>getOne("type").get(), args.<Integer>getOne("modificateur").orElse(0), Optional.empty()));
           }
         } else {
           src.sendMessage(Text.of(TextColors.YELLOW,
@@ -444,9 +444,9 @@ public class RollCommand extends AbstractCommand {
           .description(Text.of("Fait un jet de défense."))
           .permission("essentials.command.roll.defense")
           .executor(this)
-          .arguments(GenericArguments.optional(GenericArguments.enumValue(Text.of("type"), Defenses.class)),
+          .arguments(GenericArguments.optional(GenericArguments.enumValue(Text.of("type"), Defense.class)),
               GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))),
-              GenericArguments.optional(GenericArguments.choices(Text.of("compétence"), Skills.getCombatSkills())))
+              GenericArguments.optional(GenericArguments.choices(Text.of("compétence"), Skill.getCombatSkills())))
           .build();
   //#f:1
     }

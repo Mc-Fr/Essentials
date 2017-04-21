@@ -1,6 +1,6 @@
 package net.mcfr.roleplay;
 
-public enum Defenses {
+public enum Defense {
   PARADE,
   ESQUIVE,
   BLOCAGE

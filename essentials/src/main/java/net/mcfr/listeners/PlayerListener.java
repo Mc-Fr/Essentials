@@ -30,7 +30,7 @@ import org.spongepowered.api.text.format.TextColors;
 import net.mcfr.chat.MessageData;
 import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionService;
-import net.mcfr.roleplay.Skills;
+import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrPlayer;
 
 public class PlayerListener {
@@ -140,7 +140,7 @@ public class PlayerListener {
 
       if (source instanceof Player) {
         McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) source);
-        int skillLevel = player.getSkillLevel(Skills.getSkillByName("chasse"), Optional.empty());
+        int skillLevel = player.getSkillLevel(Skill.getSkillByName("chasse"), Optional.empty());
 
         if (skillLevel >= 12) {
           mustLoot = true;
@@ -152,7 +152,7 @@ public class PlayerListener {
           Optional<Entity> optEntity = Sponge.getServer().getWorld("world").get().getEntity(sourceArrow.getCreator().get());
           if (optEntity.isPresent() && optEntity.get() instanceof Player) {
             McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) optEntity.get());
-            int skillLevel = player.getSkillLevel(Skills.getSkillByName("chasse"), Optional.empty());
+            int skillLevel = player.getSkillLevel(Skill.getSkillByName("chasse"), Optional.empty());
             
             if (skillLevel >= 12) {
               mustLoot = true;

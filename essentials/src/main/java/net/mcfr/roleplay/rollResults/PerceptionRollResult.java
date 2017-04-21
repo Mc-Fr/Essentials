@@ -2,12 +2,12 @@ package net.mcfr.roleplay.rollResults;
 
 import org.spongepowered.api.entity.living.player.Player;
 
-import net.mcfr.roleplay.Senses;
+import net.mcfr.roleplay.Sense;
 
 public class PerceptionRollResult extends RollResult {
-  private Senses sense;
+  private Sense sense;
   
-  public PerceptionRollResult(Player player, Senses sense, int modifier, int roll, int score, int margin) {
+  public PerceptionRollResult(Player player, Sense sense, int modifier, int roll, int score, int margin) {
     super(player, modifier, roll, score, margin);
     this.sense = sense;
   }

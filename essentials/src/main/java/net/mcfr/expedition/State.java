@@ -3,7 +3,7 @@ package net.mcfr.expedition;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
-public enum States {
+public enum State {
 //#f:0
   IN_AREA( 
       Text.of(TextColors.YELLOW, "Vous vous sentez enfin débarassé de ce qui vous suivait.")),
@@ -25,16 +25,16 @@ public enum States {
   private final Text safeMessage;
   private final Text dangerMessage;
 
-  private States(Text safeMessage, Text dangerMessage) {
+  private State(Text safeMessage, Text dangerMessage) {
     this.safeMessage = safeMessage;
     this.dangerMessage = dangerMessage;
   }
 
-  private States(Text safeMessage) {
+  private State(Text safeMessage) {
     this(safeMessage, Text.of(""));
   }
 
-  private States() {
+  private State() {
     this(Text.of(""));
   }
   

@@ -1,6 +1,6 @@
 package net.mcfr.roleplay;
 
-public enum Senses {
+public enum Sense {
   VISION,
   OUIE,
   GOUT,

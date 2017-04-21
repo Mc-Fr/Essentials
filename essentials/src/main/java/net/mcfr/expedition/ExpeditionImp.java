@@ -19,7 +19,7 @@ import net.mcfr.utils.McFrPlayer;
 public class ExpeditionImp implements ExpeditionService {
   private final int RADIUS_DELTA = 10;
   private List<AuthorizedArea> areas = new ArrayList<>();
-  private States current;
+  private State current;
 
   public ExpeditionImp() {
     loadFromDatabase();
@@ -72,8 +72,8 @@ public class ExpeditionImp implements ExpeditionService {
   @Override
   public void actualizePlayerState(Player p) {
     McFrPlayer player = McFrPlayer.getMcFrPlayer(p);
-    States prevState = player.getExpeditionState();
-    States nextState = getStateAtLocation(p.getLocation());
+    State prevState = player.getExpeditionState();
+    State nextState = getStateAtLocation(p.getLocation());
 
     if (!p.hasPermission("essentials.leavearea") && !p.hasPermission("essentials.freefromareas")) {
       if (nextState.ordinal() > prevState.ordinal()) {
@@ -104,35 +104,35 @@ public class ExpeditionImp implements ExpeditionService {
   }
 
   @Override
-  public States getStateAtLocation(Location<World> loc) {
-    this.current = States.TO_COMPUTE;
+  public State getStateAtLocation(Location<World> loc) {
+    this.current = State.TO_COMPUTE;
 
     this.areas.stream().filter(a -> a.getExtent().equals(loc.getExtent())).forEach(a -> {
-      if (this.current.equals(States.TO_COMPUTE)) {
-        this.current = States.KILL;
+      if (this.current.equals(State.TO_COMPUTE)) {
+        this.current = State.KILL;
       }
 
       double distance = a.distance(loc);
       int radius = a.getRadius();
 
       if (distance < radius) {
-        this.current = getSafest(this.current, States.IN_AREA);
+        this.current = getSafest(this.current, State.IN_AREA);
       } else if (distance < radius + this.RADIUS_DELTA) {
-        this.current = getSafest(this.current, States.ADVERT);
+        this.current = getSafest(this.current, State.ADVERT);
       } else if (distance < radius + 2 * this.RADIUS_DELTA) {
-        this.current = getSafest(this.current, States.HURT1);
+        this.current = getSafest(this.current, State.HURT1);
       } else if (distance < radius + 3 * this.RADIUS_DELTA) {
-        this.current = getSafest(this.current, States.HURT2);
+        this.current = getSafest(this.current, State.HURT2);
       } else if (distance < radius + 4 * this.RADIUS_DELTA) {
-        this.current = getSafest(this.current, States.HURT3);
+        this.current = getSafest(this.current, State.HURT3);
       }
     });
 
-    return this.current.equals(States.TO_COMPUTE) ? States.IN_AREA : this.current;
+    return this.current.equals(State.TO_COMPUTE) ? State.IN_AREA : this.current;
   }
 
   @Override
-  public States getSafest(States current, States next) {
+  public State getSafest(State current, State next) {
     return current.ordinal() > next.ordinal() ? next : current;
   }
 }

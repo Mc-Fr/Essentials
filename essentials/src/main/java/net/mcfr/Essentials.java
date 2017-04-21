@@ -26,7 +26,7 @@ import com.google.inject.Inject;
 
 import net.mcfr.babel.TribalWord;
 import net.mcfr.commands.utils.AbstractCommand;
-import net.mcfr.commands.utils.Commands;
+import net.mcfr.commands.utils.Command;
 import net.mcfr.death.CareImp;
 import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionImp;
@@ -60,7 +60,7 @@ public class Essentials {
   @Listener
   public void onInit(GameInitializationEvent e) {
     this.serverLock = false;
-    for (Commands command : Commands.values()) {
+    for (Command command : Command.values()) {
       try {
         AbstractCommand cmd = command.getCommandClass().getConstructor(Essentials.class).newInstance(this);
         getGame().getCommandManager().register(this, cmd.getCommandSpec(), cmd.getAliases());

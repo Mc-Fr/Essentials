@@ -4,25 +4,25 @@ import java.util.Optional;
 
 import org.spongepowered.api.entity.living.player.Player;
 
-import net.mcfr.roleplay.Defenses;
-import net.mcfr.roleplay.Skills;
+import net.mcfr.roleplay.Defense;
+import net.mcfr.roleplay.Skill;
 
 public class DefenseRollResult extends RollResult {
   
-  private Defenses defense;
-  private Optional<Skills> skill;
+  private Defense defense;
+  private Optional<Skill> skill;
   
-  public DefenseRollResult(Player player, Defenses defense, Optional<Skills> optSskill, int modifier, int roll, int score, int margin) {
+  public DefenseRollResult(Player player, Defense defense, Optional<Skill> optSskill, int modifier, int roll, int score, int margin) {
     super(player, modifier, roll, score, margin);
     this.defense = defense;
     this.skill = optSskill;
   }
   
-  public Defenses getDefense() {
+  public Defense getDefense() {
     return this.defense;
   }
   
-  public Optional<Skills> getSkill() {
+  public Optional<Skill> getSkill() {
     return this.skill;
   }
 }

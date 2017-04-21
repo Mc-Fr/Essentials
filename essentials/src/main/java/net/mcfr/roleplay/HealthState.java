@@ -33,7 +33,7 @@ public class HealthState {
   }
 
   public void refresh(McFrPlayer owner) {
-    this.endMax = owner.getAttributePoints(Attributes.ENDURANCE);
+    this.endMax = owner.getAttributePoints(Attribute.ENDURANCE);
     this.healthValue = Math.min(this.healthValue, this.endMax);
     this.fatigueValue = Math.min(this.fatigueValue, this.endMax);
     this.isMalusReduced = owner.hasTrait("haute_resistance_a_la_douleur");
@@ -71,12 +71,12 @@ public class HealthState {
     this.save(owner);
   }
 
-  public int getMalus(Attributes attribute) {
+  public int getMalus(Attribute attribute) {
     int malus = getHealthMalus();
-    if (attribute.equals(Attributes.INTELLECT)) {
+    if (attribute.equals(Attribute.INTELLECT)) {
       malus /= 2;
     }    
-    if (attribute.equals(Attributes.DEXTERITE) || attribute.equals(Attributes.INTELLECT)) {
+    if (attribute.equals(Attribute.DEXTERITE) || attribute.equals(Attribute.INTELLECT)) {
       malus += getFatigueMalus();
     }
     return malus;

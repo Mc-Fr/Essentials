@@ -36,7 +36,8 @@ import net.mcfr.commands.TribalLanguageCommand;
 import net.mcfr.commands.VanishCommand;
 import net.mcfr.commands.WhoIsCommand;
 
-public enum Commands {
+// TODO Trouver un moyen de refactorer ça. C'est dégueu.
+public enum Command {
   BABEL(BabelCommand.class),
   BACK(BackCommand.class),
   BURROW(BurrowCommand.class),
@@ -75,7 +76,7 @@ public enum Commands {
 
   private Class<? extends AbstractCommand> cmdClass;
 
-  private Commands(Class<? extends AbstractCommand> cmdClass) {
+  private Command(Class<? extends AbstractCommand> cmdClass) {
     this.cmdClass = cmdClass;
   }
 

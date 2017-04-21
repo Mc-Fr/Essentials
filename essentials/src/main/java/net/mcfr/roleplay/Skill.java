@@ -14,17 +14,17 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import net.mcfr.utils.McFrConnection;
 import net.mcfr.utils.McFrPlayer;
 
-public class Skills {
-  private static Map<String, Skills> skills = new HashMap<>();
-  private static Map<String, Skills> combatSkills = new HashMap<>();
+public class Skill {
+  private static Map<String, Skill> skills = new HashMap<>();
+  private static Map<String, Skill> combatSkills = new HashMap<>();
 
   private String name;
   private String displayName;
-  private Attributes attribute;
+  private Attribute attribute;
   private int difficulty;
-  private Map<Skills, Integer> dependencies;
+  private Map<Skill, Integer> dependencies;
 
-  private Skills(String name, String displayName, Attributes attribute, int difficulty) {
+  private Skill(String name, String displayName, Attribute attribute, int difficulty) {
     this.name = name;
     this.displayName = displayName.toLowerCase();
     this.attribute = attribute;
@@ -32,7 +32,7 @@ public class Skills {
     this.dependencies = new HashMap<>();
   }
 
-  private void addDependency(Skills otherSkill, int score) {
+  private void addDependency(Skill otherSkill, int score) {
     this.dependencies.put(otherSkill, score);
   }
 
@@ -48,7 +48,7 @@ public class Skills {
     return this.difficulty;
   }
 
-  public Map<Skills, Integer> getDependencies() {
+  public Map<Skill, Integer> getDependencies() {
     return this.dependencies;
   }
 
@@ -57,8 +57,8 @@ public class Skills {
       ResultSet skillData = jdrConnection.prepareStatement("SELECT name, displayName, baseAttribute, difficulty, category FROM Skills").executeQuery();
       
       while (skillData.next()) {
-        Skills skill = new Skills(skillData.getString("name"), skillData.getString("displayName"),
-            Attributes.getAttributeFromString(skillData.getString("baseAttribute")), skillData.getInt("difficulty"));
+        Skill skill = new Skill(skillData.getString("name"), skillData.getString("displayName"),
+            Attribute.getAttributeFromString(skillData.getString("baseAttribute")), skillData.getInt("difficulty"));
         skills.put(skill.getName(), skill);
 
         if (skillData.getString("category").equals("combat")) {
@@ -70,8 +70,8 @@ public class Skills {
       ResultSet dependenciesData = jdrConnection.prepareStatement("SELECT skill1, skill2, score FROM Dependances").executeQuery();
       
       while (dependenciesData.next()) {
-        Skills skill1 = skills.get(dependenciesData.getString("skill1"));
-        Skills skill2 = skills.get(dependenciesData.getString("skill2"));
+        Skill skill1 = skills.get(dependenciesData.getString("skill1"));
+        Skill skill2 = skills.get(dependenciesData.getString("skill2"));
         int score = dependenciesData.getInt("score");
         skill1.addDependency(skill2, score);
         skill2.addDependency(skill1, score);
@@ -82,19 +82,19 @@ public class Skills {
     }
   }
 
-  public Attributes getAttribute() {
+  public Attribute getAttribute() {
     return this.attribute;
   }
 
-  public static Map<String, Skills> getSkills() {
+  public static Map<String, Skill> getSkills() {
     return skills;
   }
 
-  public static Map<String, Skills> getCombatSkills() {
+  public static Map<String, Skill> getCombatSkills() {
     return combatSkills;
   }
 
-  public static Skills getSkillByName(String name) {
+  public static Skill getSkillByName(String name) {
     return skills.get(name);
   }
 
@@ -103,7 +103,7 @@ public class Skills {
    * @param player Le joueur dont la compétence de combat est déterminée
    * @return La compétence de combat à utiliser
    */
-  public static Skills getWeaponSkill(Player player) {
+  public static Skill getWeaponSkill(Player player) {
     Optional<ItemStack> optUsedWeapon = player.getItemInHand(HandTypes.MAIN_HAND);
     McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
     

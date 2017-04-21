@@ -27,10 +27,10 @@ import org.spongepowered.api.world.World;
 import net.mcfr.babel.Language;
 import net.mcfr.burrows.Burrow;
 import net.mcfr.chat.ChatType;
-import net.mcfr.expedition.States;
-import net.mcfr.roleplay.Attributes;
+import net.mcfr.expedition.State;
+import net.mcfr.roleplay.Attribute;
 import net.mcfr.roleplay.HealthState;
-import net.mcfr.roleplay.Skills;
+import net.mcfr.roleplay.Skill;
 
 public class McFrPlayer {
   private static List<McFrPlayer> players = new ArrayList<>();
@@ -67,7 +67,7 @@ public class McFrPlayer {
    * </table>
    */
   private int booleans;
-  private States expeditionState;
+  private State expeditionState;
   private Optional<Burrow> selectedBurrow;
   private String name;
   private Optional<String> description;
@@ -75,8 +75,8 @@ public class McFrPlayer {
   private Language language;
   private Player lastCorrespondent;
   private int sheetId;
-  private HashMap<Skills, Integer> skills;
-  private HashMap<Attributes, Integer> attributes;
+  private HashMap<Skill, Integer> skills;
+  private HashMap<Attribute, Integer> attributes;
   private HashMap<String, Integer> traits;
   private HealthState healthState;
   private Location<World> previousLocation;
@@ -122,7 +122,7 @@ public class McFrPlayer {
     this.booleans = 0b0_0001_1000;
     this.name = player.getName();
     this.description = Optional.empty();
-    this.expeditionState = States.IN_AREA;
+    this.expeditionState = State.IN_AREA;
     this.defaultChat = ChatType.MEDIUM;
     this.sheetId = -1;
     this.skills = new HashMap<>();
@@ -139,11 +139,11 @@ public class McFrPlayer {
     return this.player;
   }
 
-  public States getExpeditionState() {
+  public State getExpeditionState() {
     return this.expeditionState;
   }
 
-  public void setExpeditionState(States state) {
+  public void setExpeditionState(State state) {
     this.expeditionState = state;
   }
 
@@ -356,14 +356,14 @@ public class McFrPlayer {
         ResultSet skillData = getCharacterSheet.executeQuery();
 
         while (skillData.next()) {
-          this.skills.put(Skills.getSkills().get(skillData.getString(2)), skillData.getInt(3));
+          this.skills.put(Skill.getSkills().get(skillData.getString(2)), skillData.getInt(3));
         }
         skillData.close();
 
         getAttributes.setInt(1, this.sheetId);
         ResultSet attributeData = getAttributes.executeQuery();
         while (attributeData.next()) {
-          this.attributes.put(Attributes.getAttributeFromString(attributeData.getString(1)), attributeData.getInt(2));
+          this.attributes.put(Attribute.getAttributeFromString(attributeData.getString(1)), attributeData.getInt(2));
         }
         attributeData.close();
 
@@ -453,7 +453,7 @@ public class McFrPlayer {
     this.player.kick(Text.of("Vous êtes mort." + (reason.equals("") ? "" : " (" + reason + ")")));
   }
 
-  public int getSkillLevel(Skills skill, Optional<Attributes> optAttribute) {
+  public int getSkillLevel(Skill skill, Optional<Attribute> optAttribute) {
     List<Integer> scores = new ArrayList<>();
     if (this.skills.containsKey(skill)) {
       scores.add(getAttributePoints(optAttribute.orElse(skill.getAttribute())) + this.skills.get(skill));
@@ -461,8 +461,8 @@ public class McFrPlayer {
       scores.add(getAttributePoints(optAttribute.orElse(skill.getAttribute())) - 3 + skill.getDifficulty());
     }
 
-    for (Map.Entry<Skills, Integer> dependency : skill.getDependencies().entrySet()) {
-      Skills depSkill = dependency.getKey();
+    for (Map.Entry<Skill, Integer> dependency : skill.getDependencies().entrySet()) {
+      Skill depSkill = dependency.getKey();
       int depScore = dependency.getValue();
 
       if (this.skills.containsKey(depSkill)) {
@@ -482,8 +482,8 @@ public class McFrPlayer {
    * @param skills Liste de compétences à comparer
    * @return La compétence dans laquelle le personnage est le plus doué
    */
-  public Skills getBestSkill(Skills... skills) {
-    Skills result = skills[0];
+  public Skill getBestSkill(Skill... skills) {
+    Skill result = skills[0];
     int maxSkillLevel = getSkillLevel(result, Optional.empty());
     int currentSkillLevel;
     
@@ -519,7 +519,7 @@ public class McFrPlayer {
     return this.language;
   }
 
-  public int getAttributePoints(Attributes attribute) {
+  public int getAttributePoints(Attribute attribute) {
     return this.attributes.get(attribute);
   }
 
@@ -546,7 +546,7 @@ public class McFrPlayer {
   public String getSkillsString() {
     String result = "Compétences :";
 
-    for (Skills skill : this.skills.keySet()) {
+    for (Skill skill : this.skills.keySet()) {
       result += "\n- " + skill.getDisplayName() + " : " + getSkillLevel(skill, Optional.empty());
     }
 
@@ -556,7 +556,7 @@ public class McFrPlayer {
   public String getAttributesString() {
     String result = "Attributs :";
 
-    for (Attributes attribute : this.attributes.keySet()) {
+    for (Attribute attribute : this.attributes.keySet()) {
       result += "\n- " + attribute.getName() + " : " + getAttributePoints(attribute);
     }
 

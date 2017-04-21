@@ -42,12 +42,12 @@ public interface ExpeditionService {
   /**
    * Retourne l'état correspondant à l'emplacement renseigné en paramètre
    */
-  public States getStateAtLocation(Location<World> loc);
+  public State getStateAtLocation(Location<World> loc);
   
   /**
    * Retourne l'état le plus sûr entre les deux états envoyés en paramètre
    */
-  public States getSafest(States current, States next);
+  public State getSafest(State current, State next);
   
   
 }

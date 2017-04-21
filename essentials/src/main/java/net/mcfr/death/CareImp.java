@@ -18,9 +18,10 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import net.mcfr.roleplay.Attributes;
+import net.mcfr.roleplay.Attribute;
 import net.mcfr.roleplay.RolePlayService;
 import net.mcfr.roleplay.rollResults.AttributeRollResult;
+import net.mcfr.roleplay.rollResults.RollResult;
 import net.mcfr.utils.McFrConnection;
 import net.mcfr.utils.McFrPlayer;
 
@@ -128,30 +129,37 @@ public class CareImp implements CareService {
     if (mcFrPlayer.hasCharacter()) {
       Optional<CareCenter> centerOpt = getBest(player.getLocation(), true);
       if (centerOpt.isPresent()) {
-        AttributeRollResult result = Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll(player, Attributes.ENDURANCE,
+        RollResult result = Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll(player, Attribute.ENDURANCE,
             computeModifier(mcFrPlayer));
-        Text deathMessage = Text.of(TextColors.YELLOW, String.format("%s fait un jet de %s, score de %d" + (result.getModifier() != 0 ? "(%d)" : ""),
-            McFrPlayer.getMcFrPlayer(player).getName(), result.getAttribute().getName(), result.getScore(), result.getMargin()));
-        switch (result.getResult()) {
-        case CRITICAL_SUCCESS:
-          deathMessage.concat(Text.of(TextColors.GREEN, "Vous n'avez aucune séquelle, tout juste quelques cicatrices."));
-          break;
-        case SUCCESS:
-          deathMessage
-              .concat(Text.of(TextColors.DARK_GREEN, "Vous gardez les marques de votre accident, mais d'ici quelques jours, tout ira mieux."));
-          break;
-        case FAILURE:
-          mcFrPlayer.incrementNumberOfDeaths();
-          deathMessage.concat(Text.of(TextColors.DARK_RED,
-              "Malgré les soins, vous gardez une séquelle de votre accident, celle-ci sera handicapante pendant les semaines à venir."));
-          break;
-        case CRITICAL_FAILURE:
-          mcFrPlayer.incrementNumberOfDeaths();
-          deathMessage.concat(Text.of(TextColors.RED,
-              "Malgré les soins, vous gardez une séquelle importante de votre accident, celle-ci sera handicapante pendant les mois à venir."));
-          break;
+        if (result instanceof AttributeRollResult) {
+          AttributeRollResult attributeResult = (AttributeRollResult) result;
+          Text deathMessage = Text.of(TextColors.YELLOW,
+              String.format("%s fait un jet de %s, score de %d" + (attributeResult.getModifier() != 0 ? "(%d)" : ""),
+                  McFrPlayer.getMcFrPlayer(player).getName(), attributeResult.getAttribute().getName(), attributeResult.getScore(),
+                  attributeResult.getMargin()));
+          switch (attributeResult.getResult()) {
+          case CRITICAL_SUCCESS:
+            deathMessage.concat(Text.of(TextColors.GREEN, "Vous n'avez aucune séquelle, tout juste quelques cicatrices."));
+            break;
+          case SUCCESS:
+            deathMessage
+                .concat(Text.of(TextColors.DARK_GREEN, "Vous gardez les marques de votre accident, mais d'ici quelques jours, tout ira mieux."));
+            break;
+          case FAILURE:
+            mcFrPlayer.incrementNumberOfDeaths();
+            deathMessage.concat(Text.of(TextColors.DARK_RED,
+                "Malgré les soins, vous gardez une séquelle de votre accident, celle-ci sera handicapante pendant les semaines à venir."));
+            break;
+          case CRITICAL_FAILURE:
+            mcFrPlayer.incrementNumberOfDeaths();
+            deathMessage.concat(Text.of(TextColors.RED,
+                "Malgré les soins, vous gardez une séquelle importante de votre accident, celle-ci sera handicapante pendant les mois à venir."));
+            break;
+          }
+          player.sendMessage(deathMessage);
+        } else {
+          // TODO Err.
         }
-        player.sendMessage(deathMessage);
       } else {
         McFrPlayer.getMcFrPlayer(player).killCharacter("Trop éloigné d'un centre de soin, vous mourrez sur place.");
       }

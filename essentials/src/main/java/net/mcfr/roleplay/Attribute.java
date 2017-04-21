@@ -1,6 +1,6 @@
 package net.mcfr.roleplay;
 
-public enum Attributes {
+public enum Attribute {
   FORCE("Force"),
   DEXTERITE("Dextérité"),
   INTELLECT("Intellect"),
@@ -9,12 +9,12 @@ public enum Attributes {
 
   private String name;
 
-  private Attributes(String name) {
+  private Attribute(String name) {
     this.name = name;
   }
 
-  public static Attributes getAttributeFromString(String name) {
-    for (Attributes att : values()) {
+  public static Attribute getAttributeFromString(String name) {
+    for (Attribute att : values()) {
       if (att.getName().toLowerCase().substring(0, 3).equals(name))
         return att;
     }

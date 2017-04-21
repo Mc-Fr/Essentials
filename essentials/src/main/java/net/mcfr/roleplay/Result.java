@@ -1,6 +1,6 @@
 package net.mcfr.roleplay;
 
-public enum Results {
+public enum Result {
   CRITICAL_SUCCESS("succès critique"),
   SUCCESS("succès"),
   FAILURE("échec"),
@@ -8,11 +8,11 @@ public enum Results {
 
   private String sentence;
 
-  private Results(String sentence) {
+  private Result(String sentence) {
     this.sentence = sentence;
   }
 
-  public static Results getResult(int roll, int margin) {
+  public static Result getResult(int roll, int margin) {
     if (roll == 3 || roll == 4)
       return CRITICAL_SUCCESS;
     if ((roll == 17 || roll == 18))
