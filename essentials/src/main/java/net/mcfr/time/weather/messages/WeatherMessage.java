@@ -15,8 +15,8 @@ public class WeatherMessage {
     this.biome = biome;
   }
   
-  public boolean isAccurate(BiomeGenres biomeIn, Seasons seasonIn, int hour, Wind wind) {
-    return this.season.equals(seasonIn) && this.biome.equals(biomeIn);
+  public boolean isAccurate(BiomeGenres biome, Seasons season, int hour, Wind wind) {
+    return this.season.equals(season) && this.biome.equals(biome);
   }
   
   @Override

@@ -3,6 +3,7 @@ package net.mcfr.time.weather;
 import java.util.Random;
 import java.util.StringJoiner;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.biome.BiomeType;
 
 import net.mcfr.time.McFrDate;
@@ -46,16 +47,17 @@ public class Weather {
 
     this.temperature = this.season.getTemperatureModificator() + this.humidityState.getLevel().getTemperatureModificator() + this.rand.nextInt(11)
         - 5;
+    
+    Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "meteo");
   }
 
   public String getWeatherString(BiomeType biome, int altitude, McFrDate date) {
     BiomeGenres biomeGenre = BiomeGenres.getGenreByBiome(biome);
     int hour = date.getHour();
 
-    int localTemperature = this.temperature - (altitude - 80) / 4 + biomeGenre.getTemperatureModificator(hour);
+    int localTemperature = this.temperature - (altitude - 90) / 8 + biomeGenre.getTemperatureModificator(hour);
 
     StringJoiner result = new StringJoiner(" * ");
-    result.add(this.humidityState.getLevel().name()); //TODO : remove
     result.add(this.humidityState.getLevel().getWeatherString(biomeGenre, this.season, hour, this.wind, new Random(this.lastUpdate.getSeed())));
     result.add(this.wind.getWindString(altitude));
     result.add(localTemperature + "°C");

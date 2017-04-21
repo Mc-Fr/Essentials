@@ -1,4 +1,4 @@
-package net.mcfr.time.weather.messages;
+ package net.mcfr.time.weather.messages;
 
 import net.mcfr.time.weather.BiomeGenres;
 import net.mcfr.time.weather.Seasons;

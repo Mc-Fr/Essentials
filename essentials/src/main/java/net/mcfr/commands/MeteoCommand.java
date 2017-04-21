@@ -35,13 +35,15 @@ public class MeteoCommand extends AbstractCommand {
       if (optTimeService.isPresent()) {
         Weather weather = optTimeService.get().getWeather();
         Location<World> loc = player.getLocation();
-        player.sendMessage(Text.of(TextColors.BLUE,
-            weather.getWeatherString(loc.getExtent().getBiome(new Vector3i(loc.getBlockX(), 0, loc.getBlockZ())), loc.getBlockY(), optTimeService.get().getDate())));
+        player.sendMessage(Text.of(TextColors.BLUE, weather.getWeatherString(
+            loc.getExtent().getBiome(new Vector3i(loc.getBlockX(), 0, loc.getBlockZ())), loc.getBlockY(), optTimeService.get().getDate())));
       } else {
         player.sendMessage(Text.of(TextColors.RED, "Le système de gestion du temps n'a pas été correctement chargé."));
       }
     } else {
-      src.sendMessage(ONLY_PLAYERS_COMMAND);
+      for (Player p : Sponge.getServer().getOnlinePlayers()) {
+        Sponge.getCommandManager().process(p, "meteo");
+      }
     }
     return CommandResult.success();
   }

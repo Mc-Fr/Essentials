@@ -17,16 +17,19 @@ public class Wind {
   
   public void updateOrientation(Random rand) {
     this.orientation = (this.orientation + ((int) Math.floor(rand.nextFloat() * 30f)) - 15) % 360;
+    if (this.orientation < 0) {
+      this.orientation += 360;
+    }
   }
   
   public String getWindString(int altitude) {
     String result = "";
     
-    WindLevels level = altitude > 100 ? WindLevels.getSuperior(this.level) : this.level;
+    WindLevels level = altitude > 130 ? WindLevels.getSuperior(this.level) : this.level;
     
     result += level;
     
-    if (level.equals(WindLevels.NONE)) {
+    if (!level.equals(WindLevels.NONE)) {
       result += ", ";
       
       int section = (int) Math.floor(this.orientation / 22.5f);

@@ -16,8 +16,14 @@ public class HouredMessage extends WeatherMessage {
   
   @Override
   public boolean isAccurate(BiomeGenres biome, Seasons season, int hour, Wind wind) {
-    if (hour >= this.minHour && hour <= this.maxHour) {
-      return super.isAccurate(biome, season, hour, wind);
+    if (this.minHour < this.maxHour) {
+      if (hour >= this.minHour && hour <= this.maxHour) {
+        return super.isAccurate(biome, season, hour, wind);
+      }
+    } else {
+      if (hour >= this.minHour || hour <= this.maxHour) {
+        return super.isAccurate(biome, season, hour, wind);
+      }
     }
     return false;
   }
