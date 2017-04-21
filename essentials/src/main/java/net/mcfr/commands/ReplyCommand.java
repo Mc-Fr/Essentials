@@ -44,6 +44,7 @@ public class ReplyCommand extends AbstractCommand {
 
         Sponge.getServer().getOnlinePlayers().parallelStream()
             .filter(p -> McFrPlayer.getMcFrPlayer(p).spiesMp() && !p.equals(player) && !p.equals(recipient)).forEach(p -> p.sendMessage(text));
+        McFrPlayer.setLastCorrespondents(player, recipient);
       } else {
         src.sendMessage(Text.of(TextColors.RED, "Vous n'avez aucun correspondant !"));
       }
