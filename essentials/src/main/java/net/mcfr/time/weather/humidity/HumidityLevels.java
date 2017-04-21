@@ -1,11 +1,7 @@
 package net.mcfr.time.weather.humidity;
 
-import static net.mcfr.time.weather.BiomeGenres.DESERT;
-import static net.mcfr.time.weather.BiomeGenres.FOREST;
-import static net.mcfr.time.weather.Seasons.FALL;
-import static net.mcfr.time.weather.Seasons.SPRING;
-import static net.mcfr.time.weather.Seasons.SUMMER;
-import static net.mcfr.time.weather.Seasons.WINTER;
+import static net.mcfr.time.weather.BiomeGenres.*;
+import static net.mcfr.time.weather.Seasons.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,18 +26,18 @@ public enum HumidityLevels {
     
     // Forêt, Printemps
     SUNNY.addMessage(new DayMessage("Le soleil vient frapper les feuillages de ses rayons chauds. L’ombre créée par les arbres procure une douce fraîcheur.", SPRING, FOREST));
-    SUNNY.addMessage(new DayMessage("L’astre lumineux laisse ses rayons illuminer les endroits non couvert par les épais feuillages des grand arbres.", SPRING, FOREST));
+    SUNNY.addMessage(new DayMessage("L’astre lumineux laisse ses rayons illuminer les endroits non couverts par les épais feuillages des grands arbres.", SPRING, FOREST));
     SUNNY.addMessage(new NightMessage("La lune n’éclaire que peu la forêt dans son ensemble, laissant une atmosphère fraîche et douce envahir cette dernière.", SPRING, FOREST));
     SUNNY.addMessage(new NightMessage("La nuit, tout est sombre dans la forêt. Les quelques rayons lunaires viennent parsemer cette dernière de quelques faibles tâches lumineuses.", SPRING, FOREST));
-    CLOUDY.addMessage(new DayMessage("Les rares rayons lumineux ne traversent que peu les différents nuages. En forêt la rare luminosité est bloquée par les arbres qui s’en abreuvent.", SPRING, FOREST));
-    CLOUDY.addMessage(new DayMessage("Les gros nuages qui parcourent le ciel empêche au soleil de faire rayonner la forêt, ce qui lui donne un air triste et inquiétant, sans rayons de soleil.", SPRING, FOREST));
+    CLOUDY.addMessage(new DayMessage("Les rares rayons lumineux ne traversent que peu les différents nuages. En forêt, la rare luminosité est bloquée par les arbres qui s’en abreuvent.", SPRING, FOREST));
+    CLOUDY.addMessage(new DayMessage("Les gros nuages qui parcourent le ciel empêche au soleil de faire rayonner la forêt, ce qui lui donne un air triste et inquiétant, sans rayon de soleil.", SPRING, FOREST));
     CLOUDY.addMessage(new NightMessage("Les nuages couvrent le ciel, obstruant les rayons lunaires. La forêt est très sombre.", SPRING, FOREST));
     THIN_RAIN.addMessage(new DayMessage("Une pluie fine ruisselle sur les feuilles des arbres, gouttant sur ceux qui se trouvent en-dessous.", SPRING, FOREST));
     THIN_RAIN.addMessage(new NightMessage("De fines gouttelettes percent la canopée pour tremper les explorateurs assez inconscients pour se promener dans la forêt de nuit.", SPRING, FOREST));
     HEAVY_RAIN.addMessage(new DayMessage("La luminosité diminue fortement alors que le fracas de la pluie qui s’abat avec force sur les feuilles fait écho à vos oreilles.", SPRING, FOREST));
     HEAVY_RAIN.addMessage(new NightMessage("Des giboulées froides s’abattent sur la forêt, et les branchages des arbres s’agitent sous le vent.", SPRING, FOREST));
     STORM.addMessage(new DayMessage("La forêt s’assombrit dangereusement alors que le grondement du tonnerre se fait entendre au-dessus des arbres. La pluie frappe les feuilles avec violence.", SPRING, FOREST));
-    STORM.addMessage(new NightMessage("Une obscurité quasi-totale s’empare de la forêt, alors que le tonnerre de la pluie qui frappe la canopée fait écho aux éclairs qui se déchaînent au-dessus de vos têtes.", SPRING, FOREST));
+    STORM.addMessage(new NightMessage("Une obscurité quasi-totale s’empare de la forêt, alors que le tonnerre de l'orage qui frappe la canopée fait écho aux éclairs qui se déchaînent au-dessus de vos têtes.", SPRING, FOREST));
     
     // Forêt, Été
     SUNNY.addMessage(new DayMessage("La forêt se pare de jeux de lumière chatoyants. Dans les arbres, les oiseaux s’agitent et se mettent à chanter.", SUMMER, FOREST));
@@ -53,7 +49,7 @@ public enum HumidityLevels {
     CLOUDY.addMessage(new NightMessage("La clarté lunaire disparaît graduellement sous les nuages, alors que la forêt plonge doucement dans le noir.", SUMMER, FOREST));
     CLOUDY.addMessage(new NightMessage("L’obscurité s’empare de la forêt au fur et à mesure que le chant des oiseaux se tait. La lune est progressivement masquée par d’épais nuages cotonneux.", SUMMER, FOREST));
     THIN_RAIN.addMessage(new DayMessage("Une légère pluie chaude ruisselle sur le feuillage des arbres.", SUMMER, FOREST));
-    THIN_RAIN.addMessage(new NightMessage("Une bruine tiède trempe les voyageurs qui errent sous la futaie.", SUMMER, FOREST));
+    THIN_RAIN.addMessage(new NightMessage("Une bruine tiède trempe les voyageurs qui errent sous la futaie.", SUMMER, FOREST)); // L'humidité est pesante ? FIXME
     HEAVY_RAIN.addMessage(new DayMessage("De grosses gouttes frappent la canopée avec force, alors que la luminosité diminue fortement. L’humidité est pesante.", SUMMER, FOREST));
     HEAVY_RAIN.addMessage(new NightMessage("Le temps est lourd, la nuit opaque et l'eau martelle sur les feuilles.", SUMMER, FOREST));
     STORM.addMessage(new DayMessage("Une pluie drue et chaude vous trempe jusqu’aux os alors que le grondement de l’orage se fait entendre au-dessus de la canopée.", SUMMER, FOREST));
@@ -103,7 +99,7 @@ public enum HumidityLevels {
     SUNNY.addMessage(new DayMessage("Le soleil brille d'un éclat quasi insoutenable, se reflétant sur le sable. Mieux vaut éviter ses rayons pour le moment ...", SPRING, DESERT));
     SUNNY.addMessage(new NightMessage("Les astres semblent plus nombreux qu'ailleurs, les nuits restent chaudes, malgré la disparition du jour.", SPRING, DESERT));
     CLOUDY.addMessage(new DayMessage("L'astre solaire s'élève dans le ciel, ce dernier est décoré de quelques rares et éparses nuages cantonnés à l'horizon.", SPRING, DESERT));
-    CLOUDY.addMessage(new NightMessage("Le silence s'installe avec l’arrivée de la nuit, il devient viable d'être à l'éxtérieur.", SPRING, DESERT));
+    CLOUDY.addMessage(new NightMessage("Le silence s'installe avec l’arrivée de la nuit, il devient viable d'être à l'extérieur.", SPRING, DESERT));
     THIN_RAIN.addMessage(new DayMessage("Le désert reste immuable, les seules variations venant de ses visiteurs et des ombres que l'éclatant soleil projette.", SPRING, DESERT));
     THIN_RAIN.addMessage(new NightMessage("Une chape d'ombre s'abat sur les dunes, accentuant l'impression de solitude.", SPRING, DESERT));
     HEAVY_RAIN.addMessage(new DayMessage("Presque pâle, le soleil continue sa route, son rayonnement se faisant supportable.", SPRING, DESERT));
@@ -171,17 +167,16 @@ public enum HumidityLevels {
     return this.temperatureModificator;
   }
 
-  public String getWeatherString(BiomeGenres biomeGenre, Seasons season, int hour, Wind wind, Random rand) {    
+  public String getWeatherString(BiomeGenres biomeGenre, Seasons season, int hour, Wind wind, Random rand) {
     List<WeatherMessage> availableMessages = new ArrayList<>();
     for (WeatherMessage message : this.messages) {
       if (message.isAccurate(biomeGenre, season, hour, wind)) {
         availableMessages.add(message);
       }
     }
-    
-    if (availableMessages.size() > 0) {
+
+    if (availableMessages.size() > 0)
       return availableMessages.get(rand.nextInt(availableMessages.size())).toString();
-    }
     return "";
   }
 }
