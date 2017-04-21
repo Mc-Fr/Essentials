@@ -2,6 +2,7 @@ package net.mcfr.time.weather.humidity;
 
 import static net.mcfr.time.weather.BiomeGenres.DESERT;
 import static net.mcfr.time.weather.BiomeGenres.FOREST;
+import static net.mcfr.time.weather.BiomeGenres.PLAIN;
 import static net.mcfr.time.weather.Seasons.FALL;
 import static net.mcfr.time.weather.Seasons.SPRING;
 import static net.mcfr.time.weather.Seasons.SUMMER;
@@ -90,9 +91,68 @@ public enum HumidityLevels {
     STORM.addMessage(new NightMessage("La forêt est avalée par l’obscurité alors que la lune disparaît derrière d’épais nuages noirs. Un déluge de grêlons et de neige se met à chuter du ciel. Mieux vaut s’abriter rapidement.", WINTER, FOREST));
     
     // Plaine, Printemps
+    SUNNY.addMessage(new DayMessage("Le ciel s’éclaircit, laissant l’astre solaire réchauffer doucement la terre.", SPRING, PLAIN));
+    SUNNY.addMessage(new DayMessage("La nature s’éveille doucement autour de vous. Un air printanier se fait sentir dans l’air.", SPRING, PLAIN));
+    SUNNY.addMessage(new NightMessage("Une nuit calme et fraîche s’abat sur le monde.", SPRING, PLAIN));
+    SUNNY.addMessage(new NightMessage("La lune illumine faiblement les environs. Le calme règne, troublé seulement par le chant des oiseaux nocturnes.", SPRING, PLAIN));
+    CLOUDY.addMessage(new DayMessage("L’atmosphère s’assombrit alors que le soleil passe derrière les nuages.", SPRING, PLAIN));
+    CLOUDY.addMessage(new DayMessage("Un voile de coton paresseux vient obstruer l’astre solaire, rafraîchissant l’air.", SPRING, PLAIN));
+    CLOUDY.addMessage(new NightMessage("Une nuit sombre et sans lune s’abat sur le monde. L’air est frais.", SPRING, PLAIN));
+    CLOUDY.addMessage(new NightMessage("Le paysage est lentement avalé par l’obscurité alors que la lune est masquée par les nuages.", SPRING, PLAIN));
+    THIN_RAIN.addMessage(new DayMessage("Une faible bruine tombe sur le monde, trempant doucement ceux qui ne s’en abritent pas.", SPRING, PLAIN));
+    THIN_RAIN.addMessage(new NightMessage("Le calme de la nuit est à peine troublé par la douce chanson des gouttelettes qui tombent sur la végétation.", SPRING, PLAIN));
+    HEAVY_RAIN.addMessage(new DayMessage("Des giboulées de printemps s’abattent avec violence sur le monde, déversant eau et neige fondue sur les voyageurs.", SPRING, PLAIN));
+    HEAVY_RAIN.addMessage(new NightMessage("Le silence de la nuit est percé par le fracas du déluge d’eau qui s’abat autour de vous, vous glaçant les os.", SPRING, PLAIN));
+    STORM.addMessage(new DayMessage("Les environs sont plongés dans l’obscurité en plein jour alors que de dangereux nuages noirs s’amoncellent au-dessus de vos têtes. Le grondement du tonnerre se fait entendre.", SPRING, PLAIN));  
+    STORM.addMessage(new NightMessage("La nuit s’illumine fugitivement sous le coup des éclairs qui lézardent l’horizon. La pluie tombe avec violence. Mieux vaut s’abriter rapidement. ", SPRING, PLAIN)); 
+
     // Plaine, Été
+    SUNNY.addMessage(new DayMessage("Le soleil vient frapper les environs de ses rayons chauds, faisant chanter les grillons. La platitude du paysage n’offre hélas que peu de répit.", SUMMER, PLAIN));
+    SUNNY.addMessage(new DayMessage("Une chaleur cuisante domine le monde et ceux qui sont assez braves pour sortir par ce temps. L’herbe sèche craque sous vos pas.", SUMMER, PLAIN));
+    SUNNY.addMessage(new NightMessage("La température chute alors que la nuit tombe, offrant un répit bienvenu.", SUMMER, PLAIN));
+    SUNNY.addMessage(new NightMessage("Une nuit claire et tiède s’abat sur le monde alors que le chant des grillons s’éteint lentement.", SUMMER, PLAIN));
+    CLOUDY.addMessage(new DayMessage("Des nuages gris viennent cacher le soleil, faisant redescendre les températures à des niveaux plus supportables.", SUMMER, PLAIN));
+    CLOUDY.addMessage(new DayMessage("Le cuisant astre solaire disparaît derrière un épais voile nuageux. L’air est lourd.", SUMMER, PLAIN));
+    CLOUDY.addMessage(new NightMessage("La lune disparaît derrière les nuages, plongeant les environs dans une obscurité tiède.", SUMMER, PLAIN));
+    CLOUDY.addMessage(new NightMessage("Une nuit sans lune tombe sur le monde. Les températures restent chaudes.", SUMMER, PLAIN)); 
+    THIN_RAIN.addMessage(new DayMessage("L’air se charge d’humidité et le temps devient lourd, difficilement supportable. Le soleil disparaît.", SUMMER, PLAIN));
+    THIN_RAIN.addMessage(new NightMessage("Une pluie fine et chaude tombe sur le monde, sans parvenir à rafraîchir ceux qui se trouvent en-dessous.", SUMMER, PLAIN));
+    HEAVY_RAIN.addMessage(new DayMessage("Une pluie violente crève soudain le plafond nuageux, trempant jusqu’aux os les malheureux qui ne se sont pas abrités.", SUMMER, PLAIN));
+    HEAVY_RAIN.addMessage(new NightMessage("Un déluge d’eau vient troubler le silence nocturne, s’abattant avec violence sur le sol desséché.", SUMMER, PLAIN));
+    STORM.addMessage(new DayMessage("D’inquiétants nuages noirs couvrent le ciel. L’orage gronde à l’horizon.", SUMMER, PLAIN));  
+    STORM.addMessage(new NightMessage("Le fracas du tonnerre vient troubler la nuit, alors que d’énormes grêlons chutent du ciel. ", SUMMER, PLAIN));
+    
     // Plaine, Automne
+    SUNNY.addMessage(new DayMessage("Le soleil illumine doucement les teintes automnales qu’a pris la végétation. L’air est frais.", FALL, PLAIN));
+    SUNNY.addMessage(new DayMessage("Un léger vent se lève, éclaircissant le ciel bleu et froid où l’on voit parfois certains oiseaux migrer.", FALL, PLAIN));
+    SUNNY.addMessage(new NightMessage("Une nuit froide et claire s’abat sur le monde. Mieux vaut sortir couvert.", FALL, PLAIN));
+    SUNNY.addMessage(new NightMessage("Une obscurité silencieuse et fraîche envahit le monde. Les étoiles brillent d’un éclat terne.", FALL, PLAIN));
+    CLOUDY.addMessage(new DayMessage("Les rares rayons lumineux ne traversent que peu les différents nuages. Un vent frais se lève.", FALL, PLAIN));
+    CLOUDY.addMessage(new DayMessage("Les gros nuages qui parcourent le ciel empêche au soleil de faire rayonner les environs, conférant un aspect triste et morne au paysage.", FALL, PLAIN));
+    CLOUDY.addMessage(new NightMessage("Les nuages couvrent le ciel, obstruant les rayons lunaires. La nuit est sombre et silencieuse.", FALL, PLAIN));
+    CLOUDY.addMessage(new NightMessage("Une nuit venteuse s’abat sur le monde. Malgré la brise, le ciel est couvert de nuages.", FALL, PLAIN)); 
+    THIN_RAIN.addMessage(new DayMessage("Une pluie fine et fraîche vient mordre la chair de ceux qui ne sont pas habillés pour la saison, alors que la luminosité baisse.", FALL, PLAIN));
+    THIN_RAIN.addMessage(new NightMessage("Le vent s’intensifie alors que la pluie tombe, ruisselant dans la nuit froide.", FALL, PLAIN));
+    HEAVY_RAIN.addMessage(new DayMessage("Le ciel s’assombrit grandement alors qu’un déluge d’eau s’abat sur ceux qui ne s’abritent pas à temps. Le sol devient boueux.", FALL, PLAIN));
+    HEAVY_RAIN.addMessage(new NightMessage("La quiétude de la nuit est troublée par le fracas des violentes averses qui s’abattent sur le monde. Mieux vaut ne pas traîner dehors. ", FALL, PLAIN));  
+    STORM.addMessage(new DayMessage("La luminosité baisse dangereusement lors que de gros nuages noirs s’amoncellent. Quelques instants plus tard, un déluge sensationnel s’abat sur le monde, alors que le tonnerre gronde.", FALL, PLAIN)); 
+    STORM.addMessage(new NightMessage("Un formidable orage éclate, trempant le monde avec violence. La nuit s’illumine brièvement sous le coup des éclairs qui lézardent le ciel noir.", FALL, PLAIN)); 
+    
     // Plaine, Hiver
+    SUNNY.addMessage(new DayMessage("Un soleil gris se lève sur le monde, peinant à réchauffer ses habitants. La neige se met à fondre doucement.", WINTER, PLAIN));
+    SUNNY.addMessage(new DayMessage("Un léger vent se lève mais le ciel reste dégagé. Les températures sont basses et le sol glissant, mélange de neige fondue et de boue verglacée.", WINTER, PLAIN));
+    SUNNY.addMessage(new NightMessage("Une nuit claire s’abat sur le monde, dangereusement froide. Mieux vaut s’abriter avant de geler sur place.", WINTER, PLAIN));
+    SUNNY.addMessage(new NightMessage("La lune éclaire un paysage hivernal, où la végétation morne attend désespérément le retour du printemps.", WINTER, PLAIN));
+    CLOUDY.addMessage(new DayMessage("Le soleil disparaît derrière les nuages, plongeant le monde dans une fraîcheur triste.", WINTER, PLAIN));
+    CLOUDY.addMessage(new DayMessage("Le luminosité diminue doucement alors que le ciel se couvre.", WINTER, PLAIN));
+    CLOUDY.addMessage(new NightMessage("La nuit disparaît derrière les nuages, plongeant le monde dans l’obscurité. Les températures sont glaçantes.", WINTER, PLAIN));
+    CLOUDY.addMessage(new NightMessage("Une pénombre froide s’abat sur le monde. La lune absente renforce l’impression de solitude qu’éprouvent les voyageurs dehors à cette heure-ci.", WINTER, PLAIN)); 
+    THIN_RAIN.addMessage(new DayMessage("Une pluie fine et froide tombe du ciel, accompagnée de quelques flocons.", WINTER, PLAIN));
+    THIN_RAIN.addMessage(new NightMessage("Quelques gouttelettes s’abattent sur le monde, glaçant les os de ceux qui n’ont pas encore trouvé refuge.", WINTER, PLAIN));
+    HEAVY_RAIN.addMessage(new DayMessage("De gros flocons se mettent à tomber du ciel, enveloppant le paysage dans un épais manteau blanc.", WINTER, PLAIN));
+    HEAVY_RAIN.addMessage(new NightMessage("Un déluge de neige s’abat sur le monde, rendant la visibilité quasi-nulle dans cette nuit sans lune.", WINTER, PLAIN)); 
+    STORM.addMessage(new DayMessage("Des grêlons dangereusement gros chutent du ciel, alors que le grondement des éclairs résonne tout autour de vous.", WINTER, PLAIN));
+    STORM.addMessage(new NightMessage("Une violente grêle vient s’abattre sur le monde en tonitruant. L’obscurité est totale en cette nuit d’orage.", WINTER, PLAIN));
     
     // Océan, Printemps
     // Océan, Été
@@ -102,8 +162,8 @@ public enum HumidityLevels {
     // Désert, Printemps
     SUNNY.addMessage(new DayMessage("Le soleil brille d'un éclat quasi insoutenable, se reflétant sur le sable. Mieux vaut éviter ses rayons pour le moment ...", SPRING, DESERT));
     SUNNY.addMessage(new NightMessage("Les astres semblent plus nombreux qu'ailleurs, les nuits restent chaudes, malgré la disparition du jour.", SPRING, DESERT));
-    CLOUDY.addMessage(new DayMessage("L'astre solaire s'élève dans le ciel, ce dernier est décoré de quelques rares et éparses nuages cantonnés à l'horizon.", SPRING, DESERT));
-    CLOUDY.addMessage(new NightMessage("Le silence s'installe avec l’arrivée de la nuit, il devient viable d'être à l'éxtérieur.", SPRING, DESERT));
+    CLOUDY.addMessage(new DayMessage("L'astre solaire s'élève dans le ciel. Ce dernier est décoré de quelques rares et éparses nuages cantonnés à l'horizon.", SPRING, DESERT));
+    CLOUDY.addMessage(new NightMessage("Le silence s'installe avec l’arrivée de la nuit, il devient viable d'être à l'extérieur.", SPRING, DESERT));
     THIN_RAIN.addMessage(new DayMessage("Le désert reste immuable, les seules variations venant de ses visiteurs et des ombres que l'éclatant soleil projette.", SPRING, DESERT));
     THIN_RAIN.addMessage(new NightMessage("Une chape d'ombre s'abat sur les dunes, accentuant l'impression de solitude.", SPRING, DESERT));
     HEAVY_RAIN.addMessage(new DayMessage("Presque pâle, le soleil continue sa route, son rayonnement se faisant supportable.", SPRING, DESERT));
@@ -114,8 +174,8 @@ public enum HumidityLevels {
     // Désert, Été
     SUNNY.addMessage(new DayMessage("Le soleil brille d'un éclat quasi insoutenable, se reflétant sur le sable. Mieux vaut éviter ses rayons pour le moment ...", SUMMER, DESERT));
     SUNNY.addMessage(new NightMessage("Les astres semblent plus nombreux qu'ailleurs, les nuits restent chaudes, malgré la disparition du jour.", SUMMER, DESERT));
-    CLOUDY.addMessage(new DayMessage("L'astre solaire s'élève dans le ciel, ce dernier est décoré de quelques rares et éparses nuages cantonnés à l'horizon.", SUMMER, DESERT));
-    CLOUDY.addMessage(new NightMessage("Le silence s'installe avec l’arrivée de la nuit, il devient viable d'être à l'extérieur.", SUMMER, DESERT));   
+    CLOUDY.addMessage(new DayMessage("L'astre solaire s'élève dans le ciel. Ce dernier est décoré de quelques rares et éparses nuages cantonnés à l'horizon.", SUMMER, DESERT));
+    CLOUDY.addMessage(new NightMessage("Le silence s'installe avec l’arrivée de la nuit, il devient viable d'être à l'extérieur.", SUMMER, DESERT));
     HEAVY_RAIN.addMessage(new DayMessage("Le désert reste immuable, les seules variations venant de ses visiteurs et des ombres que l'éclatant soleil projette.", SUMMER, DESERT));
     HEAVY_RAIN.addMessage(new NightMessage("Une chape d'ombre s'abat sur les dunes, accentuant l'impression de solitude.", SUMMER, DESERT));   
     STORM.addMessage(new DayMessage("Le vent se lève, mugissant de toute part, le sable s'élève en de grandes volutes, venant cacher le ciel et fouetter la peau.", SUMMER, DESERT));
@@ -140,8 +200,8 @@ public enum HumidityLevels {
     THIN_RAIN.addMessage(new NightMessage("L'impression de solitude se fait pesante dans la nuit glaciale que vous offre ses grandes étendues de sable.", WINTER, DESERT));
     HEAVY_RAIN.addMessage(new DayMessage("Une brise vient soulever quelques grains de sable, rien de suffisant pour éviter au soleil de frapper sur le sable.", WINTER, DESERT));  
     HEAVY_RAIN.addMessage(new NightMessage("Mût par un vent persistant, le sable volette en tout sens, rendant changeant et vivant le paysage seulement éclairé par les astres.", WINTER, DESERT));  
-    STORM.addMessage(new DayMessage("Un tempête se lève, le sable s'incrustant en tout endroits exposés, masquant le ciel azur.", WINTER, DESERT));  
-    STORM.addMessage(new NightMessage("Le froid s'empare du désert, le sable, battu par les vents, vient rendre l'endroit plus inhabitable encore. ", WINTER, DESERT)); 
+    STORM.addMessage(new DayMessage("Une tempête se lève, le sable s'incrustant dans tous les endroits exposés, masquant le ciel azur.", WINTER, DESERT)); 
+    STORM.addMessage(new NightMessage("Le froid s'empare du désert. Le sable, battu par les vents, vient rendre l'endroit plus inhabitable encore. ", WINTER, DESERT));
     
     // Enneigé, Printemps
     
