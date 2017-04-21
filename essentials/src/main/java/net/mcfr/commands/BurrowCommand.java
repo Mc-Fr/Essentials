@@ -21,7 +21,7 @@ import org.spongepowered.api.world.World;
 
 import net.mcfr.Essentials;
 import net.mcfr.burrows.Burrow;
-import net.mcfr.burrows.BurrowedEntityClasses;
+import net.mcfr.burrows.BurrowedEntityClasse;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.entities.mobs.gender.EntityGendered;
 import net.mcfr.listeners.BurrowListener;
@@ -92,7 +92,7 @@ public class BurrowCommand extends AbstractCommand {
         int maxPopulation = args.<Integer>getOne("population maximale").get();
         int malePopulation = args.<Integer>getOne("mâles").get();
         int femalePopulation = args.<Integer>getOne("femelles").get();
-        Class<? extends EntityGendered> entityClass = ((BurrowedEntityClasses) args.getOne("entité").get()).getEntityClass();
+        Class<? extends EntityGendered> entityClass = ((BurrowedEntityClasse) args.getOne("entité").get()).getEntityClass();
         Optional<String> name = args.<String>getOne("nom");
 
         Optional<Burrow> optBurrow = Burrow.createBurrow(name, location, delay, maxPopulation, malePopulation, femalePopulation, entityClass);
@@ -122,7 +122,7 @@ public class BurrowCommand extends AbstractCommand {
               GenericArguments.integer(Text.of("mâles")),
               GenericArguments.integer(Text.of("femelles")),
               GenericArguments.longNum(Text.of("délai")),
-              GenericArguments.enumValue(Text.of("entité"), BurrowedEntityClasses.class),
+              GenericArguments.enumValue(Text.of("entité"), BurrowedEntityClasse.class),
               GenericArguments.optional(GenericArguments.remainingJoinedStrings(Text.of("nom"))))
           .executor(this)
           .build();

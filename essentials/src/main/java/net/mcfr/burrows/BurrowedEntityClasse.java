@@ -10,7 +10,7 @@ import net.mcfr.entities.mobs.gender.EntityGendered;
 /**
  * Classes d'entités utilisables par le système des terriers
  */
-public enum BurrowedEntityClasses {
+public enum BurrowedEntityClasse {
   SIKER(EntitySiker.class),
   HOEN(EntityHoen.class),
   BORMOTH(EntityBormoth.class),
@@ -19,7 +19,7 @@ public enum BurrowedEntityClasses {
   
   private Class<? extends EntityGendered> entityClass;
   
-  private BurrowedEntityClasses(Class<? extends EntityGendered> entityClass) {
+  private BurrowedEntityClasse(Class<? extends EntityGendered> entityClass) {
     this.entityClass = entityClass;
   }
   

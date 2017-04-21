@@ -217,11 +217,7 @@ public class CareCenterCommand extends AbstractCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-      Player player = args.<Player>getOne("joueur").get();
-      String faction = args.<String>getOne("compétence").get();
-      
-      
-      
+      // TODO
       return CommandResult.success();
     }
 
@@ -251,11 +247,7 @@ public class CareCenterCommand extends AbstractCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-      Player player = args.<Player>getOne("joueur").get();
-      String faction = args.<String>getOne("compétence").get();
-      
-      
-      
+      // TODO
       return CommandResult.success();
     }
 

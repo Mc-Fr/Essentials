@@ -1,17 +1,13 @@
 package net.mcfr.commands.utils;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.spec.CommandExecutor;
 import org.spongepowered.api.command.spec.CommandSpec;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -31,14 +27,6 @@ public abstract class AbstractCommand implements CommandExecutor {
 
   protected Essentials getPlugin() {
     return this.plugin;
-  }
-
-  protected final Collection<Player> getOnlinePlayers() {
-    return Sponge.getServer().getOnlinePlayers();
-  }
-
-  protected final Logger getLogger() {
-    return getPlugin().getLogger();
   }
 
   protected final Map<List<String>, CommandCallable> getChildrenList(AbstractCommand... commands) {

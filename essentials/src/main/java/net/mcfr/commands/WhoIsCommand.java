@@ -1,5 +1,8 @@
 package net.mcfr.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -37,15 +40,16 @@ public class WhoIsCommand extends AbstractCommand {
     }
     McFrPlayer mcfrPlayer = McFrPlayer.getMcFrPlayer(player);
     String name = mcfrPlayer.getName();
-    src.sendMessage(Text.of(TextColors.DARK_GREEN, player.getName() + " -> " + name));
+    List<Text> messages = new ArrayList<>();
+    messages.add(Text.of(TextColors.DARK_GREEN, player.getName() + " -> " + name));
     if (selfTarget) {
-      src.sendMessage(Text.of(TextColors.DARK_GREEN, " - Desc : " + McFrPlayer.getMcFrPlayer(player).getDescription()));
-      src.sendMessage(
-          Text.of(TextColors.DARK_GREEN, " - Vous " + (mcfrPlayer.isInCareCenterEffectArea() ? "êtes" : "n'êtes pas") + " en zone sûre."));
-      src.sendMessage(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getAttributesString()));
-      src.sendMessage(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getSkillsString()));
-      src.sendMessage(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getTraitsString()));
+      messages.add(Text.of(TextColors.DARK_GREEN, " - Desc : " + McFrPlayer.getMcFrPlayer(player).getDescription()));
+      messages.add(Text.of(TextColors.DARK_GREEN, " - Vous " + (mcfrPlayer.isInCareCenterEffectArea() ? "êtes" : "n'êtes pas") + " en zone sûre."));
+      messages.add(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getAttributesString()));
+      messages.add(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getSkillsString()));
+      messages.add(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getTraitsString()));
     }
+    src.sendMessages(messages);
 
     return CommandResult.success();
   }
