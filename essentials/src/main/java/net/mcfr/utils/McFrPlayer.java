@@ -24,9 +24,9 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import net.mcfr.babel.Language;
 import net.mcfr.burrows.Burrow;
 import net.mcfr.chat.ChatType;
+import net.mcfr.chat.Language;
 import net.mcfr.expedition.State;
 import net.mcfr.roleplay.Attribute;
 import net.mcfr.roleplay.HealthState;

@@ -13,7 +13,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
-import net.mcfr.babel.TribalWord;
+import net.mcfr.chat.TribalWord;
 import net.mcfr.commands.utils.AbstractCommand;
 
 /**

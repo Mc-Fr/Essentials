@@ -11,7 +11,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextColors;
 
-import net.mcfr.babel.Language;
 import net.mcfr.utils.McFrPlayer;
 
 public class MessageData {

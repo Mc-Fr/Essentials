@@ -5,7 +5,7 @@ import java.util.Random;
 
 import org.spongepowered.api.entity.living.player.Player;
 
-import net.mcfr.babel.Language;
+import net.mcfr.chat.Language;
 import net.mcfr.roleplay.rollResults.AttackRollResult;
 import net.mcfr.roleplay.rollResults.AttributeRollResult;
 import net.mcfr.roleplay.rollResults.DefenseRollResult;

@@ -1,4 +1,4 @@
-package net.mcfr.babel;
+package net.mcfr.chat;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
