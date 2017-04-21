@@ -87,7 +87,7 @@ public enum HumidityLevels {
     
     // Plaine, Printemps
     SUNNY.addMessage(new DayMessage("Le ciel s’éclaircit, laissant l’astre solaire réchauffer doucement la terre.", SPRING, PLAIN));
-    SUNNY.addMessage(new DayMessage("La nature s’éveille doucement autour de vous. Un air printanier se fait sentir dans l’air.", SPRING, PLAIN));
+    SUNNY.addMessage(new DayMessage("La nature s’éveille doucement autour de vous. Les parfums printaniers emplissent l'air.", SPRING, PLAIN));
     SUNNY.addMessage(new NightMessage("Une nuit calme et fraîche s’abat sur le monde.", SPRING, PLAIN));
     SUNNY.addMessage(new NightMessage("La lune illumine faiblement les environs. Le calme règne, troublé seulement par le chant des oiseaux nocturnes.", SPRING, PLAIN));
     CLOUDY.addMessage(new DayMessage("L’atmosphère s’assombrit alors que le soleil passe derrière les nuages.", SPRING, PLAIN));
