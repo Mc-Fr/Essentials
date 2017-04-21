@@ -27,8 +27,6 @@ import com.google.inject.Inject;
 import net.mcfr.chat.TribalWord;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.commands.utils.Command;
-import net.mcfr.death.CareImp;
-import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionImp;
 import net.mcfr.expedition.ExpeditionService;
 import net.mcfr.listeners.BurrowListener;
@@ -87,7 +85,6 @@ public class Essentials {
   public void onPostInit(GamePostInitializationEvent e) {
     Sponge.getServiceManager().setProvider(this, RolePlayService.class, new RolePlayImp());
     Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
-    Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
   }
 
   @Listener

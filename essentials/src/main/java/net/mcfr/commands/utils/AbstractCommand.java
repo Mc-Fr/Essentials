@@ -19,7 +19,9 @@ public abstract class AbstractCommand implements CommandExecutor {
 
   public static final Text ONLY_PLAYERS_COMMAND = Text.of(TextColors.RED, "Seuls les joueurs peuvent utiliser cette commande !");
 
-  private final Essentials plugin;
+  private Essentials plugin;
+
+  public AbstractCommand() {}
 
   public AbstractCommand(Essentials plugin) {
     this.plugin = plugin;

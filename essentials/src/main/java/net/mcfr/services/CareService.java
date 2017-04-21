@@ -1,4 +1,4 @@
-package net.mcfr.death;
+package net.mcfr.services;
 
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
