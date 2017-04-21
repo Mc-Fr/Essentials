@@ -29,10 +29,10 @@ public class LoginListener {
     McFrPlayer player = new McFrPlayer(e.getTargetEntity());
     McFrPlayer.addPlayer(player);
     player.loadFromDataBase();
-    
+
     Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
     if (optCareService.isPresent()) {
-      optCareService.get().actualizePlayerState(player.getPlayer());
+      optCareService.get().trackPlayer(player.getPlayer()); // XXX Ici
       if (player.isInCareCenterEffectArea()) {
         player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes dans une zone sécurisée."));
       } else {

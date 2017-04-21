@@ -33,13 +33,11 @@ public class CareImp implements CareService {
     loadFromDatabase();
   }
 
-  @Override
   public List<CareCenter> getCenters() {
     return this.careCenters;
   }
 
-  @Override
-  public Map<String, String> getFactionsMap() {
+  public Map<String, String> getFactions() {
     Map<String, String> result = new HashMap<>();
     for (String f : this.factions) {
       result.put(f, f);
@@ -47,7 +45,6 @@ public class CareImp implements CareService {
     return result;
   }
 
-  @Override
   public boolean addCenter(String name, Location<World> location, int radius, String faction) {
     if (!getCenterByName(name).isPresent() && this.factions.contains(faction)) {
       CareCenter newCenter = new CareCenter(name, location, radius, faction);
@@ -58,19 +55,16 @@ public class CareImp implements CareService {
     return false;
   }
 
-  @Override
   public void removeCenter(CareCenter center) {
     this.careCenters.remove(center);
     center.removeFromDatabase();
   }
 
-  @Override
   public Optional<CareCenter> getCenterByName(String name) {
     return this.careCenters.stream().filter(c -> c.getName().equals(name)).findFirst();
   }
 
-  @Override
-  public void loadFromDatabase() {
+  private void loadFromDatabase() {
     try (Connection connection = McFrConnection.getConnection()) {
       ResultSet centersData = connection.prepareStatement("SELECT name,x,y,z,radius,world,faction FROM srv_carecenters").executeQuery();
       ResultSet factionsData = connection.prepareStatement("SELECT name FROM srv_factions").executeQuery();
@@ -93,7 +87,7 @@ public class CareImp implements CareService {
   }
 
   @Override
-  public void actualizePlayerState(Player player) {
+  public void trackPlayer(Player player) {
     Location<World> location = player.getLocation();
 
     boolean wasInCenterArea = McFrPlayer.getMcFrPlayer(player).isInCareCenterEffectArea();
@@ -178,8 +172,14 @@ public class CareImp implements CareService {
     }
   }
 
-  @Override
-  public Optional<CareCenter> getBest(Location<World> location, boolean inRange) {
+  /**
+   * Renvoit le centre de soin le plus à même de récupérer le personnage blessé
+   * 
+   * @param location
+   *          La Location du joueur
+   * @return Un Optional vide si pas de centre, ou avec le meilleur centre
+   */
+  private Optional<CareCenter> getBest(Location<World> location, boolean inRange) {
     double currentValue = -1;
     Optional<CareCenter> optCareCenter = Optional.empty();
 

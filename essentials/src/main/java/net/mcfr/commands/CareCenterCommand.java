@@ -20,6 +20,7 @@ import org.spongepowered.api.text.format.TextColors;
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.death.CareCenter;
+import net.mcfr.death.CareImp;
 import net.mcfr.death.CareService;
 
 public class CareCenterCommand extends AbstractCommand {
@@ -65,10 +66,12 @@ public class CareCenterCommand extends AbstractCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      CareImp careService = (CareImp) Sponge.getServiceManager().provide(CareService.class).get();
+
       if (src instanceof Player) {
         if (args.hasAny("nom") && args.hasAny("rayon") && args.<Integer>getOne("rayon").get() > 0) {
-          if (Sponge.getServiceManager().provide(CareService.class).get().addCenter(args.<String>getOne("nom").get(), ((Player) src).getLocation(),
-              args.<Integer>getOne("rayon").get(), args.<String>getOne("faction").orElse("neutral"))) {
+          if (careService.addCenter(args.<String>getOne("nom").get(), ((Player) src).getLocation(), args.<Integer>getOne("rayon").get(),
+              args.<String>getOne("faction").orElse("neutral"))) {
             src.sendMessage(Text.of(TextColors.YELLOW, "Un centre de soins a été créée : " + args.<String>getOne("nom").get() + " : "
                 + args.<Integer>getOne("rayon").get() + ", " + args.<String>getOne("faction").orElse("neutral")));
           } else {
@@ -123,7 +126,7 @@ public class CareCenterCommand extends AbstractCommand {
         Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
 
         if (optCareService.isPresent()) {
-          CareService careService = optCareService.get();
+          CareImp careService = (CareImp) optCareService.get();
           Optional<CareCenter> optCenter = careService.getCenterByName(args.<String>getOne("nom").get());
 
           if (optCenter.isPresent()) {
@@ -177,7 +180,7 @@ public class CareCenterCommand extends AbstractCommand {
       Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
 
       if (optCareService.isPresent()) {
-        CareService careService = optCareService.get();
+        CareImp careService = (CareImp) optCareService.get();
 
         List<CareCenter> centers = careService.getCenters();
         List<Text> texts = new ArrayList<>(centers.size());
@@ -281,9 +284,9 @@ public class CareCenterCommand extends AbstractCommand {
       Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
 
       if (optCareService.isPresent()) {
-        CareService careService = optCareService.get();
+        CareImp careService = (CareImp) optCareService.get();
 
-        Map<String, String> factions = careService.getFactionsMap();
+        Map<String, String> factions = careService.getFactions();
         List<Text> texts = new ArrayList<>(factions.size());
         factions.forEach((s1, s2) -> texts.add(Text.of(TextColors.YELLOW, "- " + s1)));
 

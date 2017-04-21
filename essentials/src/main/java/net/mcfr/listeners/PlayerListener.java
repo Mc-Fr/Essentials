@@ -36,7 +36,7 @@ import net.mcfr.utils.McFrPlayer;
 public class PlayerListener {
   private final long LAST_BREATH_INVICIBILITY = 2000;
   private final long LAST_BREATH_DELAY = 15000;
-  
+
   @Listener
   public void onPlayerMove(MoveEntityEvent e, @First Player p) {
     if (p != null) {
@@ -46,21 +46,21 @@ public class PlayerListener {
       }
       Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
       if (optCareService.isPresent()) {
-        optCareService.get().actualizePlayerState(p);
+        optCareService.get().trackPlayer(p); // XXX Ici
       }
     }
   }
-  
+
   @Listener
   public void onDamageEntity(DamageEntityEvent e) {
     if (e.getTargetEntity() instanceof Player) {
       Player player = (Player) e.getTargetEntity();
-      
+
       if (McFrPlayer.getMcFrPlayer(player).isGod()) {
         e.setCancelled(true);
         return;
       }
-      
+
       double health = player.health().get();
       double damage = e.getOriginalFinalDamage();
 
@@ -93,26 +93,26 @@ public class PlayerListener {
 
     }
   }
-  
+
   @Listener
   public void onPlayerDeath(DestructEntityEvent.Death e) {
     if (e.getTargetEntity() instanceof Player) {
       Player player = (Player) e.getTargetEntity();
       Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
       if (optCareService.isPresent()) {
-        optCareService.get().computeDeath(player);
+        optCareService.get().computeDeath(player); // XXX Ici
       }
     }
   }
-  
+
   @Listener
   public void onPlayerRespawn(RespawnPlayerEvent e) {
     Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
     if (optCareService.isPresent()) {
-      optCareService.get().respawnPlayer(e);
+      optCareService.get().respawnPlayer(e); // XXX Ici
     }
   }
-  
+
   @Listener
   public void onPlayerRightClick(InteractEntityEvent.Secondary e, @First Player player) {
     Entity target = e.getTargetEntity();
@@ -124,7 +124,7 @@ public class PlayerListener {
       }
     }
   }
-  
+
   /**
    * Déclenché quand un item est looté depuis un bloc cassé ou une entité tuée
    */
@@ -153,7 +153,7 @@ public class PlayerListener {
           if (optEntity.isPresent() && optEntity.get() instanceof Player) {
             McFrPlayer player = McFrPlayer.getMcFrPlayer((Player) optEntity.get());
             int skillLevel = player.getSkillLevel(Skill.getSkillByName("chasse"), Optional.empty());
-            
+
             if (skillLevel >= 12) {
               mustLoot = true;
             }
@@ -166,17 +166,17 @@ public class PlayerListener {
       e.setCancelled(true);
     }
   }
-  
+
   @Listener
-  public void onClientConnectionMessage (MessageChannelEvent e) {
+  public void onClientConnectionMessage(MessageChannelEvent e) {
     if (e instanceof ClientConnectionEvent) {
       e.setMessageCancelled(true);
     }
   }
-  
+
   @Listener
   public void onMessageChannelEvent(MessageChannelEvent.Chat e, @First CommandSource sender) {
-    
+
     if (sender instanceof Player) {
       MessageData data = new MessageData((Player) sender, e.getRawMessage().toPlain());
       if (data.checkConditions()) {
