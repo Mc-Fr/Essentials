@@ -1,5 +1,9 @@
 package net.mcfr.commands.utils;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
+
+import net.mcfr.Essentials;
 import net.mcfr.commands.BabelCommand;
 import net.mcfr.commands.BackCommand;
 import net.mcfr.commands.BurrowCommand;
@@ -80,5 +84,15 @@ public enum Command {
 
   public Class<? extends AbstractCommand> getCommandClass() {
     return this.cmdClass;
+  }
+
+  public Optional<AbstractCommand> f() {
+    try {
+      return Optional.of(getCommandClass().getConstructor(Essentials.class).newInstance(this));
+    } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+        | SecurityException e) {
+      e.printStackTrace();
+    }
+    return Optional.empty();
   }
 }
