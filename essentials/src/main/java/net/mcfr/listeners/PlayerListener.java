@@ -44,10 +44,7 @@ public class PlayerListener {
       if (optExpeditionService.isPresent()) {
         optExpeditionService.get().actualizePlayerState(p);
       }
-      Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
-      if (optCareService.isPresent()) {
-        optCareService.get().trackPlayer(p); // XXX Ici
-      }
+
     }
   }
 
@@ -97,10 +94,9 @@ public class PlayerListener {
   @Listener
   public void onPlayerDeath(DestructEntityEvent.Death e) {
     if (e.getTargetEntity() instanceof Player) {
-      Player player = (Player) e.getTargetEntity();
       Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
       if (optCareService.isPresent()) {
-        optCareService.get().computeDeath(player); // XXX Ici
+        optCareService.get().manageDeath((Player) e.getTargetEntity());
       }
     }
   }
@@ -109,7 +105,7 @@ public class PlayerListener {
   public void onPlayerRespawn(RespawnPlayerEvent e) {
     Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
     if (optCareService.isPresent()) {
-      optCareService.get().respawnPlayer(e); // XXX Ici
+      optCareService.get().manageRespawn(e.getTargetEntity());
     }
   }
 

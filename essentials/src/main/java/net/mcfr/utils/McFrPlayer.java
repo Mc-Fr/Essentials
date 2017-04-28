@@ -189,10 +189,6 @@ public class McFrPlayer {
     }
   }
 
-  public void toggleInCareCenterEffectArea() {
-    setInCareCenterEffectArea(!isInCareCenterEffectArea());
-  }
-
   public boolean isMuted() {
     return (this.booleans & 0b0_0000_0001) == 0b0_0000_0001;
   }
@@ -304,18 +300,17 @@ public class McFrPlayer {
       this.attributes.clear();
       this.traits.clear();
       PreparedStatement getPseudonym = connection.prepareStatement("SELECT * FROM srv_player WHERE pseudonym = ?");
-      PreparedStatement getUserId = connection
-          .prepareStatement("SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
-      PreparedStatement getCharacterSheetId = connection
-          .prepareStatement("SELECT id, health, fatigue FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
-      PreparedStatement getCharacterSheet = connection
-          .prepareStatement("SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement getAttributes = connection
-          .prepareStatement("SELECT attribut, level FROM fiche_perso_personnage_attribut WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement getAdvantages = connection
-          .prepareStatement("SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement registerPlayer = connection
-          .prepareStatement("CALL addPlayer(?,?)");
+      PreparedStatement getUserId = connection.prepareStatement(
+          "SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
+      PreparedStatement getCharacterSheetId = connection.prepareStatement(
+          "SELECT id, health, fatigue FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
+      PreparedStatement getCharacterSheet = connection.prepareStatement(
+          "SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = ?");
+      PreparedStatement getAttributes = connection.prepareStatement(
+          "SELECT attribut, level FROM fiche_perso_personnage_attribut WHERE id_fiche_perso_personnage = ?");
+      PreparedStatement getAdvantages = connection.prepareStatement(
+          "SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
+      PreparedStatement registerPlayer = connection.prepareStatement("CALL addPlayer(?,?)");
 
       getPseudonym.setString(1, this.player.getName());
       ResultSet playerData = getPseudonym.executeQuery();
@@ -325,7 +320,7 @@ public class McFrPlayer {
         String description = playerData.getString(4);
         this.description = description == null ? Optional.empty() : Optional.of(description);
         this.deaths = playerData.getInt(7);
-      } else { 
+      } else {
         this.name = this.player.getName();
         this.description = Optional.of("Un nouveau colon");
         this.deaths = 0;
@@ -421,13 +416,13 @@ public class McFrPlayer {
       effects.addElement(effect);
     }
     if (hasTrait("guerison_rapide_surnaturelle")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.REGENERATION).duration(EFFECT_DURATION).amplifier(1).particles(false)
-          .build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.REGENERATION).duration(EFFECT_DURATION).amplifier(1).particles(
+          false).build();
       effects.addElement(effect);
     }
     if (hasTrait("armure_naturelle")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.RESISTANCE).duration(EFFECT_DURATION)
-          .amplifier(getTraitLevel("armure_naturelle")).particles(false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.RESISTANCE).duration(EFFECT_DURATION).amplifier(
+          getTraitLevel("armure_naturelle")).particles(false).build();
       effects.addElement(effect);
     }
     if (getTraitLevel("vision_dans_la_nuit") > 3 || hasTrait("vision_dans_le_noir")) {
@@ -474,19 +469,20 @@ public class McFrPlayer {
 
     return scores.stream().max((s1, s2) -> Integer.compare(s1, s2)).get();
   }
-  
+
   /**
-   * Calcule la compétence de la liste fournie dans laquelle le personnage a le plus haut score effectif.
-   * (c'est à dire en comptant l'ajout des attributs et la gestion des interdépendances entre compétences)
+   * Calcule la compétence de la liste fournie dans laquelle le personnage a le plus haut score effectif. (c'est à dire
+   * en comptant l'ajout des attributs et la gestion des interdépendances entre compétences)
    * 
-   * @param skills Liste de compétences à comparer
+   * @param skills
+   *          Liste de compétences à comparer
    * @return La compétence dans laquelle le personnage est le plus doué
    */
   public Skill getBestSkill(Skill... skills) {
     Skill result = skills[0];
     int maxSkillLevel = getSkillLevel(result, Optional.empty());
     int currentSkillLevel;
-    
+
     for (int i = 1; i < skills.length; i++) {
       currentSkillLevel = getSkillLevel(skills[i], Optional.empty());
       if (currentSkillLevel > maxSkillLevel) {
@@ -494,7 +490,7 @@ public class McFrPlayer {
         result = skills[i];
       }
     }
-    
+
     return result;
   }
 

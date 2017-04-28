@@ -2,7 +2,9 @@ package net.mcfr.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -15,6 +17,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.services.CareService;
 import net.mcfr.utils.McFrPlayer;
 
 public class WhoIsCommand extends AbstractCommand {
@@ -44,7 +47,11 @@ public class WhoIsCommand extends AbstractCommand {
     messages.add(Text.of(TextColors.DARK_GREEN, player.getName() + " -> " + name));
     if (selfTarget) {
       messages.add(Text.of(TextColors.DARK_GREEN, " - Desc : " + McFrPlayer.getMcFrPlayer(player).getDescription()));
-      messages.add(Text.of(TextColors.DARK_GREEN, " - Vous " + (mcfrPlayer.isInCareCenterEffectArea() ? "êtes" : "n'êtes pas") + " en zone sûre."));
+      Optional<CareService> careService = Sponge.getServiceManager().provide(CareService.class);
+      if (careService.isPresent()) {
+        messages.add(
+            Text.of(TextColors.DARK_GREEN, " - Vous " + (careService.get().isInProtectedArea(player) ? "êtes" : "n'êtes pas") + " en zone sûre."));
+      }
       messages.add(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getAttributesString()));
       messages.add(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getSkillsString()));
       messages.add(Text.of(TextColors.DARK_GREEN, mcfrPlayer.getTraitsString()));

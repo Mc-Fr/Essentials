@@ -1,22 +1,21 @@
 package net.mcfr.services;
 
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.entity.living.humanoid.player.RespawnPlayerEvent;
 
 public interface CareService {
 
   /**
-   * Actualise l'état du joueur
+   * Vérifie si un joueur est protégé par un centre de soin.
    */
-  public void trackPlayer(Player p);
+  public boolean isInProtectedArea(Player player);
 
   /**
-   * Effectue le roll de la mort d'un personnage
+   * Gère la mort du joueur.
    */
-  public void computeDeath(Player player);
+  public void manageDeath(Player player);
 
   /**
-   * Effectue le respawn d'un joueur dans le centre de soin le plus approprié
+   * Gère la ré-apparition du joueur après sa mort.
    */
-  public void respawnPlayer(RespawnPlayerEvent e);
+  public void manageRespawn(Player player);
 }
