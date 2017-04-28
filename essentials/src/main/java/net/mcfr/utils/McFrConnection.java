@@ -18,9 +18,7 @@ public final class McFrConnection {
   private static SqlService sql = Sponge.getServiceManager().provide(SqlService.class).get();
 
   /**
-   * Lit les identifiants de connexion renseignées dans le fichier de config : config/essentials-config/database.json.
-   * 
-   * Fichier de la forme (valeurs par défaut renseignées) : { "user" : "root", "password" : "" }
+   * Initialise l'url de connection à la base de données.
    */
   static {
     File commandsFile = new File("config/essentials-config/database.json");
@@ -40,6 +38,9 @@ public final class McFrConnection {
     }
   }
 
+  /**
+   * Fournit une connection pour pouvoir des requêtes.
+   */
   public static Connection getConnection() {
     try {
       return sql.getDataSource(jdbcUrl).getConnection();
