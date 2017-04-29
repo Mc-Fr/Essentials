@@ -1,7 +1,9 @@
 package net.mcfr.chat;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -80,14 +82,14 @@ public class MessageData {
    */
   public Text toText(Player recipient, String message) {
     ChatType type = getChatType();
-    int distance = type.getDistance();
-    double distanceBetweenPlayers = McFrPlayer.distance(getSender(), recipient);
-    TextColor nearColor = type.getNearColor();
 
-    TextColor color = distanceBetweenPlayers <= distance / 2 ? nearColor : distanceBetweenPlayers <= distance ? type.getFarColor() : nearColor;
-    String[] names = getFormattedNames(recipient);
+    TextColor color = McFrPlayer.distance(recipient, getSender()) <= type.getDistance() / 2 ? type.getNearColor() : type.getFarColor();
 
-    return Text.of(color, type.getStyle(), String.format(type.getMessageFormat(), names[0], names[1], message));
+    Map<String, String> map = new HashMap<>(2);
+    map.put("player", getFormattedNames(recipient));
+    map.put("message", message);
+
+    return type.getTemplate().apply(map).color(color).build();
   }
 
   /**
@@ -112,18 +114,9 @@ public class MessageData {
    *          le destinataire du message
    * @return les noms à utiliser pour traiter le message
    */
-  private String[] getFormattedNames(Player player) {
-    String[] names = new String[2];
+  private String getFormattedNames(Player player) {
     McFrPlayer mcfrSender = McFrPlayer.getMcFrPlayer(getSender());
-    McFrPlayer mcfrPlayer = McFrPlayer.getMcFrPlayer(player);
-    if (getChatType().isRealname()) {
-      names[0] = mcfrSender.getPlayer().getName();
-      names[1] = mcfrPlayer.getPlayer().getName();
-    } else {
-      names[0] = mcfrSender.getName();
-      names[1] = mcfrPlayer.getName();
-    }
-    return names;
+    return getChatType().isRealname() ? mcfrSender.getPlayer().getName() : mcfrSender.getName();
   }
 
   /**
