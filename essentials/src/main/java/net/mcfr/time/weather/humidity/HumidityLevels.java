@@ -78,7 +78,7 @@ public enum HumidityLevels {
     CLOUDY.addMessage(new DayMessage("Le soleil disparaît derrière un épais voile cotonneux alors qu’un froid mordant s’installe sur la forêt. ", WINTER, FOREST));
     CLOUDY.addMessage(new NightMessage("La lune est masquée par des nuages imposants, plongeant la forêt dans une froide obscurité.", WINTER, FOREST));
     CLOUDY.addMessage(new NightMessage("Un épais voile cotonneux avale la clarté des astres. La pénombre s’abat autour de vous.", WINTER, FOREST));
-    THIN_RAIN.addMessage(new DayMessage("Une pluis fine et froide s’abat sur la forêt, ruisselant le long des troncs dénudés.", WINTER, FOREST));
+    THIN_RAIN.addMessage(new DayMessage("Une pluie fine et froide s’abat sur la forêt, ruisselant le long des troncs dénudés.", WINTER, FOREST));
     THIN_RAIN.addMessage(new NightMessage("Quelques gouttes froides tombent, troublant le calme de la nuit en s’abattant sur le sol givré.", WINTER, FOREST));
     HEAVY_RAIN.addMessage(new DayMessage("Des giboulées violentes, faites de grêlons et de neige mêlés, déferlent sur la forêt, obscurcissant le ciel. Mieux vaut s’abriter.", WINTER, FOREST));
     HEAVY_RAIN.addMessage(new NightMessage("Un violent déluge de neige fondue tombe sur les voyageurs assez inconscients pour se promener de nuit dans la forêt.", WINTER, FOREST));
