@@ -71,13 +71,14 @@ public class ItemCommand extends AbstractCommand {
           it1.offer(Keys.DISPLAY_NAME, Text.of(name));
           p.setItemInHand(HandTypes.MAIN_HAND, it1);
           src.sendMessage(Text.of(TextColors.YELLOW, "L'item a été renommé : " + name + "."));
+          return CommandResult.success();
         } else {
           src.sendMessage(Text.of(TextColors.RED, "Vous devez tenir un objet en main pour pouvoir modifier son nom !"));
         }
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
       }
-      return CommandResult.success();
+      return CommandResult.empty();
     }
 
     @Override
@@ -148,7 +149,7 @@ public class ItemCommand extends AbstractCommand {
     }
 
   }
-  
+
   static class Clear extends AbstractCommand {
 
     public Clear(Essentials plugin) {
