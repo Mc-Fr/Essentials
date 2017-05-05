@@ -59,6 +59,9 @@ public class RolePlayImp implements RolePlayService {
     case "theologie":
       score += mcFrPlayer.hasTrait("tres_bonne_memoire") ? 1 : 0;
       break;
+    case "meditation":
+      score += mcFrPlayer.hasTrait("concentration_accrue") ? 1 : 0;
+      break;
     }
 
     if (skill.getAttribute() == Attribute.DEXTERITE) {
