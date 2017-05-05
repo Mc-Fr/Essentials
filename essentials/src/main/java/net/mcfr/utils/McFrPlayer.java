@@ -30,6 +30,7 @@ import net.mcfr.chat.Language;
 import net.mcfr.expedition.State;
 import net.mcfr.roleplay.Attribute;
 import net.mcfr.roleplay.HealthState;
+import net.mcfr.roleplay.ManaState;
 import net.mcfr.roleplay.Skill;
 
 public class McFrPlayer {
@@ -79,6 +80,7 @@ public class McFrPlayer {
   private HashMap<Attribute, Integer> attributes;
   private HashMap<String, Integer> traits;
   private HealthState healthState;
+  private ManaState manaState;
   private Location<World> previousLocation;
   private long lastBreathTime;
   private long readDescriptionTime;
@@ -133,6 +135,7 @@ public class McFrPlayer {
     this.lastBreathTime = 0;
     this.readDescriptionTime = 0;
     this.healthState = new HealthState(100);
+    this.manaState = new ManaState(100);
   }
 
   public Player getPlayer() {
@@ -303,7 +306,7 @@ public class McFrPlayer {
       PreparedStatement getUserId = connection.prepareStatement(
           "SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
       PreparedStatement getCharacterSheetId = connection.prepareStatement(
-          "SELECT id, health, fatigue FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
+          "SELECT id, health, fatigue, mana FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
       PreparedStatement getCharacterSheet = connection.prepareStatement(
           "SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = ?");
       PreparedStatement getAttributes = connection.prepareStatement(
@@ -347,6 +350,7 @@ public class McFrPlayer {
         this.sheetId = characterSheet.getInt(1);
         int currentHealth = characterSheet.getInt(2);
         int currentFatigue = characterSheet.getInt(3);
+        int currentMana = characterSheet.getInt(4);
         getCharacterSheet.setInt(1, this.sheetId);
         ResultSet skillData = getCharacterSheet.executeQuery();
 
@@ -393,6 +397,9 @@ public class McFrPlayer {
         this.healthState.refresh(this);
         this.healthState.setHealth(this, currentHealth);
         this.healthState.setFatigue(this, currentFatigue);
+        
+        this.manaState.refresh(this);
+        this.manaState.set(this, currentMana);
       } else {
         this.player.sendMessage(Text.of(TextColors.YELLOW, "Attention, vous n'avez pas de fiche de personnage active !"));
       }
@@ -592,6 +599,10 @@ public class McFrPlayer {
 
   public HealthState getHealthState() {
     return this.healthState;
+  }
+  
+  public ManaState getManaState() {
+    return this.manaState;
   }
 
   public int getArmorModifier() {

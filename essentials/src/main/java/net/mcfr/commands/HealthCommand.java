@@ -30,9 +30,9 @@ public class HealthCommand extends AbstractCommand {
           player.getHealthState().addHealth(player, addingValue);
 
           if (addingValue > 0) {
-            src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez été soigné de " + addingValue + " points."));
+            src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez été soigné de " + addingValue + " point" + (addingValue > 1 ? "s" : "") + "."));
           } else {
-            src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez été blessé de " + (-addingValue) + " points."));
+            src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez été blessé de " + (-addingValue) + " point" + (addingValue < -1 ? "s" : "") + "."));
           }
         }
 
