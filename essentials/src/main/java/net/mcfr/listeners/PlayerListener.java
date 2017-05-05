@@ -28,6 +28,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.chat.MessageData;
+import net.mcfr.death.CareImp;
 import net.mcfr.expedition.ExpeditionService;
 import net.mcfr.roleplay.Skill;
 import net.mcfr.services.CareService;
@@ -40,6 +41,12 @@ public class PlayerListener {
   @Listener
   public void onPlayerMove(MoveEntityEvent e, @First Player p) {
     if (p != null) {
+      Optional<CareService> careService = Sponge.getServiceManager().provide(CareService.class);
+
+      if (careService.isPresent() && careService.get() instanceof CareImp) {
+        ((CareImp) careService.get()).trackPlayer(p);
+      }
+
       Optional<ExpeditionService> optExpeditionService = Sponge.getServiceManager().provide(ExpeditionService.class);
       if (optExpeditionService.isPresent()) {
         optExpeditionService.get().actualizePlayerState(p);

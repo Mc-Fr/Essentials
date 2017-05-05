@@ -7,6 +7,7 @@ import net.mcfr.Essentials;
 import net.mcfr.commands.BabelCommand;
 import net.mcfr.commands.BackCommand;
 import net.mcfr.commands.BurrowCommand;
+import net.mcfr.commands.CareCenterCommand;
 import net.mcfr.commands.DescCommand;
 import net.mcfr.commands.ExpeditionCommand;
 import net.mcfr.commands.FatigueCommand;
@@ -44,6 +45,7 @@ public enum Command {
   BABEL(BabelCommand.class),
   BACK(BackCommand.class),
   BURROW(BurrowCommand.class),
+  CARE_CENTER(CareCenterCommand.class),
   DESC(DescCommand.class),
   EXPEDITION(ExpeditionCommand.class),
   FATIGUE(FatigueCommand.class),

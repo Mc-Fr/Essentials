@@ -1,4 +1,4 @@
-package net.mcfr.death;
+package net.mcfr.commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,8 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.death.CareCenter;
+import net.mcfr.death.CareImp;
 import net.mcfr.services.CareService;
 
 public class CareCenterCommand extends AbstractCommand {
