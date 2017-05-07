@@ -44,6 +44,7 @@ public class RollCommand extends AbstractCommand {
       Object rollEntry = args.getOne("type").get();
       Optional<Object> secondaryRollEntry = args.getOne("secondaire");
       int modifier = args.<Integer>getOne("modificateur").orElse(0);
+      
       int range = args.<Integer>getOne("portée").orElse(20);
 
       if (rollEntry instanceof Skill) {
@@ -96,9 +97,9 @@ public class RollCommand extends AbstractCommand {
             .description(Text.of("Permet de faire des jets de dés."))
             .permission("essentials.command.roll")
             .arguments(GenericArguments.choices(Text.of("type"), RolePlayImp.getRollEntries()),
-                GenericArguments.optionalWeak(GenericArguments.integer(Text.of("modificateur"))),
                 GenericArguments.optionalWeak(GenericArguments.choices(Text.of("secondaire"), RolePlayImp.getSecondaryRollEntries())),
-                GenericArguments.optionalWeak(GenericArguments.integer(Text.of("portée"))))
+                GenericArguments.optionalWeak(GenericArguments.integer(Text.of("modificateur"))),
+                GenericArguments.optionalWeak(GenericArguments.string(Text.of("portée"))))
             .executor(this)
             .children(getChildrenList(new None(getPlugin())))
             .build();

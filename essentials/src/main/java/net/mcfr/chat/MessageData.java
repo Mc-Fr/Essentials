@@ -98,7 +98,12 @@ public class MessageData {
     Player sender = getSender();
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> {
       boolean samePlayer = p.equals(sender);
-      boolean rpChat = p.getWorld().equals(sender.getWorld()) && McFrPlayer.distance(sender, p) <= getChatType().getDistance();
+      
+      boolean rpChatHigh = getChatType().equals(ChatType.LOUD_SPEAK) || getChatType().equals(ChatType.SHOUT);
+      boolean rpChatListening = McFrPlayer.distance(sender, p) <= McFrPlayer.getMcFrPlayer(p).getListeningRange();
+      boolean rpChatRange = McFrPlayer.distance(sender, p) <= getChatType().getDistance();
+      boolean rpChat = p.getWorld().equals(sender.getWorld()) && ((rpChatHigh && rpChatRange) || (!rpChatHigh && rpChatListening && rpChatRange));
+      
       boolean supportChat = getChatType().getDistance() == -1;
       boolean permission = p.hasPermission(getChatType().getListenPermission());
 

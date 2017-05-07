@@ -42,14 +42,13 @@ public class ManaState {
   }
 
   public int add(McFrPlayer owner, int addingValue) {
-    this.manaValue = Math.min(this.manaValue + addingValue, this.manaMax);
+    int newValue = this.manaValue + addingValue;
+    int negativeValue = Math.min(newValue, 0);
+    newValue = Math.max(newValue, 0);
+    this.manaValue = Math.min(newValue, this.manaMax);
     this.save(owner);
-    int value = 0;
-    if (this.manaValue < 0) {
-      value = this.manaValue;
-      this.manaValue = 0;
-    }
-    return value;
+    
+    return negativeValue;
   }
 
   public void set(McFrPlayer owner, int value) {

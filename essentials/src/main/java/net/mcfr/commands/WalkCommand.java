@@ -8,6 +8,7 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
@@ -28,8 +29,10 @@ public class WalkCommand extends AbstractCommand {
       
       if (McFrPlayer.getMcFrPlayer(p).isWalking()) {
         Sponge.getCommandManager().process(p, String.format("speed walk 0.13"));
+        p.sendMessage(Text.of(TextColors.YELLOW, "Vitesse réduite."));
       } else {
         Sponge.getCommandManager().process(p, String.format("speed walk 0.2"));
+        p.sendMessage(Text.of(TextColors.YELLOW, "Vitesse normale."));
       }
     }
     else {

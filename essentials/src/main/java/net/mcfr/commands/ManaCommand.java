@@ -32,9 +32,11 @@ public class ManaCommand extends AbstractCommand {
           if (addingValue > 0) {
             src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez récupéré " + addingValue + " point" + (addingValue > 1 ? "s" : "") + "."));
           } else {
-            src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez perdu " + (-addingValue) + " point" + (addingValue < -1 ? "s" : "") + "."));
-            if (healthToSpend > 0) {
-              src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez également perdu " + (-healthToSpend) + "point" + (healthToSpend < -1 ? "s" : "") + " de santé !"));
+            int lostMana = - addingValue + healthToSpend;
+            src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez perdu " + lostMana + " point" + (lostMana > 1 ? "s" : "") + "."));
+            if (healthToSpend < 0) {
+              player.getHealthState().addHealth(player, healthToSpend);
+              src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez également perdu " + (-healthToSpend) + " point" + (healthToSpend < -1 ? "s" : "") + " de santé !"));
               src.sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + player.getHealthState().getHealthValue() + "/" + player.getHealthState().getMax()
                   + ", malus de " + player.getHealthState().getHealthMalus()));
             }
@@ -88,13 +90,15 @@ public class ManaCommand extends AbstractCommand {
             src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " a récupéré " + addingValue + " point" + (addingValue > 1 ? "s" : "") + "."));
             player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez récupéré " + addingValue + " point" + (addingValue > 1 ? "s" : "") + "."));
           } else {
-            src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " a perdu " + (-addingValue) + " point" + (addingValue < -1 ? "s" : "") + "."));
-            player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez perdu " + (-addingValue) + " point" + (addingValue < -1 ? "s" : "") + "."));
-            if (healthToSpend > 0) {
-              src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " a également perdu " + (-healthToSpend) + "point" + (healthToSpend < -1 ? "s" : "") + " de santé !"));
+            int lostMana = - addingValue + healthToSpend;
+            src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " a perdu " + lostMana + " point" + (lostMana > 1 ? "s" : "") + "."));
+            player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez perdu " + lostMana + " point" + (lostMana > 1 ? "s" : "") + "."));
+            if (healthToSpend < 0) {
+              player.getHealthState().addHealth(player, healthToSpend);
+              src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " a également perdu " + (-healthToSpend) + " point" + (healthToSpend < -1 ? "s" : "") + " de santé !"));
               src.sendMessage(Text.of(TextColors.YELLOW, "La santé de " + player.getName() + " est de : " + player.getHealthState().getHealthValue() + "/" + player.getHealthState().getMax()
                   + ", malus de " + player.getHealthState().getHealthMalus()));
-              player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez également perdu " + (-healthToSpend) + "point" + (healthToSpend < -1 ? "s" : "") + " de santé !"));
+              player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez également perdu " + (-healthToSpend) + " point" + (healthToSpend < -1 ? "s" : "") + " de santé !"));
               player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + player.getHealthState().getHealthValue() + "/" + player.getHealthState().getMax()
                   + ", malus de " + player.getHealthState().getHealthMalus()));
             }

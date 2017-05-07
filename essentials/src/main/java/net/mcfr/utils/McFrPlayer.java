@@ -86,6 +86,7 @@ public class McFrPlayer {
   private Location<World> previousLocation;
   private long lastBreathTime;
   private long readDescriptionTime;
+  private int listeningRange;
 
   public static void addPlayer(McFrPlayer player) {
     players.add(player);
@@ -138,6 +139,7 @@ public class McFrPlayer {
     this.readDescriptionTime = 0;
     this.healthState = new HealthState(100);
     this.manaState = new ManaState(100);
+    this.listeningRange = 20;
   }
 
   public Player getPlayer() {
@@ -150,6 +152,14 @@ public class McFrPlayer {
 
   public void setExpeditionState(State state) {
     this.expeditionState = state;
+  }
+  
+  public void setListeningRange(int range) {
+    this.listeningRange = range;
+  }
+  
+  public int getListeningRange() {
+    return this.listeningRange;
   }
 
   public boolean isInCareCenterEffectArea() {
