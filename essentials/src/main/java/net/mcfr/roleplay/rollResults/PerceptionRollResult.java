@@ -12,8 +12,8 @@ public class PerceptionRollResult extends RollResult {
     this.sense = sense;
   }
   
-  public String getSense() {
-    return this.sense.name();
+  public Sense getSense() {
+    return this.sense;
   }
   
 }

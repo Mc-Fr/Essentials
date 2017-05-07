@@ -1,11 +1,11 @@
 package net.mcfr.roleplay;
 
 public enum Attribute {
-  FORCE("Force"),
-  DEXTERITE("Dextérité"),
-  INTELLECT("Intellect"),
-  ENDURANCE("Endurance"),
-  PERCEPTION("Perception");
+  FORCE("force"),
+  DEXTERITE("dextérité"),
+  INTELLECT("intellect"),
+  ENDURANCE("endurance"),
+  PERCEPTION("perception");
 
   private String name;
 

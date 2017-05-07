@@ -18,6 +18,7 @@ import net.mcfr.utils.McFrPlayer;
 
 public class RolePlayImp implements RolePlayService {
   private static Map<String, Object> rollEntries = new HashMap<>();
+  private static Map<String, Object> secondaryRollEntries = new HashMap<>();
   
   private Random rd;
 
@@ -32,14 +33,21 @@ public class RolePlayImp implements RolePlayService {
     for (Attribute att : Attribute.values())
       rollEntries.put(att.getName(), att);
     for (Sense sense : Sense.values())
-      rollEntries.put(sense.name(), sense);
+      rollEntries.put(sense.getName(), sense);
     for (Defense defense : Defense.values())
-      rollEntries.put(defense.name(), defense);
+      rollEntries.put(defense.getName(), defense);
     
+    secondaryRollEntries.putAll(Skill.getCombatSkills());
+    for (Attribute att : Attribute.values())
+      secondaryRollEntries.put(att.getName(), att);
   }
 
   public static Map<String, Object> getRollEntries() {
     return rollEntries;
+  }
+  
+  public static Map<String, Object> getSecondaryRollEntries() {
+    return secondaryRollEntries;
   }
   
   @Override

@@ -17,6 +17,7 @@ import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
+import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.death.CareCenter;
 import net.mcfr.death.CareImp;
@@ -24,6 +25,10 @@ import net.mcfr.services.CareService;
 
 public class CareCenterCommand extends AbstractCommand {
 
+  public CareCenterCommand(Essentials plugin) {
+    super(plugin);
+  }
+  
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     src.sendMessage(Text.of(TextColors.RED,

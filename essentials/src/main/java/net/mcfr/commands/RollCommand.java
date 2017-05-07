@@ -16,7 +16,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
-import net.mcfr.chat.ChatType;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.roleplay.Attribute;
 import net.mcfr.roleplay.Defense;
@@ -43,21 +42,31 @@ public class RollCommand extends AbstractCommand {
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (src instanceof Player) {
       Object rollEntry = args.getOne("type").get();
+      Optional<Object> secondaryRollEntry = args.getOne("secondaire");
       int modifier = args.<Integer>getOne("modificateur").orElse(0);
       int range = args.<Integer>getOne("portée").orElse(20);
 
       if (rollEntry instanceof Skill) {
-        printResult(range, RollType.SKILL, Sponge.getServiceManager().provide(RolePlayService.class).get().skillRoll((Player) src, (Skill) rollEntry,
-            modifier, args.<Attribute>getOne("attribut")));
+        Optional<Attribute> optAttribute = Optional.empty();
+        if (secondaryRollEntry.isPresent() && secondaryRollEntry.get() instanceof Attribute) {
+          optAttribute = Optional.of((Attribute) secondaryRollEntry.get());
+        }
+
+        printResult(range, RollType.SKILL,
+            Sponge.getServiceManager().provide(RolePlayService.class).get().skillRoll((Player) src, (Skill) rollEntry, modifier, optAttribute));
 
       } else if (rollEntry instanceof Attribute) {
         printResult(range, RollType.ATTRIBUTE,
             Sponge.getServiceManager().provide(RolePlayService.class).get().attributeRoll((Player) src, (Attribute) rollEntry, modifier));
 
       } else if (rollEntry instanceof Defense) {
-        printResult(range, RollType.DEFENSE, Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src,
-            (Defense) rollEntry, modifier,
-            rollEntry.equals(Defense.PARADE) && args.hasAny("compétence") ? Optional.of(args.<Skill>getOne("compétence").get()) : Optional.empty()));
+        Optional<Skill> optSkill = Optional.empty();
+        if (rollEntry.equals(Defense.PARADE) && secondaryRollEntry.isPresent() && secondaryRollEntry.get() instanceof Skill) {
+          optSkill = Optional.of((Skill) secondaryRollEntry.get());
+        }
+
+        printResult(range, RollType.DEFENSE,
+            Sponge.getServiceManager().provide(RolePlayService.class).get().defenseRoll((Player) src, (Defense) rollEntry, modifier, optSkill));
 
       } else if (rollEntry instanceof Sense) {
         printResult(range, RollType.PERCEPTION,
@@ -68,7 +77,7 @@ public class RollCommand extends AbstractCommand {
 
       } else if (rollEntry instanceof String && ((String) rollEntry).equals("spell")) {
         src.sendMessage(Text.of(TextColors.RED, "Cette commande n'est pas encore disponible !"));
-        
+
       } else if (rollEntry instanceof String && ((String) rollEntry).equals("damage")) {
         src.sendMessage(Text.of(TextColors.RED, "Cette commande n'est pas encore disponible !"));
 
@@ -88,9 +97,8 @@ public class RollCommand extends AbstractCommand {
             .permission("essentials.command.roll")
             .arguments(GenericArguments.choices(Text.of("type"), RolePlayImp.getRollEntries()),
                 GenericArguments.optionalWeak(GenericArguments.integer(Text.of("modificateur"))),
-                GenericArguments.optionalWeak(GenericArguments.choices(Text.of("compétence"), Skill.getCombatSkills())),
-                GenericArguments.optionalWeak(GenericArguments.enumValue(Text.of("attribut"), Attribute.class)),
-                GenericArguments.optionalWeak(GenericArguments.choices(Text.of("portée"), ChatType.getRangeEntries())))
+                GenericArguments.optionalWeak(GenericArguments.choices(Text.of("secondaire"), RolePlayImp.getSecondaryRollEntries())),
+                GenericArguments.optionalWeak(GenericArguments.integer(Text.of("portée"))))
             .executor(this)
             .children(getChildrenList(new None(getPlugin())))
             .build();
@@ -185,8 +193,19 @@ public class RollCommand extends AbstractCommand {
     case PERCEPTION: {
       PerceptionRollResult result = (PerceptionRollResult) res;
 
-      line1 = String.format("%s fait un jet de %s, score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(),
-          result.getSense(), result.getScore());
+      String perceptionString = "";
+      switch (result.getSense()) {
+      case OUIE:
+      case ODORAT:
+        perceptionString = "d'";
+        break;
+      default:
+        perceptionString = "de ";
+        break;
+      }
+      perceptionString += result.getSense().getName();
+
+      line1 = String.format("%s fait un jet " + perceptionString + ", score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(), result.getScore());
     }
       break;
     case RESISTANCE: {
@@ -235,15 +254,15 @@ public class RollCommand extends AbstractCommand {
         int faces = args.<Integer>getOne("faces").orElse(6);
         int nbre = args.<Integer>getOne("nombre").orElse(1);
         int result = Sponge.getServiceManager().provide(RolePlayService.class).get().rollDice(nbre, faces);
-        
-        Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.distance((Player)src, p) < 20).forEach(p -> {
-          src.sendMessage(Text.of(TextColors.YELLOW,
-              McFrPlayer.getMcFrPlayer((Player)src).getName() + "lance " + nbre + "D" + faces + " : " + result));
+
+        Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.distance((Player) src, p) < 20).forEach(p -> {
+          src.sendMessage(
+              Text.of(TextColors.YELLOW, McFrPlayer.getMcFrPlayer((Player) src).getName() + "lance " + nbre + "D" + faces + " : " + result));
         });
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
       }
-      
+
       return CommandResult.success();
     }
 
