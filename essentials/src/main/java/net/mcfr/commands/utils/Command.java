@@ -24,6 +24,7 @@ import net.mcfr.commands.MpCommand;
 import net.mcfr.commands.MuteCommand;
 import net.mcfr.commands.NameCommand;
 import net.mcfr.commands.NoCommand;
+import net.mcfr.commands.RangeCommand;
 import net.mcfr.commands.RealnameCommand;
 import net.mcfr.commands.RefreshCommand;
 import net.mcfr.commands.ReplyCommand;
@@ -64,6 +65,7 @@ public enum Command {
   MUTE(MuteCommand.class),
   NAME(NameCommand.class),
   NO(NoCommand.class),
+  RANGE(RangeCommand.class),
   REALNAME(RealnameCommand.class),
   REFRESH(RefreshCommand.class),
   REPLY(ReplyCommand.class),
