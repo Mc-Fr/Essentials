@@ -51,13 +51,13 @@ public class Essentials {
   public void onInit(GameInitializationEvent e) {
     this.serverLock = false;
 
-    Arrays.stream(Command.values()).map(c -> c.f()).filter(o -> o.isPresent()).map(o -> o.get()).forEach(
-        c -> Sponge.getCommandManager().register(this, c.getCommandSpec(), c.getAliases()));
-
     Sponge.getServiceManager().setProvider(this, RolePlayService.class, new RolePlayImp());
     Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
     Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
 
+    Arrays.stream(Command.values()).map(c -> c.f(this)).filter(o -> o.isPresent()).map(o -> o.get()).forEach(
+        c -> Sponge.getCommandManager().register(this, c.getCommandSpec(), c.getAliases()));
+    
     Sponge.getEventManager().registerListeners(this, new BurrowListener());
     Sponge.getEventManager().registerListeners(this, new CommandListener());
     Sponge.getEventManager().registerListeners(this, new LoginListener(this));

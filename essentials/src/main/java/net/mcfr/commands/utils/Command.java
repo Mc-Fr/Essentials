@@ -39,6 +39,7 @@ import net.mcfr.commands.TpPosCommand;
 import net.mcfr.commands.TpToCommand;
 import net.mcfr.commands.TribalLanguageCommand;
 import net.mcfr.commands.VanishCommand;
+import net.mcfr.commands.WalkCommand;
 import net.mcfr.commands.WhoIsCommand;
 
 // TODO Trouver un moyen de refactorer ça. C'est dégueu.
@@ -78,6 +79,7 @@ public enum Command {
   TPTO(TpToCommand.class),
   TRIBELANG(TribalLanguageCommand.class),
   VANISH(VanishCommand.class),
+  WALK(WalkCommand.class),
   WHOIS(WhoIsCommand.class);
 
   private Class<? extends AbstractCommand> cmdClass;
@@ -90,9 +92,9 @@ public enum Command {
     return this.cmdClass;
   }
 
-  public Optional<AbstractCommand> f() {
+  public Optional<AbstractCommand> f(Essentials plugin) {
     try {
-      return Optional.of(getCommandClass().getConstructor(Essentials.class).newInstance(this));
+      return Optional.of(getCommandClass().getConstructor(Essentials.class).newInstance(plugin));
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
         | SecurityException e) {
       e.printStackTrace();
