@@ -1,5 +1,7 @@
 package net.mcfr.roleplay;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -15,14 +17,31 @@ import net.mcfr.roleplay.rollResults.SkillRollResult;
 import net.mcfr.utils.McFrPlayer;
 
 public class RolePlayImp implements RolePlayService {
+  private static Map<String, Object> rollEntries = new HashMap<>();
+  
   private Random rd;
 
   public RolePlayImp() {
     this.rd = new Random();
     Skill.loadFromDatabase();
     Language.loadFromDatabase();
+    
+    rollEntries.putAll(Skill.getSkills());
+    rollEntries.put("att", "attack");
+    rollEntries.put("sort", "spell");
+    for (Attribute att : Attribute.values())
+      rollEntries.put(att.getName(), att);
+    for (Sense sense : Sense.values())
+      rollEntries.put(sense.name(), sense);
+    for (Defense defense : Defense.values())
+      rollEntries.put(defense.name(), defense);
+    
   }
 
+  public static Map<String, Object> getRollEntries() {
+    return rollEntries;
+  }
+  
   @Override
   public SkillRollResult skillRoll(Player player, Skill skill, int modifier, Optional<Attribute> optAttribute) {
     int roll = rollDice(3, 6);
@@ -133,10 +152,10 @@ public class RolePlayImp implements RolePlayService {
   }
 
   @Override
-  public AttackRollResult attackRoll(Player player, int modifier, Optional<Skill> optSkill) {
+  public AttackRollResult attackRoll(Player player, int modifier) {
     int roll = rollDice(3, 6);
 
-    Skill attackSkill = optSkill.orElse(Skill.getWeaponSkill(player));
+    Skill attackSkill = Skill.getWeaponSkill(player);
     McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
 
     modifier += mcFrPlayer.getHealthState().getMalus(attackSkill.getAttribute());

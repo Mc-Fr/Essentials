@@ -18,6 +18,7 @@ import net.mcfr.commands.HealCommand;
 import net.mcfr.commands.HealthCommand;
 import net.mcfr.commands.HrpCommand;
 import net.mcfr.commands.ItemCommand;
+import net.mcfr.commands.ManaCommand;
 import net.mcfr.commands.MoveNpcCommand;
 import net.mcfr.commands.MpCommand;
 import net.mcfr.commands.MuteCommand;
@@ -56,6 +57,7 @@ public enum Command {
   HEALTH(HealthCommand.class),
   HRP(HrpCommand.class),
   ITEM(ItemCommand.class),
+  MANA(ManaCommand.class),
   MOVENPC(MoveNpcCommand.class),
   MP(MpCommand.class),
   MUTE(MuteCommand.class),
