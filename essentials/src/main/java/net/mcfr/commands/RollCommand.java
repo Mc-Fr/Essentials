@@ -315,7 +315,7 @@ public class RollCommand extends AbstractCommand {
             roll += "-" + (-secondBonus) + ", ";
           }
           roll += category + ")";
-          src.sendMessage(Text.of(TextColors.YELLOW, McFrPlayer.getMcFrPlayer((Player) src).getName() + " fait " + roll + " de dégâts : " + result));
+          p.sendMessage(Text.of(TextColors.YELLOW, McFrPlayer.getMcFrPlayer((Player) src).getName() + " fait " + roll + " de dégâts : " + result));
         });
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
