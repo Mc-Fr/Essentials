@@ -91,7 +91,7 @@ public class RollCommand extends AbstractCommand {
             .arguments(GenericArguments.choices(Text.of("type"), RolePlayImp.getRollEntries()),
                 GenericArguments.optionalWeak(GenericArguments.choices(Text.of("secondaire"), RolePlayImp.getSecondaryRollEntries())),
                 GenericArguments.optionalWeak(GenericArguments.integer(Text.of("modificateur"))),
-                GenericArguments.optionalWeak(GenericArguments.string(Text.of("portée"))))
+                GenericArguments.optionalWeak(GenericArguments.integer(Text.of("portée"))))
             .executor(this)
             .children(getChildrenList(new None(getPlugin()),
                 new Damage(getPlugin()),
