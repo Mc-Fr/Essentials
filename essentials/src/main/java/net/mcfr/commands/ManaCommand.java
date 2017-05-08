@@ -104,10 +104,11 @@ public class ManaCommand extends AbstractCommand {
                   + ", malus de " + player.getHealthState().getMalus(Attribute.ENDURANCE)));
             }
           }
+          
+          player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Votre mana est de : " + player.getManaState().getValue() + "/" + player.getManaState().getMax()));
         }
         
         src.sendMessage(Text.of(TextColors.YELLOW, "La mana de " + player.getName() + " est de : " + player.getManaState().getValue() + "/" + player.getManaState().getMax()));
-        player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Votre mana est de : " + player.getManaState().getValue() + "/" + player.getManaState().getMax()));
       } else {
         src.sendMessage(Text.of(TextColors.YELLOW, "Le personnage n'est pas magicien et n'a donc pas de mana."));
       }

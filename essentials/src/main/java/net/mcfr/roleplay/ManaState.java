@@ -26,7 +26,7 @@ public class ManaState {
 
   public void refresh(McFrPlayer owner) {
     int magicLevel = owner.getTraitLevel("magie");
-    this.manaMax = magicLevel > 0 ? owner.getAttributePoints(Attribute.INTELLECT) + magicLevel : 0;
+    this.manaMax = magicLevel > 0 ? owner.getAttributePoints(Attribute.INTELLECT) + magicLevel - 5 : 0;
     this.manaValue = Math.min(this.manaValue, this.manaMax);
   }
 

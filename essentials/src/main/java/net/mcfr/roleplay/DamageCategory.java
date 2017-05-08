@@ -140,10 +140,10 @@ public enum DamageCategory {
   }
   
   public int getDies(int strenght) {
-    return this.dies.get(strenght);
+    return this.dies.getOrDefault(strenght, 1);
   }
   
   public int getBonus(int strenght) {
-    return this.bonus.get(strenght);
+    return this.bonus.getOrDefault(strenght, 0);
   }
 }
