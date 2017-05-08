@@ -30,6 +30,8 @@ public class WalkCommand extends AbstractCommand {
       Optional<MovementSpeedData> optSpeedData = p.get(MovementSpeedData.class);
       
       if (optSpeedData.isPresent()) {
+        McFrPlayer.getMcFrPlayer(p).toggleWalking();
+        
         MovementSpeedData speedData = optSpeedData.get();
         Value<Double> walkSpeed = speedData.walkSpeed();
         
@@ -43,12 +45,7 @@ public class WalkCommand extends AbstractCommand {
         
         speedData.set(walkSpeed);
         p.offer(speedData);
-      }
-      
-      McFrPlayer.getMcFrPlayer(p).toggleWalking();
-      
-      
-      
+      }      
     }
     else {
       src.sendMessage(ONLY_PLAYERS_COMMAND);
