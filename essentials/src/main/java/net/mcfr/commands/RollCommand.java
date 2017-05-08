@@ -18,6 +18,7 @@ import org.spongepowered.api.text.format.TextColors;
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.roleplay.Attribute;
+import net.mcfr.roleplay.DamageCategory;
 import net.mcfr.roleplay.Defense;
 import net.mcfr.roleplay.RolePlayImp;
 import net.mcfr.roleplay.RolePlayService;
@@ -44,7 +45,7 @@ public class RollCommand extends AbstractCommand {
       Object rollEntry = args.getOne("type").get();
       Optional<Object> secondaryRollEntry = args.getOne("secondaire");
       int modifier = args.<Integer>getOne("modificateur").orElse(0);
-      
+
       int range = args.<Integer>getOne("portée").orElse(20);
 
       if (rollEntry instanceof Skill) {
@@ -73,15 +74,6 @@ public class RollCommand extends AbstractCommand {
         printResult(range, RollType.PERCEPTION,
             Sponge.getServiceManager().provide(RolePlayService.class).get().perceptionRoll((Player) src, (Sense) rollEntry, modifier));
 
-      } else if (rollEntry instanceof String && ((String) rollEntry).equals("attack")) {
-        printResult(range, RollType.ATTACK, Sponge.getServiceManager().provide(RolePlayService.class).get().attackRoll((Player) src, modifier));
-
-      } else if (rollEntry instanceof String && ((String) rollEntry).equals("spell")) {
-        src.sendMessage(Text.of(TextColors.RED, "Cette commande n'est pas encore disponible !"));
-
-      } else if (rollEntry instanceof String && ((String) rollEntry).equals("damage")) {
-        src.sendMessage(Text.of(TextColors.RED, "Cette commande n'est pas encore disponible !"));
-
       }
     } else {
       src.sendMessage(ONLY_PLAYERS_COMMAND);
@@ -101,7 +93,10 @@ public class RollCommand extends AbstractCommand {
                 GenericArguments.optionalWeak(GenericArguments.integer(Text.of("modificateur"))),
                 GenericArguments.optionalWeak(GenericArguments.string(Text.of("portée"))))
             .executor(this)
-            .children(getChildrenList(new None(getPlugin())))
+            .children(getChildrenList(new None(getPlugin()),
+                new Damage(getPlugin()),
+                new Spell(getPlugin()),
+                new Attack(getPlugin())))
             .build();
     //#f:1
   }
@@ -144,7 +139,7 @@ public class RollCommand extends AbstractCommand {
     return weaponString;
   }
 
-  private static void printResult(int range, RollType type, RollResult res) {
+  private static RollResult printResult(int range, RollType type, RollResult res) {
     Player player = res.getPlayer();
 
     String line1 = "";
@@ -206,7 +201,8 @@ public class RollCommand extends AbstractCommand {
       }
       perceptionString += result.getSense().getName();
 
-      line1 = String.format("%s fait un jet " + perceptionString + ", score de %d" + result.getModifierString(), McFrPlayer.getMcFrPlayer(player).getName(), result.getScore());
+      line1 = String.format("%s fait un jet " + perceptionString + ", score de %d" + result.getModifierString(),
+          McFrPlayer.getMcFrPlayer(player).getName(), result.getScore());
     }
       break;
     case RESISTANCE: {
@@ -242,6 +238,8 @@ public class RollCommand extends AbstractCommand {
       p.sendMessage(text1);
       p.sendMessage(text2);
     });
+
+    return res;
   }
 
   static class None extends AbstractCommand {
@@ -258,7 +256,7 @@ public class RollCommand extends AbstractCommand {
 
         Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.distance((Player) src, p) < 20).forEach(p -> {
           src.sendMessage(
-              Text.of(TextColors.YELLOW, McFrPlayer.getMcFrPlayer((Player) src).getName() + "lance " + nbre + "D" + faces + " : " + result));
+              Text.of(TextColors.YELLOW, McFrPlayer.getMcFrPlayer((Player) src).getName() + " lance " + nbre + "D" + faces + " : " + result));
         });
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
@@ -283,6 +281,155 @@ public class RollCommand extends AbstractCommand {
     @Override
     public String[] getAliases() {
       return new String[] { "n" };
+    }
+  }
+
+  static class Damage extends AbstractCommand {
+    public Damage(Essentials plugin) {
+      super(plugin);
+    }
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      if (src instanceof Player) {
+        int strenght = args.hasAny("force") ? args.<Integer>getOne("force").get()
+            : McFrPlayer.getMcFrPlayer((Player) src).getAttributePoints(Attribute.FORCE);
+        DamageCategory category = args.<DamageCategory>getOne("catégorie").get();
+        int dies = category.getDies(strenght);
+        int firstBonus = category.getBonus(strenght);
+        int secondBonus = args.<Integer>getOne("bonus").orElse(0);
+
+        int result = Sponge.getServiceManager().provide(RolePlayService.class).get().rollDice(dies, 6) + firstBonus + secondBonus;
+
+        Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.distance((Player) src, p) < 20).forEach(p -> {
+          String roll = dies + "D6";
+          if (firstBonus > 0) {
+            roll += "+" + firstBonus;
+          } else if (firstBonus < 0) {
+            roll += "-" + (-firstBonus);
+          }
+          roll += " (";
+          if (secondBonus > 0) {
+            roll += "+" + secondBonus + ", ";
+          } else if (secondBonus < 0) {
+            roll += "-" + (-secondBonus) + ", ";
+          }
+          roll += category + ")";
+          src.sendMessage(Text.of(TextColors.YELLOW, McFrPlayer.getMcFrPlayer((Player) src).getName() + " fait " + roll + " de dégâts : " + result));
+        });
+      } else {
+        src.sendMessage(ONLY_PLAYERS_COMMAND);
+      }
+
+      return CommandResult.success();
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+    //#f:0
+    return CommandSpec.builder()
+            .description(Text.of("Fait un jet de dégâts."))
+            .permission("essentials.command.roll.damage")
+            .arguments(GenericArguments.optionalWeak(GenericArguments.integer(Text.of("force"))),
+                GenericArguments.enumValue(Text.of("catégorie"), DamageCategory.class),
+                GenericArguments.optional(GenericArguments.integer(Text.of("bonus"))))
+            .executor(this)
+            .build();
+    //#f:1
+    }
+
+    @Override
+    public String[] getAliases() {
+      return new String[] { "deg" };
+    }
+  }
+
+  static class Attack extends AbstractCommand {
+    public Attack(Essentials plugin) {
+      super(plugin);
+    }
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      if (src instanceof Player) {
+        printResult(args.<Integer>getOne("portée").orElse(20), RollType.ATTACK,
+            Sponge.getServiceManager().provide(RolePlayService.class).get().attackRoll((Player) src, args.<Integer>getOne("modificateur").orElse(0)));
+      } else {
+        src.sendMessage(ONLY_PLAYERS_COMMAND);
+      }
+
+      return CommandResult.success();
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+    //#f:0
+    return CommandSpec.builder()
+            .description(Text.of("Fait un jet d'attaque avec l'arme portée en main."))
+            .permission("essentials.command.roll.attack")
+            .arguments(GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))),
+                GenericArguments.optional(GenericArguments.integer(Text.of("portée"))))
+            .executor(this)
+            .build();
+    //#f:1
+    }
+
+    @Override
+    public String[] getAliases() {
+      return new String[] { "a" };
+    }
+  }
+
+  static class Spell extends AbstractCommand {
+    public Spell(Essentials plugin) {
+      super(plugin);
+    }
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      if (src instanceof Player) {
+        int mana = args.<Integer>getOne("palier").get();
+
+        RollResult res = printResult(args.<Integer>getOne("portée").orElse(20), RollType.SKILL,
+            Sponge.getServiceManager().provide(RolePlayService.class).get().skillRoll((Player) src, Skill.getSkillByName("thaumatologie"),
+                args.<Integer>getOne("modificateur").orElse(0), Optional.empty()));
+
+        switch (res.getResult()) {
+        case CRITICAL_SUCCESS:
+          mana /= Math.ceil(1f * mana / 3f);
+          break;
+        case FAILURE:
+          mana = 1;
+          break;
+        default:
+          break;
+        }
+
+        Sponge.getCommandManager().process(src, "mana -" + mana);
+      } else {
+        src.sendMessage(ONLY_PLAYERS_COMMAND);
+      }
+
+      return CommandResult.success();
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+    //#f:0
+    return CommandSpec.builder()
+            .description(Text.of("Permet de tenter de lancer un sort."))
+            .permission("essentials.command.roll.spell")
+            .arguments(GenericArguments.integer(Text.of("palier")),
+                GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))),
+                GenericArguments.optional(GenericArguments.integer(Text.of("portée"))))
+            .executor(this)
+            .build();
+    //#f:1
+    }
+
+    @Override
+    public String[] getAliases() {
+      return new String[] { "spell" };
     }
   }
 }

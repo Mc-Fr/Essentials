@@ -12,6 +12,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.roleplay.Attribute;
 import net.mcfr.utils.McFrPlayer;
 
 public class HealthCommand extends AbstractCommand {
@@ -27,7 +28,7 @@ public class HealthCommand extends AbstractCommand {
       if (player.hasCharacter()) {
         if (args.hasAny("ajout")) {
           int addingValue = args.<Integer>getOne("ajout").get();
-          player.getHealthState().addHealth(player, addingValue);
+          player.getHealthState().add(player, addingValue);
 
           if (addingValue > 0) {
             src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez été soigné de " + addingValue + " point" + (addingValue > 1 ? "s" : "") + "."));
@@ -35,9 +36,21 @@ public class HealthCommand extends AbstractCommand {
             src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez été blessé de " + (-addingValue) + " point" + (addingValue < -1 ? "s" : "") + "."));
           }
         }
-
-        src.sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + player.getHealthState().getHealthValue() + "/" + player.getHealthState().getMax()
-            + ", malus de " + player.getHealthState().getHealthMalus()));
+        
+        int health = player.getHealthState().getValue();
+        int max = player.getHealthState().getMax();
+        int end = player.getAttributePoints(Attribute.ENDURANCE);
+        int malus = player.getHealthState().getMalus(Attribute.ENDURANCE);
+        
+        if (health <= -2 * end) {
+          src.sendMessage(Text.of(TextColors.YELLOW, "Vous êtes mort ! Votre santé a atteint -" + (2*end) + " points."));
+        } else if (health <= -end) {
+          src.sendMessage(Text.of(TextColors.YELLOW, "Vous êtes inconscient, votre santé est de : " + health + "/" + max + ", malus de " + malus));
+        } else if (health <= 0) {
+          src.sendMessage(Text.of(TextColors.YELLOW, "Vous êtes gravement blessé, votre santé est de : " + health + "/" + max + ", malus de " + malus));
+        } else {
+          src.sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + health + "/" + max));
+        }
       } else {
         src.sendMessage(Text.of(TextColors.YELLOW, "Vous n'avez pas de personnage."));
       }
@@ -78,7 +91,7 @@ public class HealthCommand extends AbstractCommand {
       if (player.hasCharacter()) {
         if (args.hasAny("ajout")) {
           int addingValue = args.<Integer>getOne("ajout").get();
-          player.getHealthState().addHealth(player, addingValue);
+          player.getHealthState().add(player, addingValue);
 
           if (addingValue > 0) {
             src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez soigné " + player.getName() + " de " + addingValue + " points."));
@@ -87,13 +100,35 @@ public class HealthCommand extends AbstractCommand {
             src.sendMessage(Text.of(TextColors.YELLOW, "Vous avez blessé " + player.getName() + " de " + (-addingValue) + " points."));
             player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous avez été blessé de " + (-addingValue) + " points."));
           }
-
-          player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + player.getHealthState().getHealthValue() + "/" + player.getHealthState().getMax()
-              + ", malus de " + player.getHealthState().getHealthMalus()));
         }
 
-        src.sendMessage(Text.of(TextColors.YELLOW, "La santé de " + player.getName() + " est de : " + player.getHealthState().getHealthValue() + "/"
-            + player.getHealthState().getMax() + ", malus de " + player.getHealthState().getHealthMalus()));
+        int health = player.getHealthState().getValue();
+        int max = player.getHealthState().getMax();
+        int end = player.getAttributePoints(Attribute.ENDURANCE);
+        int malus = player.getHealthState().getMalus(Attribute.ENDURANCE);
+        
+        if (args.hasAny("ajout")) {
+          if (health <= -2 * end) {
+            player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes mort ! Votre santé a atteint -" + (2*end) + " points."));
+          } else if (health <= -end) {
+            player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes inconscient, votre santé est de : " + health + "/" + max + ", malus de " + malus));
+          } else if (health <= 0) {
+            player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes gravement blessé, votre santé est de : " + health + "/" + max + ", malus de " + malus));
+          } else {
+            player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Votre santé est de : " + health + "/" + max));
+          }
+        }
+        
+        if (health <= -2 * end) {
+          src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " est mort ! Sa santé a atteint -" + (2*end) + " points."));
+        } else if (health <= -end) {
+          src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " est inconscient, sa santé est de : " + health + "/" + max + ", malus de " + malus));
+        } else if (health <= 0) {
+          src.sendMessage(Text.of(TextColors.YELLOW, player.getName() + " est gravement blessé, sa santé est de : " + health + "/" + max + ", malus de " + malus));
+        } else {
+          src.sendMessage(Text.of(TextColors.YELLOW, "La santé de " + player.getName() + " est de : " + health + "/" + max));
+        }
+        
       } else {
         src.sendMessage(Text.of(TextColors.YELLOW, "Le joueur ciblé n'a pas de personnage."));
       }

@@ -28,8 +28,6 @@ public class RolePlayImp implements RolePlayService {
     Language.loadFromDatabase();
     
     rollEntries.putAll(Skill.getSkills());
-    rollEntries.put("att", "attack");
-    rollEntries.put("sort", "spell");
     for (Attribute att : Attribute.values())
       rollEntries.put(att.getName(), att);
     for (Sense sense : Sense.values())

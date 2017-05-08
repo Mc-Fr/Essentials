@@ -9,91 +9,83 @@ import net.mcfr.utils.McFrPlayer;
 
 public class HealthState {
   private int healthValue;
-  private int fatigueValue;
-  private int endMax;
+  private int healthMax;
+  private int end;
   private boolean isMalusReduced;
+  private boolean isMalusIncreased;
 
   public HealthState(int initValue) {
     this.healthValue = initValue;
-    this.fatigueValue = initValue;
-    this.endMax = initValue;
+    this.healthMax = initValue;
+    this.end = initValue;
     this.isMalusReduced = false;
+    this.isMalusIncreased = false;
   }
 
-  public int getHealthValue() {
+  public int getValue() {
     return this.healthValue;
-  }
-  
-  public int getFatigueValue() {
-    return this.fatigueValue;
   }
 
   public int getMax() {
-    return this.endMax;
+    return this.healthMax;
   }
 
   public void refresh(McFrPlayer owner) {
-    this.endMax = owner.getAttributePoints(Attribute.ENDURANCE);
-    this.healthValue = Math.min(this.healthValue, this.endMax);
-    this.fatigueValue = Math.min(this.fatigueValue, this.endMax);
+    this.end = owner.getAttributePoints(Attribute.ENDURANCE);
+    this.healthMax = this.end * 2;
+    this.healthValue = Math.min(this.healthValue, this.healthMax);
     this.isMalusReduced = owner.hasTrait("haute_resistance_a_la_douleur");
+    this.isMalusIncreased = owner.hasTrait("sensible_a_la_douleur");
   }
 
   private void save(McFrPlayer owner) {
     try (Connection jdrConnection = McFrConnection.getConnection()) {
-      PreparedStatement setHealth = jdrConnection.prepareStatement("UPDATE `fiche_perso_personnage` SET `health`=?,`fatigue`=? WHERE `id`=?");
+      PreparedStatement setHealth = jdrConnection.prepareStatement("UPDATE `fiche_perso_personnage` SET `health`=? WHERE `id`=?");
       setHealth.setInt(1, this.healthValue);
-      setHealth.setInt(2, this.fatigueValue);
-      setHealth.setInt(3, owner.getSheetId());
+      setHealth.setInt(2, owner.getSheetId());
       setHealth.execute();
     } catch (SQLException e) {
       e.printStackTrace();
     }
   }
 
-  public void addHealth(McFrPlayer owner, int addingValue) {
-    this.healthValue = Math.min(this.healthValue + addingValue, this.endMax);
+  public void add(McFrPlayer owner, int addingValue) {
+    this.healthValue = Math.min(this.healthValue + addingValue, this.healthMax);
     this.save(owner);
   }
 
-  public void setHealth(McFrPlayer owner, int value) {
-    this.healthValue = Math.min(value, this.endMax);
-    this.save(owner);
-  }
-  
-  public void addFatigue(McFrPlayer owner, int addingValue) {
-    this.fatigueValue = Math.min(this.fatigueValue + addingValue, this.endMax);
-    this.save(owner);
-  }
-  
-  public void setFatigue(McFrPlayer owner, int value) {
-    this.fatigueValue = Math.min(value, this.endMax);
+  public void set(McFrPlayer owner, int value) {
+    this.healthValue = Math.min(value, this.healthMax);
     this.save(owner);
   }
 
   public int getMalus(Attribute attribute) {
-    int malus = getHealthMalus();
-    if (attribute.equals(Attribute.INTELLECT)) {
-      malus /= 2;
-    }    
-    if (attribute.equals(Attribute.DEXTERITE) || attribute.equals(Attribute.INTELLECT)) {
-      malus += getFatigueMalus();
-    }
-    return malus;
-  }
-
-  public int getHealthMalus() {
-    return Math.min(this.healthValue - 2 * this.endMax / 3 + (this.isMalusReduced ? 2 : 0), 0);
-  }
-  
-  public int getFatigueMalus() {
     int malus = 0;
-    if (this.fatigueValue <= this.endMax / 2) {
-      malus -= 2;
-      if (this.fatigueValue <= this.endMax / 3) {
-        malus -= 2;
-      }
+    float spacing = 0f;
+    
+    if (this.healthValue <= 0)
+      malus--;
+    
+    if (this.isMalusReduced) {
+      malus++;
+      spacing++;
+    } else if (this.isMalusIncreased) {
+      spacing -= 0.5f;
     }
-    return malus;
+    
+    if (this.end <= 7) {
+      spacing += 1.5f;
+    } else if (this.end <= 11) {
+      spacing += 2f;
+    } else {
+      spacing += 3f;
+    }
+    
+    malus -= Math.floor(-1f * this.healthValue / spacing);
+    
+    if (attribute.equals(Attribute.INTELLECT))
+      malus /= 2;
+    
+    return Math.min(malus, 0);
   }
 }

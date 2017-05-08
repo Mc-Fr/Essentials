@@ -326,7 +326,7 @@ public class McFrPlayer {
       PreparedStatement getUserId = connection.prepareStatement(
           "SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
       PreparedStatement getCharacterSheetId = connection.prepareStatement(
-          "SELECT id, health, fatigue, mana FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
+          "SELECT id, health, mana FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
       PreparedStatement getCharacterSheet = connection.prepareStatement(
           "SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = ?");
       PreparedStatement getAttributes = connection.prepareStatement(
@@ -369,8 +369,7 @@ public class McFrPlayer {
         this.booleans |= 0b01_0000_0000;
         this.sheetId = characterSheet.getInt(1);
         int currentHealth = characterSheet.getInt(2);
-        int currentFatigue = characterSheet.getInt(3);
-        int currentMana = characterSheet.getInt(4);
+        int currentMana = characterSheet.getInt(3);
         getCharacterSheet.setInt(1, this.sheetId);
         ResultSet skillData = getCharacterSheet.executeQuery();
 
@@ -415,8 +414,7 @@ public class McFrPlayer {
 
         applyJdrEffects();
         this.healthState.refresh(this);
-        this.healthState.setHealth(this, currentHealth);
-        this.healthState.setFatigue(this, currentFatigue);
+        this.healthState.set(this, currentHealth);
         
         this.manaState.refresh(this);
         this.manaState.set(this, currentMana);
