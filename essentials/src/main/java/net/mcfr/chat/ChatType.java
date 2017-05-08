@@ -3,6 +3,9 @@ package net.mcfr.chat;
 import static org.spongepowered.api.text.format.TextColors.*;
 import static org.spongepowered.api.text.format.TextStyles.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextStyle;
 import org.spongepowered.api.text.format.TextStyles;
@@ -32,6 +35,16 @@ public enum ChatType {
   TEAM(-1, RED, "@", true, "[Équipe] %1$s : %3$s"),
   ADMIN(-1, RED, "=", true, "[Admin] %1$s : %3$s");
 
+  public static final Map<String, Integer> rangeStrings = new HashMap<>();
+  
+  static {
+    rangeStrings.put("p\"'", 2);
+    rangeStrings.put("p\"", 5);
+    rangeStrings.put("p'", 10);
+    rangeStrings.put("p&", 45);
+    rangeStrings.put("p!", 60);
+  }
+  
   /**
    * Distance de compréhension du message. Au delà, le message n'est pas affiché.
    */

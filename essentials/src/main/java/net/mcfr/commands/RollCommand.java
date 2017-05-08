@@ -16,6 +16,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
+import net.mcfr.chat.ChatType;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.roleplay.Attribute;
 import net.mcfr.roleplay.DamageCategory;
@@ -46,7 +47,19 @@ public class RollCommand extends AbstractCommand {
       Optional<Object> secondaryRollEntry = args.getOne("secondaire");
       int modifier = args.<Integer>getOne("modificateur").orElse(0);
 
-      int range = args.<Integer>getOne("portée").orElse(20);
+      int range = 20;
+      if (args.hasAny("portée")) {
+        String rangeString = args.<String>getOne("portée").get();
+        
+        if (ChatType.rangeStrings.containsKey(rangeString)) {
+          range = ChatType.rangeStrings.get(rangeString);
+        } else if ((rangeString.length() == 2 && rangeString.matches("p[1-9]")) || (rangeString.length() == 3 && rangeString.matches("p[1-9][0-9]"))) {
+          range = Integer.parseInt(rangeString.substring(1, rangeString.length()));
+        } else {
+          src.sendMessage(Text.of(TextColors.RED, "La portée doit être de la forme p10, ou p\", p', p&... Le nombre doit être entre 1 et 99."));
+          return CommandResult.success();
+        }
+      }
 
       if (rollEntry instanceof Skill) {
         Optional<Attribute> optAttribute = Optional.empty();
@@ -91,7 +104,7 @@ public class RollCommand extends AbstractCommand {
             .arguments(GenericArguments.choices(Text.of("type"), RolePlayImp.getRollEntries()),
                 GenericArguments.optionalWeak(GenericArguments.choices(Text.of("secondaire"), RolePlayImp.getSecondaryRollEntries())),
                 GenericArguments.optionalWeak(GenericArguments.integer(Text.of("modificateur"))),
-                GenericArguments.optionalWeak(GenericArguments.integer(Text.of("portée"))))
+                GenericArguments.optionalWeak(GenericArguments.string(Text.of("portée"))))
             .executor(this)
             .children(getChildrenList(new None(getPlugin()),
                 new Damage(getPlugin()),
@@ -292,6 +305,21 @@ public class RollCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
+        int range = 20;
+        if (args.hasAny("portée")) {
+          String rangeString = args.<String>getOne("portée").get();
+          
+          if (ChatType.rangeStrings.containsKey(rangeString)) {
+            range = ChatType.rangeStrings.get(rangeString);
+          } else if ((rangeString.length() == 2 && rangeString.matches("p[1-9]")) || (rangeString.length() == 3 && rangeString.matches("p[1-9][0-9]"))) {
+            range = Integer.parseInt(rangeString.substring(1, rangeString.length()));
+          } else {
+            src.sendMessage(Text.of(TextColors.RED, "La portée doit être de la forme p10, ou p\", p', p&... Le nombre doit être entre 1 et 99."));
+            return CommandResult.success();
+          }
+        }
+        final int finalRange = range;
+        
         int strenght = args.hasAny("force") ? args.<Integer>getOne("force").get()
             : McFrPlayer.getMcFrPlayer((Player) src).getAttributePoints(Attribute.FORCE);
         DamageCategory category = args.<DamageCategory>getOne("catégorie").get();
@@ -301,7 +329,7 @@ public class RollCommand extends AbstractCommand {
 
         int result = Sponge.getServiceManager().provide(RolePlayService.class).get().rollDice(dies, 6) + firstBonus + secondBonus;
 
-        Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.distance((Player) src, p) < 20).forEach(p -> {
+        Sponge.getServer().getOnlinePlayers().stream().filter(p -> McFrPlayer.distance((Player) src, p) < finalRange).forEach(p -> {
           String roll = dies + "D6";
           if (firstBonus > 0) {
             roll += "+" + firstBonus;
@@ -332,7 +360,8 @@ public class RollCommand extends AbstractCommand {
             .permission("essentials.command.roll.damage")
             .arguments(GenericArguments.optionalWeak(GenericArguments.integer(Text.of("force"))),
                 GenericArguments.enumValue(Text.of("catégorie"), DamageCategory.class),
-                GenericArguments.optional(GenericArguments.integer(Text.of("bonus"))))
+                GenericArguments.optionalWeak(GenericArguments.integer(Text.of("bonus"))),
+                GenericArguments.optionalWeak(GenericArguments.string(Text.of("portée"))))
             .executor(this)
             .build();
     //#f:1
@@ -352,7 +381,21 @@ public class RollCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
-        printResult(args.<Integer>getOne("portée").orElse(20), RollType.ATTACK,
+        int range = 20;
+        if (args.hasAny("portée")) {
+          String rangeString = args.<String>getOne("portée").get();
+          
+          if (ChatType.rangeStrings.containsKey(rangeString)) {
+            range = ChatType.rangeStrings.get(rangeString);
+          } else if ((rangeString.length() == 2 && rangeString.matches("p[1-9]")) || (rangeString.length() == 3 && rangeString.matches("p[1-9][0-9]"))) {
+            range = Integer.parseInt(rangeString.substring(1, rangeString.length()));
+          } else {
+            src.sendMessage(Text.of(TextColors.RED, "La portée doit être de la forme p10, ou p\", p', p&... Le nombre doit être entre 1 et 99."));
+            return CommandResult.success();
+          }
+        }
+        
+        printResult(range, RollType.ATTACK,
             Sponge.getServiceManager().provide(RolePlayService.class).get().attackRoll((Player) src, args.<Integer>getOne("modificateur").orElse(0)));
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
@@ -367,8 +410,8 @@ public class RollCommand extends AbstractCommand {
     return CommandSpec.builder()
             .description(Text.of("Fait un jet d'attaque avec l'arme portée en main."))
             .permission("essentials.command.roll.attack")
-            .arguments(GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))),
-                GenericArguments.optional(GenericArguments.integer(Text.of("portée"))))
+            .arguments(GenericArguments.optionalWeak(GenericArguments.integer(Text.of("modificateur"))),
+                GenericArguments.optionalWeak(GenericArguments.string(Text.of("portée"))))
             .executor(this)
             .build();
     //#f:1
@@ -388,9 +431,23 @@ public class RollCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
+        int range = 20;
+        if (args.hasAny("portée")) {
+          String rangeString = args.<String>getOne("portée").get();
+          
+          if (ChatType.rangeStrings.containsKey(rangeString)) {
+            range = ChatType.rangeStrings.get(rangeString);
+          } else if ((rangeString.length() == 2 && rangeString.matches("p[1-9]")) || (rangeString.length() == 3 && rangeString.matches("p[1-9][0-9]"))) {
+            range = Integer.parseInt(rangeString.substring(1, rangeString.length()));
+          } else {
+            src.sendMessage(Text.of(TextColors.RED, "La portée doit être de la forme p10, ou p\", p', p&... Le nombre doit être entre 1 et 99."));
+            return CommandResult.success();
+          }
+        }
+        
         int mana = args.<Integer>getOne("palier").get();
 
-        RollResult res = printResult(args.<Integer>getOne("portée").orElse(20), RollType.SKILL,
+        RollResult res = printResult(range, RollType.SKILL,
             Sponge.getServiceManager().provide(RolePlayService.class).get().skillRoll((Player) src, Skill.getSkillByName("thaumatologie"),
                 args.<Integer>getOne("modificateur").orElse(0), Optional.empty()));
 
@@ -420,8 +477,8 @@ public class RollCommand extends AbstractCommand {
             .description(Text.of("Permet de tenter de lancer un sort."))
             .permission("essentials.command.roll.spell")
             .arguments(GenericArguments.integer(Text.of("palier")),
-                GenericArguments.optional(GenericArguments.integer(Text.of("modificateur"))),
-                GenericArguments.optional(GenericArguments.integer(Text.of("portée"))))
+                GenericArguments.optionalWeak(GenericArguments.integer(Text.of("modificateur"))),
+                GenericArguments.optionalWeak(GenericArguments.string(Text.of("portée"))))
             .executor(this)
             .build();
     //#f:1

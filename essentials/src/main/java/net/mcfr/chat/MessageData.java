@@ -36,8 +36,9 @@ public class MessageData {
   private Collection<Player> recipients;
 
   /**
-   * Construit un {@code MessageData} à partir d'un {@code Player} et d'une chaîne de caractère. Extrait du message le
-   * type de tchat à utiliser, ainsi que tous les destinataires du message.
+   * Construit un {@code MessageData} à partir d'un {@code Player} et d'une
+   * chaîne de caractère. Extrait du message le type de tchat à utiliser, ainsi
+   * que tous les destinataires du message.
    *
    * @param sender
    *          l'émetteur du message
@@ -98,12 +99,13 @@ public class MessageData {
     Player sender = getSender();
     Sponge.getServer().getOnlinePlayers().stream().filter(p -> {
       boolean samePlayer = p.equals(sender);
-      
-      boolean rpChatHigh = getChatType().equals(ChatType.LOUD_SPEAK) || getChatType().equals(ChatType.SHOUT);
+
+      boolean rpChatLow = getChatType().equals(ChatType.WHISPER) || getChatType().equals(ChatType.LOW_VOICE)
+          || getChatType().equals(ChatType.SOFT_VOICE) || getChatType().equals(ChatType.MEDIUM);
       boolean rpChatListening = McFrPlayer.distance(sender, p) <= McFrPlayer.getMcFrPlayer(p).getListeningRange();
       boolean rpChatRange = McFrPlayer.distance(sender, p) <= getChatType().getDistance();
-      boolean rpChat = p.getWorld().equals(sender.getWorld()) && ((rpChatHigh && rpChatRange) || (!rpChatHigh && rpChatListening && rpChatRange));
-      
+      boolean rpChat = p.getWorld().equals(sender.getWorld()) && ((!rpChatLow && rpChatRange) || (rpChatLow && rpChatListening && rpChatRange));
+
       boolean supportChat = getChatType().getDistance() == -1;
       boolean permission = p.hasPermission(getChatType().getListenPermission());
 

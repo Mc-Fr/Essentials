@@ -33,7 +33,7 @@ public class RangeCommand extends AbstractCommand {
           cancelReducedRange(p);
         } else {
           McFrPlayer.getMcFrPlayer(p).setListeningRange(range);
-          src.sendMessage(Text.of(TextColors.YELLOW, "Votre portée d'écoute maximale est fixée à " + range + ". Les cris et hurlements ne sont pas concernés."));
+          src.sendMessage(Text.of(TextColors.YELLOW, "Votre portée d'écoute maximale est fixée à " + range + ". Les cris, hurlements et actions ne sont pas affectés."));
         }
       } else {
         cancelReducedRange(p);
