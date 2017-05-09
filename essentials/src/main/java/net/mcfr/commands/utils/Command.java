@@ -40,6 +40,7 @@ import net.mcfr.commands.TpToCommand;
 import net.mcfr.commands.TribalLanguageCommand;
 import net.mcfr.commands.VanishCommand;
 import net.mcfr.commands.WalkCommand;
+import net.mcfr.commands.WarpCommand;
 import net.mcfr.commands.WhoIsCommand;
 
 // TODO Trouver un moyen de refactorer ça. C'est dégueu.
@@ -80,6 +81,7 @@ public enum Command {
   TRIBELANG(TribalLanguageCommand.class),
   VANISH(VanishCommand.class),
   WALK(WalkCommand.class),
+  WARP(WarpCommand.class),
   WHOIS(WhoIsCommand.class);
 
   private Class<? extends AbstractCommand> cmdClass;
