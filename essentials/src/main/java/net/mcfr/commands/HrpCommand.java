@@ -72,7 +72,7 @@ public class HrpCommand extends AbstractCommand {
         Player p = (Player) src;
         
         ItemStack orpFoodStack = ItemStack.builder()
-            .itemType(Sponge.getGame().getRegistry().getType(ItemType.class, "mcfr_b_i:orp_sign").get()).quantity(16).build(); //TODO : passer à orp_food quand implémenté
+            .itemType(Sponge.getGame().getRegistry().getType(ItemType.class, "mcfr_b_i:orp_sign").get()).quantity(4).build(); //TODO : passer à orp_food quand implémenté
         
         List<Text> text = new ArrayList<>();
         text.add(Text.of("Cette nourriture est HRP, pensez à faire manger de la vraie nourriture à votre personnage de temps en temps !"));
