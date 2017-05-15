@@ -153,11 +153,11 @@ public class McFrPlayer {
   public void setExpeditionState(State state) {
     this.expeditionState = state;
   }
-  
+
   public void setListeningRange(int range) {
     this.listeningRange = range;
   }
-  
+
   public int getListeningRange() {
     return this.listeningRange;
   }
@@ -181,25 +181,23 @@ public class McFrPlayer {
   public void toggleWalking() {
     this.booleans ^= 0b10_0000_0000;
   }
-  
+
   public boolean isWalking() {
     return (this.booleans & 0b10_0000_0000) == 0b10_0000_0000;
   }
-  
+
   public void selectBurrow(Burrow burrow) {
     unselectBurrow();
     this.selectedBurrow = Optional.of(burrow);
-    if (seesBurrows()) {
+    if (seesBurrows())
       burrow.setVisible(this.player);
-    }
   }
 
   public void unselectBurrow() {
     Optional<Burrow> burrow = this.selectedBurrow;
     this.selectedBurrow = Optional.empty();
-    if (burrow.isPresent() && seesBurrows()) {
+    if (burrow.isPresent() && seesBurrows())
       burrow.get().setVisible(this.player);
-    }
   }
 
   public Optional<Burrow> getSelectedBurrow() {
@@ -207,9 +205,8 @@ public class McFrPlayer {
   }
 
   public void setInCareCenterEffectArea(boolean inCareCenterEffectArea) {
-    if (!(inCareCenterEffectArea == isInCareCenterEffectArea())) {
+    if (!(inCareCenterEffectArea == isInCareCenterEffectArea()))
       this.booleans ^= 0b00_1000_0000;
-    }
   }
 
   public boolean isMuted() {
@@ -355,9 +352,8 @@ public class McFrPlayer {
       int userId = -1;
       getUserId.setString(1, this.player.getName());
       ResultSet user = getUserId.executeQuery();
-      if (user.next()) {
+      if (user.next())
         userId = user.getInt(1);
-      }
       user.close();
 
       getCharacterSheetId.setInt(1, userId);
@@ -368,36 +364,33 @@ public class McFrPlayer {
         this.sheetId = characterSheet.getInt(1);
         int currentHealth = characterSheet.getInt(2);
         int currentMana = characterSheet.getInt(3);
-        
+
         String strDescription = playerData.getString(4);
         this.description = strDescription == null ? Optional.empty() : Optional.of(strDescription);
-        
+
         getCharacterSheet.setInt(1, this.sheetId);
         ResultSet skillData = getCharacterSheet.executeQuery();
 
-        while (skillData.next()) {
+        while (skillData.next())
           this.skills.put(Skill.getSkills().get(skillData.getString(2)), skillData.getInt(3));
-        }
         skillData.close();
 
         getAttributes.setInt(1, this.sheetId);
         ResultSet attributeData = getAttributes.executeQuery();
-        while (attributeData.next()) {
+        while (attributeData.next())
           this.attributes.put(Attribute.getAttributeFromString(attributeData.getString(1)), attributeData.getInt(2));
-        }
         attributeData.close();
 
         getAdvantages.setInt(1, this.sheetId);
         ResultSet traitData = getAdvantages.executeQuery();
 
-        while (traitData.next()) {
+        while (traitData.next())
           this.traits.put(traitData.getString(1), traitData.getInt(2));
-        }
         traitData.close();
 
-        if (getLanguageLevel(Language.getLanguages().get("commun")) > 0) {
+        if (getLanguageLevel(Language.getLanguages().get("commun")) > 0)
           setLanguage(Language.getLanguages().get("commun"));
-        } else {
+        else {
           boolean hasLanguage = false;
           int maxLangLevel = 0;
           int currentLevel = 0;
@@ -409,20 +402,18 @@ public class McFrPlayer {
               maxLangLevel = currentLevel;
             }
           }
-          if (!hasLanguage) {
+          if (!hasLanguage)
             this.language = Language.getLanguages().get("commun");
-          }
         }
 
         applyJdrEffects();
         this.healthState.refresh(this);
         this.healthState.set(this, currentHealth);
-        
+
         this.manaState.refresh(this);
         this.manaState.set(this, currentMana);
-      } else {
+      } else
         this.player.sendMessage(Text.of(TextColors.YELLOW, "Attention, vous n'avez pas de fiche de personnage active !"));
-      }
       characterSheet.close();
 
       connection.close();
@@ -432,9 +423,8 @@ public class McFrPlayer {
   }
 
   private void applyJdrEffects() {
-    if (this.player.get(PotionEffectData.class).isPresent()) {
+    if (this.player.get(PotionEffectData.class).isPresent())
       Sponge.getCommandManager().process(Sponge.getServer().getConsole(), String.format("effect %s clear", this.player.getName()));
-    }
 
     PotionEffectData effects = this.player.getOrCreate(PotionEffectData.class).get();
 
@@ -473,21 +463,19 @@ public class McFrPlayer {
 
   public int getSkillLevel(Skill skill, Optional<Attribute> optAttribute) {
     List<Integer> scores = new ArrayList<>();
-    if (this.skills.containsKey(skill)) {
+    if (this.skills.containsKey(skill))
       scores.add(getAttributePoints(optAttribute.orElse(skill.getAttribute())) + this.skills.get(skill));
-    } else {
+    else
       scores.add(getAttributePoints(optAttribute.orElse(skill.getAttribute())) - 3 + skill.getDifficulty());
-    }
 
     for (Map.Entry<Skill, Integer> dependency : skill.getDependencies().entrySet()) {
       Skill depSkill = dependency.getKey();
       int depScore = dependency.getValue();
 
-      if (this.skills.containsKey(depSkill)) {
+      if (this.skills.containsKey(depSkill))
         scores.add(getAttributePoints(optAttribute.orElse(depSkill.getAttribute())) + this.skills.get(depSkill) + depScore);
-      } else {
+      else
         scores.add(getAttributePoints(optAttribute.orElse(depSkill.getAttribute())) - 3 + depSkill.getDifficulty() + depScore);
-      }
     }
 
     return scores.stream().max((s1, s2) -> Integer.compare(s1, s2)).get();
@@ -555,9 +543,8 @@ public class McFrPlayer {
   public String getTraitsString() {
     String result = "Traits :";
 
-    for (Entry<String, Integer> entry : this.traits.entrySet()) {
+    for (Entry<String, Integer> entry : this.traits.entrySet())
       result += "\n- " + entry.getKey() + " : " + entry.getValue();
-    }
 
     return result;
   }
@@ -565,9 +552,8 @@ public class McFrPlayer {
   public String getSkillsString() {
     String result = "Compétences :";
 
-    for (Skill skill : this.skills.keySet()) {
+    for (Skill skill : this.skills.keySet())
       result += "\n- " + skill.getDisplayName() + " : " + getSkillLevel(skill, Optional.empty());
-    }
 
     return result;
   }
@@ -575,9 +561,8 @@ public class McFrPlayer {
   public String getAttributesString() {
     String result = "Attributs :";
 
-    for (Attribute attribute : this.attributes.keySet()) {
+    for (Attribute attribute : this.attributes.keySet())
       result += "\n- " + attribute.getName() + " : " + getAttributePoints(attribute);
-    }
 
     return result;
   }
@@ -616,7 +601,7 @@ public class McFrPlayer {
   public HealthState getHealthState() {
     return this.healthState;
   }
-  
+
   public ManaState getManaState() {
     return this.manaState;
   }

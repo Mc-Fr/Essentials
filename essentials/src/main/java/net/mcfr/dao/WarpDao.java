@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.world.Location;
@@ -20,9 +21,14 @@ public class WarpDao extends Dao<Warp> {
     List<Warp> warps = new ArrayList<>();
     try {
       ResultSet rs = McFrConnection.getConnection().createStatement().executeQuery("select name, world, x, y, z, locked from warp");
+
       while (rs.next()) {
-        Location<World> loc = new Location<>(Sponge.getServer().getWorld(rs.getString("world")).get(), rs.getInt("x"), rs.getInt("y"),
-            rs.getInt("z"));
+        Optional<World> optWorld = Sponge.getServer().getWorld(rs.getString("world"));
+        if (!optWorld.isPresent()) {
+          System.out.println("Le monde " + rs.getString("world") + " n'existe pas.");
+          continue;
+        }
+        Location<World> loc = new Location<>(optWorld.get(), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"));
         Warp warp = new Warp(rs.getString("warp"), loc);
         warp.setLocked(rs.getBoolean("locked"));
         warps.add(warp);
