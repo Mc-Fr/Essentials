@@ -322,7 +322,7 @@ public class McFrPlayer {
       this.skills.clear();
       this.attributes.clear();
       this.traits.clear();
-      PreparedStatement getPseudonym = connection.prepareStatement("SELECT * FROM srv_player WHERE pseudonym = ?");
+      PreparedStatement getPseudonym = connection.prepareStatement("SELECT name, deaths FROM srv_player WHERE pseudonym = ?");
       PreparedStatement getUserId = connection.prepareStatement(
           "SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
       PreparedStatement getCharacterSheetId = connection.prepareStatement(
@@ -339,11 +339,10 @@ public class McFrPlayer {
       ResultSet playerData = getPseudonym.executeQuery();
 
       if (playerData.next()) {
-        this.name = playerData.getString(3);
-        this.deaths = playerData.getInt(7);
+        this.name = playerData.getString(1);
+        this.deaths = playerData.getInt(2);
       } else {
         this.name = this.player.getName();
-        this.description = Optional.of("Un nouveau colon");
         this.deaths = 0;
 
         registerPlayer.setString(1, this.player.getUniqueId().toString());
