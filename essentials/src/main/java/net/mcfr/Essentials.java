@@ -75,8 +75,8 @@ public class Essentials {
     if (commandsFile.exists())
       new JsonParser().parse(new JsonReader(new FileReader(commandsFile))).getAsJsonObject().get("commands").getAsJsonArray().forEach(this::planTask);
 
-    Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load")).delay(
-        4, TimeUnit.SECONDS).submit(this);
+    //    Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load")).delay(
+    //        4, TimeUnit.SECONDS).submit(this);
     TribalWord.loadFromDatabase();
   }
 
