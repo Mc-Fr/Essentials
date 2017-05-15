@@ -29,8 +29,8 @@ public class BabelCommand extends AbstractCommand {
       if (args.hasAny("langue")) {
         Language lang = args.<Language>getOne("langue").get();
         int playerLevel = player.getLanguageLevel(lang);
-
-        if (playerLevel > 0) {
+        
+        if (playerLevel > 0 || player.hasTrait("langue_mj")) {
           player.setLanguage(lang);
           src.sendMessage(Text.of(TextColors.YELLOW, "Vous parlez désormais " + lang.getDisplayName() + "."));
         } else {

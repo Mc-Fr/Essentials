@@ -151,7 +151,11 @@ public class MessageData {
         if (p.equals(getSender())) {
           p.sendMessage(toText(p, translatedMessages[3]));
         } else {
-          p.sendMessage(toText(p, translatedMessages[McFrPlayer.getMcFrPlayer(p).getLanguageLevel(lang)]));
+          if (McFrPlayer.getMcFrPlayer(p).hasTrait("langue_mj")) {
+            p.sendMessage(toText(p, translatedMessages[3]));
+          } else {
+            p.sendMessage(toText(p, translatedMessages[McFrPlayer.getMcFrPlayer(p).getLanguageLevel(lang)]));
+          }
         }
       });
     } else {
