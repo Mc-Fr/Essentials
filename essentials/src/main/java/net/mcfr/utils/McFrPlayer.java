@@ -283,9 +283,9 @@ public class McFrPlayer {
   public void setDescription(String description) {
     try (Connection serverConnection = McFrConnection.getConnection()) {
 
-      PreparedStatement changeDescription = serverConnection.prepareStatement("UPDATE srv_player SET description = ? WHERE pseudonym = ?");
+      PreparedStatement changeDescription = serverConnection.prepareStatement("UPDATE fiche_perso_personnage SET description = ? WHERE id = ?");
       changeDescription.setString(1, description);
-      changeDescription.setString(2, this.player.getName());
+      changeDescription.setInt(2, this.sheetId);
       changeDescription.execute();
     } catch (SQLException e) {
       e.printStackTrace();
@@ -326,7 +326,7 @@ public class McFrPlayer {
       PreparedStatement getUserId = connection.prepareStatement(
           "SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
       PreparedStatement getCharacterSheetId = connection.prepareStatement(
-          "SELECT id, health, mana FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
+          "SELECT id, health, mana, description FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
       PreparedStatement getCharacterSheet = connection.prepareStatement(
           "SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = ?");
       PreparedStatement getAttributes = connection.prepareStatement(
@@ -340,8 +340,6 @@ public class McFrPlayer {
 
       if (playerData.next()) {
         this.name = playerData.getString(3);
-        String description = playerData.getString(4);
-        this.description = description == null ? Optional.empty() : Optional.of(description);
         this.deaths = playerData.getInt(7);
       } else {
         this.name = this.player.getName();
@@ -370,6 +368,10 @@ public class McFrPlayer {
         this.sheetId = characterSheet.getInt(1);
         int currentHealth = characterSheet.getInt(2);
         int currentMana = characterSheet.getInt(3);
+        
+        String strDescription = playerData.getString(4);
+        this.description = strDescription == null ? Optional.empty() : Optional.of(strDescription);
+        
         getCharacterSheet.setInt(1, this.sheetId);
         ResultSet skillData = getCharacterSheet.executeQuery();
 
@@ -452,10 +454,6 @@ public class McFrPlayer {
     }
     if (getTraitLevel("vision_dans_la_nuit") > 3 || hasTrait("vision_dans_le_noir")) {
       PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.NIGHT_VISION).duration(EFFECT_DURATION).particles(false).build();
-      effects.addElement(effect);
-    }
-    if (hasTrait("boiteux_jambe_en_moins")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.SLOWNESS).duration(EFFECT_DURATION).particles(false).build();
       effects.addElement(effect);
     }
     this.player.offer(effects);
