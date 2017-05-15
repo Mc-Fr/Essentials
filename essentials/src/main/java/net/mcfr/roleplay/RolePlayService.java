@@ -12,8 +12,6 @@ public interface RolePlayService {
 
   RollResult attributeRoll(Player player, Attribute attribute, int modifier);
 
-  RollResult resistanceRoll(Player player, int modifier);
-
   RollResult perceptionRoll(Player player, Sense sense, int modifier);
 
   RollResult attackRoll(Player player, int modifier);

@@ -12,7 +12,6 @@ import net.mcfr.roleplay.rollResults.AttackRollResult;
 import net.mcfr.roleplay.rollResults.AttributeRollResult;
 import net.mcfr.roleplay.rollResults.DefenseRollResult;
 import net.mcfr.roleplay.rollResults.PerceptionRollResult;
-import net.mcfr.roleplay.rollResults.ResistanceRollResult;
 import net.mcfr.roleplay.rollResults.SkillRollResult;
 import net.mcfr.utils.McFrPlayer;
 
@@ -109,20 +108,6 @@ public class RolePlayImp implements RolePlayService {
   }
 
   @Override
-  public ResistanceRollResult resistanceRoll(Player player, int modifier) {
-    int roll = rollDice(3, 6);
-    int armorModifier = McFrPlayer.getMcFrPlayer(player).getArmorModifier();
-    int endModifier = (McFrPlayer.getMcFrPlayer(player).getAttributePoints(Attribute.ENDURANCE) - 10) / 2;
-    modifier += McFrPlayer.getMcFrPlayer(player).getHealthState().getMalus(Attribute.ENDURANCE);
-    int score = 10 + endModifier + armorModifier + modifier;
-
-    score += McFrPlayer.getMcFrPlayer(player).hasTrait("armure_naturelle") ? 1 : 0;
-
-    int margin = score - roll;
-    return new ResistanceRollResult(player, modifier, armorModifier, roll, score, margin);
-  }
-
-  @Override
   public PerceptionRollResult perceptionRoll(Player player, Sense sense, int modifier) {
     int roll = rollDice(3, 6);
     McFrPlayer mcFrPlayer = McFrPlayer.getMcFrPlayer(player);
@@ -130,21 +115,18 @@ public class RolePlayImp implements RolePlayService {
 
     switch (sense) {
     case VISION:
-      score += mcFrPlayer.hasTrait("vue_elfe") ? 1 : 0;
+      score += mcFrPlayer.getTraitLevel("vue_accentuee");
       score -= mcFrPlayer.hasTrait("mauvaise_vue_sans_lunettes") ? 4 : 0;
       score -= mcFrPlayer.hasTrait("pas_de_vision_de_profondeur") ? 2 : 0;
       score -= mcFrPlayer.hasTrait("un_seul_oeil") ? 5 : 0;
       break;
     case OUIE:
-      score += mcFrPlayer.hasTrait("ouie_amelioree_legere") ? 1 : 0;
-      score += mcFrPlayer.hasTrait("ouie_amelioree_moyenne") ? 2 : 0;
-      score += mcFrPlayer.hasTrait("ouie_amelioree_complete") ? 3 : 0;
+      score += mcFrPlayer.getTraitLevel("ouie_accentuee");
       score -= mcFrPlayer.hasTrait("dur_de_la_feuille") ? 4 : 0;
       break;
     case GOUT:
     case ODORAT:
-      score += mcFrPlayer.hasTrait("truffe_geroune") ? 1 : 0;
-      score += mcFrPlayer.hasTrait("truffe_sheonne") ? 6 : 0;
+      score += mcFrPlayer.getTraitLevel("odorat_et_gout_accentues");
       break;
     case TOUCHER:
       break;
@@ -183,11 +165,12 @@ public class RolePlayImp implements RolePlayService {
       score = mcFrPlayer.getSkillLevel(shieldSkill, Optional.empty());
       score /= 2;
       score += 3;
+      score += mcFrPlayer.hasTrait("defense_amelioree_blocage") ? 1 : 0;
       break;
     case ESQUIVE:
       optSkill = Optional.empty();
       score = mcFrPlayer.getAttributePoints(Attribute.DEXTERITE) - 4;
-      score += mcFrPlayer.hasTrait("esquive_amelioree") ? 1 : 0;
+      score += mcFrPlayer.hasTrait("defense_amelioree_esquive") ? 1 : 0;
       break;
     case PARADE:
       Skill weaponSkill = Skill.getWeaponSkill(player);
@@ -199,18 +182,12 @@ public class RolePlayImp implements RolePlayService {
       score = mcFrPlayer.getSkillLevel(weaponSkill, Optional.empty());
       score /= 2;
       score += 3;
-      if ((weaponSkill.getName().equals("pugilat") || weaponSkill.getName().equals("lutte") || weaponSkill.getName().equals("arts_martiaux") || weaponSkill.getName().equals("attaque_innee"))
-          && mcFrPlayer.hasTrait("parade_a_mains_nues_amelioree")) {
-        score += 1;
-      } else if (mcFrPlayer.hasTrait("parade_amelioree")) {
-        score += 1;
-      }
+      score += mcFrPlayer.hasTrait("defense_amelioree_parade") ? 1 : 0;
       break;
     }
 
     modifier += mcFrPlayer.getHealthState().getMalus(Attribute.DEXTERITE);
     score += modifier;
-    score += mcFrPlayer.hasTrait("reflexes_de_combat") ? 1 : 0;
 
     int margin = score - roll;
     return new DefenseRollResult(player, defense, optSkill, modifier, roll, score, margin);
