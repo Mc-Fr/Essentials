@@ -446,6 +446,9 @@ public class RollCommand extends AbstractCommand {
         }
         
         int mana = args.<Integer>getOne("palier").get();
+        if (mana <= McFrPlayer.getMcFrPlayer((Player) src).getTraitLevel("magie") - 6) {
+          mana = 0;
+        }
 
         RollResult res = printResult(range, RollType.SKILL,
             Sponge.getServiceManager().provide(RolePlayService.class).get().skillRoll((Player) src, Skill.getSkillByName("thaumatologie"),
@@ -453,11 +456,13 @@ public class RollCommand extends AbstractCommand {
 
         switch (res.getResult()) {
         case CRITICAL_SUCCESS:
-          mana /= Math.ceil(1f * mana / 3f);
+          mana = (int) Math.ceil(1f * mana / 3f);
           break;
         case FAILURE:
-          mana = 1;
+          mana = (mana == 0 ? 0 : 1);
           break;
+        case CRITICAL_FAILURE:
+          mana = (mana == 0 ? 1 : mana);
         default:
           break;
         }
