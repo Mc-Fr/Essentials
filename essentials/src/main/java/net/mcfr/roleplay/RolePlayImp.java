@@ -66,7 +66,6 @@ public class RolePlayImp implements RolePlayService {
       break;
     case "connaissance_de_callac":
     case "connaissance_de_dromorth":
-    case "connaissance_de_la_loi":
     case "connaissance_de_l_ile_des_brumes":
     case "connaissance_de_l_ostalie":
     case "connaissance_de_menicea":
@@ -76,15 +75,35 @@ public class RolePlayImp implements RolePlayService {
     case "connaissance_secrete":
     case "heraldique":
     case "herboristerie":
+    case "histoire" :
     case "alchimie":
-    case "histoire":
     case "litterature":
     case "naturaliste":
-    case "theologie":
       score += mcFrPlayer.hasTrait("tres_bonne_memoire") ? 1 : 0;
       break;
     case "meditation":
       score += mcFrPlayer.hasTrait("concentration_accrue") ? 1 : 0;
+      break;
+    case "artillerie" :
+    case "camouflage" :
+    case "entrainement_de_soldat" :
+    case "strategie" :
+    case "tactique" :
+    case "cartographie" :
+      score += mcFrPlayer.hasTrait("rang_militaire") ? 1 : 0;
+      break;
+    case "comptabilite" :
+    case "capitainerie" :
+    case "connaissance_de_la_loi" :
+      score += mcFrPlayer.hasTrait("rang_de_marchand") ? 1 : 0;
+      break;
+    case "rituels_religieux" :
+    case "occultisme" :
+      score += mcFrPlayer.hasTrait("clerge") ? 1 : 0;
+      break;
+    case "theologie" :
+      score += mcFrPlayer.hasTrait("tres_bonne_memoire") ? 1 : 0;
+      score += mcFrPlayer.hasTrait("clerge") ? 1 : 0;
       break;
     }
 

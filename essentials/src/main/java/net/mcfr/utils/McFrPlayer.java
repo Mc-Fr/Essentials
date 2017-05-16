@@ -364,7 +364,7 @@ public class McFrPlayer {
         int currentHealth = characterSheet.getInt(2);
         int currentMana = characterSheet.getInt(3);
 
-        String strDescription = playerData.getString(4);
+        String strDescription = characterSheet.getString(4);
         this.description = strDescription == null ? Optional.empty() : Optional.of(strDescription);
 
         getCharacterSheet.setInt(1, this.sheetId);
