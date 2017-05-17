@@ -56,6 +56,9 @@ public class RolePlayImp implements RolePlayService {
     int score = mcFrPlayer.getSkillLevel(skill, optAttribute) + modifier;
 
     switch (skill.getName()) {
+    case "saut" :
+      score += mcFrPlayer.hasTrait("saut_ameliore") ? 3 : 0;
+      break;
     case "escalade":
     case "evasion":
       score += mcFrPlayer.hasTrait("souplesse") ? 3 : 0;
