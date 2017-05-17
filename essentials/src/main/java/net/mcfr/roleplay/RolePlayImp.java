@@ -108,6 +108,9 @@ public class RolePlayImp implements RolePlayService {
       score += mcFrPlayer.hasTrait("tres_bonne_memoire") ? 1 : 0;
       score += mcFrPlayer.hasTrait("clerge") ? 1 : 0;
       break;
+    case "chant" :
+      score += mcFrPlayer.hasTrait("voix") ? 2 : 0;
+      break;
     }
 
     if (skill.getAttribute() == Attribute.DEXTERITE) {
