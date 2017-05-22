@@ -11,8 +11,16 @@ import net.mcfr.dao.DaoFactory;
 
 public class Warp {
 
+  /**
+   * Liste des {@code Warp}s.
+   */
   private static Map<String, Warp> warps;
 
+  /**
+   * Si les {@code Warp}s n'ont jamais été utilisées, les charge depuis la base de données.
+   * 
+   * @return la liste des {@code Warp}s
+   */
   public final static Map<String, Warp> getWarps() {
     if (warps == null) {
       warps = new HashMap<>();

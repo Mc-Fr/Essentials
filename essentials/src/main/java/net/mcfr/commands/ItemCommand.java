@@ -20,9 +20,6 @@ import org.spongepowered.api.text.format.TextColors;
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
 
-//TODO : help
-//TODO : voir pour locker les descriptions
-
 public class ItemCommand extends AbstractCommand {
 
   public ItemCommand(Essentials plugin) {
@@ -31,7 +28,7 @@ public class ItemCommand extends AbstractCommand {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-    src.sendMessage(Text.of(TextColors.RED, "Utilisation : /item [name | desc] <texte>"));
+    src.sendMessage(Text.of(TextColors.RED, "Utilisation : /item ?"));
     return CommandResult.empty();
   }
 
@@ -42,7 +39,8 @@ public class ItemCommand extends AbstractCommand {
             .description(Text.of("Commande de manipulation d'un objet."))
             .permission("essentials.command.item")
             .executor(this)
-            .children(getChildrenList(new Name(getPlugin()),
+            .children(getChildrenList(new Help(getPlugin()),
+                new Name(getPlugin()),
                 new Description(getPlugin()),
                 new Clear(getPlugin())))
             .build();
@@ -52,6 +50,43 @@ public class ItemCommand extends AbstractCommand {
   @Override
   public String[] getAliases() {
     return new String[] { "item" };
+  }
+
+  static class Help extends AbstractCommand {
+
+    public Help(Essentials plugin) {
+      super(plugin);
+    }
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      src.sendMessage(createNotification("=== Aide du /item ==="));
+      src.sendMessage(createNotification(" /item ? => Affiche l'aide de la commande"));
+      src.sendMessage(createNotification(" /item name <nom> => Attribue un nom à l'item tenu en main"));
+      src.sendMessage(createNotification(" /item desc <desc> => Attribue une description à l'item tenu en main"));
+      src.sendMessage(createNotification(" /item list => Affiche la liste des descriptions"));
+      src.sendMessage(createNotification(" /item read <desc> => Affiche la description renseignée"));
+      src.sendMessage(createNotification(" /item load <desc> => Applique la description renseignée à l'item tenu en main"));
+      src.sendMessage(createNotification(" /item clear => Supprime la description de l'item tenu en main"));
+      return CommandResult.success();
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+      //#f:0
+      return CommandSpec.builder()
+              .description(Text.of("Aide de la commande item"))
+              .permission("essentials.command.item.help")
+              .executor(this)
+              .build();
+      //#f:1
+    }
+
+    @Override
+    public String[] getAliases() {
+      return new String[] { "?" };
+    }
+
   }
 
   static class Name extends AbstractCommand {
@@ -72,12 +107,10 @@ public class ItemCommand extends AbstractCommand {
           p.setItemInHand(HandTypes.MAIN_HAND, it1);
           src.sendMessage(Text.of(TextColors.YELLOW, "L'item a été renommé : " + name + "."));
           return CommandResult.success();
-        } else {
+        } else
           src.sendMessage(Text.of(TextColors.RED, "Vous devez tenir un objet en main pour pouvoir modifier son nom !"));
-        }
-      } else {
+      } else
         src.sendMessage(ONLY_PLAYERS_COMMAND);
-      }
       return CommandResult.empty();
     }
 
@@ -122,12 +155,10 @@ public class ItemCommand extends AbstractCommand {
 
           p.setItemInHand(HandTypes.MAIN_HAND, it1);
           src.sendMessage(Text.of(TextColors.YELLOW, "La description de l'item a été modifiée : " + description + "."));
-        } else {
+        } else
           src.sendMessage(Text.of(TextColors.RED, "Vous devez tenir un objet en main pour pouvoir modifier sa description !"));
-        }
-      } else {
+      } else
         src.sendMessage(ONLY_PLAYERS_COMMAND);
-      }
       return CommandResult.success();
     }
 
@@ -147,7 +178,6 @@ public class ItemCommand extends AbstractCommand {
     public String[] getAliases() {
       return new String[] { "desc" };
     }
-
   }
 
   static class Clear extends AbstractCommand {
@@ -171,12 +201,10 @@ public class ItemCommand extends AbstractCommand {
 
           p.setItemInHand(HandTypes.MAIN_HAND, it1);
           src.sendMessage(Text.of(TextColors.YELLOW, "La description de l'item a été effacée."));
-        } else {
+        } else
           src.sendMessage(Text.of(TextColors.RED, "Vous devez tenir un objet en main pour pouvoir effacer sa description !"));
-        }
-      } else {
+      } else
         src.sendMessage(ONLY_PLAYERS_COMMAND);
-      }
       return CommandResult.success();
     }
 
@@ -195,6 +223,5 @@ public class ItemCommand extends AbstractCommand {
     public String[] getAliases() {
       return new String[] { "clear" };
     }
-
   }
 }

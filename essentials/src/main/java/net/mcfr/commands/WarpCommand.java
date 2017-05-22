@@ -8,6 +8,7 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
@@ -21,8 +22,7 @@ public class WarpCommand extends AbstractCommand {
   }
 
   @Override
-  public CommandResult execute(CommandSource src, CommandContext args)
-      throws CommandException {
+  public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     if (src instanceof Player) {
       Player p = (Player) src;
       Warp warp = args.<Warp>getOne("warp").get();
@@ -44,8 +44,8 @@ public class WarpCommand extends AbstractCommand {
             .description(Text.of("Commande de manipulation des warps"))
             .permission("essentials.command.warp")
             .executor(this)
-            .arguments(GenericArguments.choices(Text.of("warp"), Warp.getWarps()))
-            .children(getChildrenList(new Create(getPlugin()), new Delete(getPlugin()), new Lock(getPlugin())))
+            .arguments(GenericArguments.string(Text.of("warp")))
+            .children(getChildrenList(new List(getPlugin()),new Create(getPlugin()), new Delete(getPlugin()), new Lock(getPlugin())))
             .build();
     //#f:1
   }
@@ -58,21 +58,18 @@ public class WarpCommand extends AbstractCommand {
   static class Create extends AbstractCommand {
     public Create(Essentials plugin) {
       super(plugin);
-      // TODO Auto-generated constructor stub
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args)
-        throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       if (src instanceof Player) {
         Player p = (Player) src;
-        Warp warp = new Warp(args.<String>getOne("name").get(),
-            p.getLocation());
+        Warp warp = new Warp(args.<String>getOne("name").get(), p.getLocation());
         if (DaoFactory.getWarpDao().create(warp)) {
-          src.sendMessage(Text.of("Le warp a été créé."));
+          src.sendMessage(Text.of(TextColors.YELLOW, "Le warp a été créé."));
           return CommandResult.success();
         }
-        src.sendMessage(Text.of("L'opération a échoué."));
+        src.sendMessage(Text.of(TextColors.RED, "L'opération a échoué."));
       } else
         src.sendMessage(ONLY_PLAYERS_COMMAND);
       return CommandResult.empty();
@@ -99,18 +96,16 @@ public class WarpCommand extends AbstractCommand {
   static class Delete extends AbstractCommand {
     public Delete(Essentials plugin) {
       super(plugin);
-      // TODO Auto-generated constructor stub
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args)
-        throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       Warp warp = args.<Warp>getOne("warp").get();
       if (DaoFactory.getWarpDao().delete(warp)) {
-        src.sendMessage(Text.of("Le warp a été supprimé."));
+        src.sendMessage(Text.of(TextColors.YELLOW, "Le warp a été supprimé."));
         return CommandResult.success();
       }
-      src.sendMessage(Text.of("L'opération a échoué."));
+      src.sendMessage(Text.of(TextColors.RED, "L'opération a échoué."));
       return CommandResult.empty();
     }
 
@@ -132,22 +127,42 @@ public class WarpCommand extends AbstractCommand {
     }
   }
 
+  static class List extends AbstractCommand {
+
+    public List(Essentials plugin) {
+      super(plugin);
+    }
+
+    @Override
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      return null;
+    }
+
+    @Override
+    public CommandSpec getCommandSpec() {
+      return null;
+    }
+
+    @Override
+    public String[] getAliases() {
+      return null;
+    }
+  }
+
   static class Lock extends AbstractCommand {
     public Lock(Essentials plugin) {
       super(plugin);
     }
 
     @Override
-    public CommandResult execute(CommandSource src, CommandContext args)
-        throws CommandException {
+    public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       Warp warp = args.<Warp>getOne("warp").get();
       warp.setLocked(warp.isLocked());
       if (DaoFactory.getWarpDao().update(warp)) {
-        src.sendMessage(Text.of(
-            "Le warp a été " + (warp.isLocked() ? "" : "dé") + "verrouillé."));
+        src.sendMessage(Text.of(TextColors.YELLOW, "Le warp a été " + (warp.isLocked() ? "" : "dé") + "verrouillé."));
         return CommandResult.success();
       }
-      src.sendMessage(Text.of("L'opération a échoué."));
+      src.sendMessage(Text.of(TextColors.RED, "L'opération a échoué."));
       return CommandResult.empty();
     }
 

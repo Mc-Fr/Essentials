@@ -94,7 +94,7 @@ public enum Command {
     return this.cmdClass;
   }
 
-  public Optional<AbstractCommand> f(Essentials plugin) {
+  public Optional<AbstractCommand> createCommand(Essentials plugin) {
     try {
       return Optional.of(getCommandClass().getConstructor(Essentials.class).newInstance(plugin));
     } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
@@ -103,4 +103,5 @@ public enum Command {
     }
     return Optional.empty();
   }
+
 }

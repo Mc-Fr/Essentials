@@ -55,7 +55,7 @@ public class Essentials {
     Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
     Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
 
-    Arrays.stream(Command.values()).map(c -> c.f(this)).filter(o -> o.isPresent()).map(o -> o.get()).forEach(
+    Arrays.stream(Command.values()).map(c -> c.createCommand(this)).filter(o -> o.isPresent()).map(o -> o.get()).forEach(
         c -> Sponge.getCommandManager().register(this, c.getCommandSpec(), c.getAliases()));
 
     getLogger().info("McFrEssentials Plugin has loaded.");
@@ -75,8 +75,6 @@ public class Essentials {
     if (commandsFile.exists())
       new JsonParser().parse(new JsonReader(new FileReader(commandsFile))).getAsJsonObject().get("commands").getAsJsonArray().forEach(this::planTask);
 
-    //    Sponge.getScheduler().createTaskBuilder().execute(() -> Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "burrow load")).delay(
-    //        4, TimeUnit.SECONDS).submit(this);
     TribalWord.loadFromDatabase();
   }
 

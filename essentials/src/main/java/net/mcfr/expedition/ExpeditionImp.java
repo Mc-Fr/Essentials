@@ -55,14 +55,15 @@ public class ExpeditionImp implements ExpeditionService {
   @Override
   public void loadFromDatabase() {
     try (Connection connection = McFrConnection.getConnection()) {
-      ResultSet areasData = connection.prepareStatement("SELECT name,x,y,z,radius,world FROM srv_safeareas").executeQuery();
+      ResultSet areasData = connection.prepareStatement("SELECT name, x, y, z, radius, world FROM srv_safeareas").executeQuery();
 
       while (areasData.next()) {
-        Optional<World> optWorld = Sponge.getServer().getWorld(areasData.getString(6));
-        if (optWorld.isPresent()) {
-          this.areas.add(new AuthorizedArea(areasData.getString(1),
-              new Location<>(optWorld.get(), areasData.getInt(2), areasData.getInt(3), areasData.getInt(4)), areasData.getInt(5)));
-        }
+        Optional<World> optWorld = Sponge.getServer().getWorld(areasData.getString("world"));
+        if (optWorld.isPresent())
+          this.areas.add(new AuthorizedArea(areasData.getString("name"),
+              new Location<>(optWorld.get(), areasData.getInt("x"), areasData.getInt("y"), areasData.getInt("z")), areasData.getInt("radius")));
+        else
+          System.out.println("[Erreur expéd] Le monde n'existe pas !");
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -75,7 +76,7 @@ public class ExpeditionImp implements ExpeditionService {
     State prevState = player.getExpeditionState();
     State nextState = getStateAtLocation(p.getLocation());
 
-    if (!p.hasPermission("essentials.leavearea") && !p.hasPermission("essentials.freefromareas")) {
+    if (!p.hasPermission("essentials.leavearea") && !p.hasPermission("essentials.freefromareas"))
       if (nextState.ordinal() > prevState.ordinal()) {
         switch (nextState) {
         case ADVERT:
@@ -95,10 +96,8 @@ public class ExpeditionImp implements ExpeditionService {
         }
 
         p.sendMessage(nextState.getDangerMessage());
-      } else if (nextState.ordinal() < prevState.ordinal()) {
+      } else if (nextState.ordinal() < prevState.ordinal())
         p.sendMessage(nextState.getSafeMessage());
-      }
-    }
 
     player.setExpeditionState(nextState);
   }
@@ -108,24 +107,22 @@ public class ExpeditionImp implements ExpeditionService {
     this.current = State.TO_COMPUTE;
 
     this.areas.stream().filter(a -> a.getExtent().equals(loc.getExtent())).forEach(a -> {
-      if (this.current.equals(State.TO_COMPUTE)) {
+      if (this.current.equals(State.TO_COMPUTE))
         this.current = State.KILL;
-      }
 
       double distance = a.distance(loc);
       int radius = a.getRadius();
 
-      if (distance < radius) {
+      if (distance < radius)
         this.current = getSafest(this.current, State.IN_AREA);
-      } else if (distance < radius + this.RADIUS_DELTA) {
+      else if (distance < radius + this.RADIUS_DELTA)
         this.current = getSafest(this.current, State.ADVERT);
-      } else if (distance < radius + 2 * this.RADIUS_DELTA) {
+      else if (distance < radius + 2 * this.RADIUS_DELTA)
         this.current = getSafest(this.current, State.HURT1);
-      } else if (distance < radius + 3 * this.RADIUS_DELTA) {
+      else if (distance < radius + 3 * this.RADIUS_DELTA)
         this.current = getSafest(this.current, State.HURT2);
-      } else if (distance < radius + 4 * this.RADIUS_DELTA) {
+      else if (distance < radius + 4 * this.RADIUS_DELTA)
         this.current = getSafest(this.current, State.HURT3);
-      }
     });
 
     return this.current.equals(State.TO_COMPUTE) ? State.IN_AREA : this.current;

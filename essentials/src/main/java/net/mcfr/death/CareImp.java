@@ -26,7 +26,14 @@ import net.mcfr.utils.McFrConnection;
 import net.mcfr.utils.McFrPlayer;
 
 public class CareImp implements CareService {
+  /**
+   * Liste des centres de soin présent sur la carte.
+   */
   private List<CareCenter> careCenters = new ArrayList<>();
+
+  /**
+   * Liste des factions présentes en jeu.
+   */
   private List<String> factions = new ArrayList<>();
 
   public CareImp() {
@@ -39,9 +46,8 @@ public class CareImp implements CareService {
 
   public Map<String, String> getFactions() {
     Map<String, String> result = new HashMap<>();
-    for (String f : this.factions) {
+    for (String f : this.factions)
       result.put(f, f);
-    }
     return result;
   }
 
@@ -69,17 +75,15 @@ public class CareImp implements CareService {
       ResultSet centersData = connection.prepareStatement("SELECT name,x,y,z,radius,world,faction FROM srv_carecenters").executeQuery();
       ResultSet factionsData = connection.prepareStatement("SELECT name FROM srv_factions").executeQuery();
 
-      while (factionsData.next()) {
+      while (factionsData.next())
         this.factions.add(factionsData.getString(1));
-      }
 
       while (centersData.next()) {
         Optional<World> optWorld = Sponge.getServer().getWorld(centersData.getString(6));
-        if (optWorld.isPresent()) {
+        if (optWorld.isPresent())
           this.careCenters.add(new CareCenter(centersData.getString(1),
               new Location<>(optWorld.get(), centersData.getInt(2), centersData.getInt(3), centersData.getInt(4)), centersData.getInt(5),
               centersData.getString(7)));
-        }
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -93,7 +97,7 @@ public class CareImp implements CareService {
     boolean isInCenterArea = false;
     boolean careCentersInWorld = false;
 
-    for (CareCenter careCenter : this.careCenters) {
+    for (CareCenter careCenter : this.careCenters)
       if (careCenter.getLocation().getExtent().equals(location.getExtent())) {
         careCentersInWorld = true;
         if (careCenter.distance(location) < careCenter.getRadius()) {
@@ -101,11 +105,9 @@ public class CareImp implements CareService {
           break;
         }
       }
-    }
 
-    if (!careCentersInWorld) {
+    if (!careCentersInWorld)
       isInCenterArea = true;
-    }
 
     if (wasInCenterArea && !isInCenterArea) {
       player.sendMessage(Text.of(TextColors.YELLOW, "Le centre de soin est loin à présent, mieux vaut faire attention."));
@@ -153,9 +155,8 @@ public class CareImp implements CareService {
         } else {
           // TODO Err.
         }
-      } else {
+      } else
         McFrPlayer.getMcFrPlayer(player).killCharacter("Trop éloigné d'un centre de soin, vous mourrez sur place.");
-      }
     }
   }
 
@@ -187,7 +188,7 @@ public class CareImp implements CareService {
     double currentValue = -1;
     Optional<CareCenter> optCareCenter = Optional.empty();
 
-    for (CareCenter c : this.careCenters) {
+    for (CareCenter c : this.careCenters)
       if (c.getLocation().getExtent().equals(location.getExtent())) {
         double value = c.distance(location) / c.getRadius();
         if ((!inRange || value < 1) && value > currentValue) {
@@ -195,7 +196,6 @@ public class CareImp implements CareService {
           optCareCenter = Optional.of(c);
         }
       }
-    }
 
     return optCareCenter;
   }

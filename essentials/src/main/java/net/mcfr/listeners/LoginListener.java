@@ -31,21 +31,20 @@ public class LoginListener {
     player.loadFromDataBase();
 
     Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
-    if (optCareService.isPresent()) {
-      if (optCareService.get().isInProtectedArea(player.getPlayer())) {
+    if (optCareService.isPresent())
+      if (optCareService.get().isInProtectedArea(player.getPlayer()))
         player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes dans une zone sécurisée."));
-      } else {
+      else
         player.getPlayer().sendMessage(Text.of(TextColors.GOLD, "Attention, vous êtes encore dans une zone non sécurisée !"));
-      }
-    }
   }
 
   @Listener
   public void onPlayerLogin(ClientConnectionEvent.Login e) {
-    if (this.plugin.isServerLocked() && !e.getTargetUser().hasPermission("essentials.admin.log_when_lock")) {
+    if (this.plugin.isServerLocked() && !e.getTargetUser().hasPermission("essentials.admin.log_when_lock"))
       e.setCancelled(true);
-    } else {
+    else
       try (Connection jdrConnection = McFrConnection.getConnection()) {
+        final String connectPermission = "essentials.admin.connect_without_character";
         int userId = -1;
         PreparedStatement forumAccountId = jdrConnection.prepareStatement(
             "SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
@@ -64,23 +63,19 @@ public class LoginListener {
                 "SELECT avantage FROM fiche_perso_personnage_avantage WHERE avantage = \"mort\" AND id_fiche_perso_personnage = ?");
             deathDataReq.setInt(1, characterSheet.getInt(1));
             ResultSet deathData = deathDataReq.executeQuery();
-            if (deathData.next()) {
-              e.setCancelled(!e.getTargetUser().hasPermission("essentials.admin.connect_without_character"));
-            }
+            if (deathData.next())
+              e.setCancelled(!e.getTargetUser().hasPermission(connectPermission));
             deathData.close();
 
-          } else {
-            e.setCancelled(!e.getTargetUser().hasPermission("essentials.admin.connect_without_character"));
-          }
+          } else
+            e.setCancelled(!e.getTargetUser().hasPermission(connectPermission));
           characterSheet.close();
-        } else {
-          e.setCancelled(!e.getTargetUser().hasPermission("essentials.admin.connect_without_character"));
-        }
+        } else
+          e.setCancelled(!e.getTargetUser().hasPermission(connectPermission));
         user.close();
       } catch (SQLException ex) {
         ex.printStackTrace();
       }
-    }
   }
 
   @Listener
