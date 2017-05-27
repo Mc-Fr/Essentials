@@ -22,7 +22,6 @@ public class ExpeditionImp implements ExpeditionService {
   private State current;
 
   public ExpeditionImp() {
-    loadFromDatabase();
   }
 
   @Override
@@ -106,24 +105,26 @@ public class ExpeditionImp implements ExpeditionService {
   public State getStateAtLocation(Location<World> loc) {
     this.current = State.TO_COMPUTE;
 
-    this.areas.stream().filter(a -> a.getExtent().equals(loc.getExtent())).forEach(a -> {
-      if (this.current.equals(State.TO_COMPUTE))
-        this.current = State.KILL;
+    for (AuthorizedArea a : this.areas) {
+      if (loc.getExtent().equals(a.getExtent())) {
+        if (this.current.equals(State.TO_COMPUTE))
+          this.current = State.KILL;
 
-      double distance = a.distance(loc);
-      int radius = a.getRadius();
+        double distance = a.distance(loc);
+        int radius = a.getRadius();
 
-      if (distance < radius)
-        this.current = getSafest(this.current, State.IN_AREA);
-      else if (distance < radius + this.RADIUS_DELTA)
-        this.current = getSafest(this.current, State.ADVERT);
-      else if (distance < radius + 2 * this.RADIUS_DELTA)
-        this.current = getSafest(this.current, State.HURT1);
-      else if (distance < radius + 3 * this.RADIUS_DELTA)
-        this.current = getSafest(this.current, State.HURT2);
-      else if (distance < radius + 4 * this.RADIUS_DELTA)
-        this.current = getSafest(this.current, State.HURT3);
-    });
+        if (distance < radius)
+          this.current = getSafest(this.current, State.IN_AREA);
+        else if (distance < radius + this.RADIUS_DELTA)
+          this.current = getSafest(this.current, State.ADVERT);
+        else if (distance < radius + 2 * this.RADIUS_DELTA)
+          this.current = getSafest(this.current, State.HURT1);
+        else if (distance < radius + 3 * this.RADIUS_DELTA)
+          this.current = getSafest(this.current, State.HURT2);
+        else if (distance < radius + 4 * this.RADIUS_DELTA)
+          this.current = getSafest(this.current, State.HURT3);
+      }
+    }
 
     return this.current.equals(State.TO_COMPUTE) ? State.IN_AREA : this.current;
   }

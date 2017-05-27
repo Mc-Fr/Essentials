@@ -18,4 +18,6 @@ public interface CareService {
    * Gère la ré-apparition du joueur après sa mort.
    */
   public void manageRespawn(Player player);
+  
+  public void loadFromDatabase();
 }

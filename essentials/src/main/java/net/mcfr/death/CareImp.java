@@ -37,7 +37,6 @@ public class CareImp implements CareService {
   private List<String> factions = new ArrayList<>();
 
   public CareImp() {
-    loadFromDatabase();
   }
 
   public List<CareCenter> getCenters() {
@@ -70,7 +69,8 @@ public class CareImp implements CareService {
     return this.careCenters.stream().filter(c -> c.getName().equals(name)).findFirst();
   }
 
-  private void loadFromDatabase() {
+  @Override
+  public void loadFromDatabase() {
     try (Connection connection = McFrConnection.getConnection()) {
       ResultSet centersData = connection.prepareStatement("SELECT name,x,y,z,radius,world,faction FROM srv_carecenters").executeQuery();
       ResultSet factionsData = connection.prepareStatement("SELECT name FROM srv_factions").executeQuery();
@@ -79,7 +79,7 @@ public class CareImp implements CareService {
         this.factions.add(factionsData.getString(1));
 
       while (centersData.next()) {
-        Optional<World> optWorld = Sponge.getServer().getWorld(centersData.getString(6));
+        Optional<World> optWorld = Sponge.getServer().getWorld(centersData.getString("world"));
         if (optWorld.isPresent())
           this.careCenters.add(new CareCenter(centersData.getString(1),
               new Location<>(optWorld.get(), centersData.getInt(2), centersData.getInt(3), centersData.getInt(4)), centersData.getInt(5),

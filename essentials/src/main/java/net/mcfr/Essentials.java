@@ -50,6 +50,14 @@ public class Essentials {
   @Listener
   public void onInit(GameInitializationEvent e) {
     this.serverLock = false;
+  }
+
+  @Listener
+  public void onPostInit(GamePostInitializationEvent e) {
+    Sponge.getEventManager().registerListeners(this, new CommandListener());
+    Sponge.getEventManager().registerListeners(this, new LoginListener(this));
+    Sponge.getEventManager().registerListeners(this, new NatureListener());
+    Sponge.getEventManager().registerListeners(this, new PlayerListener());
 
     Sponge.getServiceManager().setProvider(this, RolePlayService.class, new RolePlayImp());
     Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
@@ -62,20 +70,16 @@ public class Essentials {
   }
 
   @Listener
-  public void onPostInit(GamePostInitializationEvent e) {
-    Sponge.getEventManager().registerListeners(this, new CommandListener());
-    Sponge.getEventManager().registerListeners(this, new LoginListener(this));
-    Sponge.getEventManager().registerListeners(this, new NatureListener());
-    Sponge.getEventManager().registerListeners(this, new PlayerListener());
-  }
-
-  @Listener
   public void onServerStart(GameStartedServerEvent event) throws IOException {
     File commandsFile = new File("config/esssentials-config/commands.json");
     if (commandsFile.exists())
       new JsonParser().parse(new JsonReader(new FileReader(commandsFile))).getAsJsonObject().get("commands").getAsJsonArray().forEach(this::planTask);
 
+    
+    
     TribalWord.loadFromDatabase();
+    Sponge.getServiceManager().provide(CareService.class).get().loadFromDatabase();
+    Sponge.getServiceManager().provide(ExpeditionService.class).get().loadFromDatabase();
   }
 
   public void toggleServerLock() {
