@@ -45,7 +45,10 @@ public class WarpCommand extends AbstractCommand {
             .permission("essentials.command.warp")
             .executor(this)
             .arguments(GenericArguments.string(Text.of("warp")))
-            .children(getChildrenList(new List(getPlugin()),new Create(getPlugin()), new Delete(getPlugin()), new Lock(getPlugin())))
+            .children(getChildrenList(new List(getPlugin()),
+                new Create(getPlugin()),
+                new Delete(getPlugin()),
+                new Lock(getPlugin())))
             .build();
     //#f:1
   }
@@ -135,17 +138,23 @@ public class WarpCommand extends AbstractCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-      return null;
+      return CommandResult.empty();
     }
 
     @Override
     public CommandSpec getCommandSpec() {
-      return null;
+      //#f:0
+      return CommandSpec.builder()
+              .description(Text.of(""))
+              .permission("essentials.command.warp.list")
+              .executor(this)
+              .build();
+      //#f:1
     }
 
     @Override
     public String[] getAliases() {
-      return null;
+      return new String[] { "list" };
     }
   }
 
