@@ -33,18 +33,31 @@ public class WarpCommand extends AbstractCommand {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-    if (src instanceof Player) {
-      Player p = (Player) src;
-      Warp warp = args.<Warp>getOne("warp").get();
-      if (p.hasPermission(warp.getPermission())) {
-        p.setLocation(warp.getLocation());
-        src.sendMessage(Text.of(TextColors.DARK_GREEN, "Vous avez été téléporté sur : " + warp.getName()));
-        return CommandResult.success();
+    Warp warp = args.<Warp>getOne("warp").get();
+
+    if (args.hasAny("joueur")) {
+      if (!(src instanceof Player) || ((Player) src).hasPermission(warp.getPermission())) {
+        Player pToTeleport = args.<Player>getOne("joueur").get();
+        pToTeleport.setLocation(warp.getLocation());
+        pToTeleport.sendMessage(Text.of(TextColors.DARK_GREEN, "Vous avez été téléporté sur : " + warp.getName()));
+        src.sendMessage(Text.of(TextColors.DARK_GREEN, pToTeleport.getName() + " a été téléporté sur : " + warp.getName()));
+      } else {
+        src.sendMessage(Text.of(TextColors.DARK_GREEN, "Vous n'avez les permissions nécessaires pour utiliser ce warp."));
       }
-      src.sendMessage(Text.of(TextColors.DARK_GREEN, "Vous n'avez les permissions nécessaires pour utiliser ce warp."));
-    } else
-      src.sendMessage(ONLY_PLAYERS_COMMAND);
-    return CommandResult.empty();
+    } else {
+      if (src instanceof Player) {
+        if (((Player) src).hasPermission(warp.getPermission())) {
+          ((Player) src).setLocation(warp.getLocation());
+          src.sendMessage(Text.of(TextColors.DARK_GREEN, "Vous avez été téléporté sur : " + warp.getName()));
+        } else {
+          src.sendMessage(Text.of(TextColors.DARK_GREEN, "Vous n'avez les permissions nécessaires pour utiliser ce warp."));
+        }
+      } else {
+        src.sendMessage(ONLY_PLAYERS_COMMAND);
+        return CommandResult.empty();
+      }
+    }
+    return CommandResult.success();
   }
 
   @Override
@@ -54,7 +67,7 @@ public class WarpCommand extends AbstractCommand {
             .description(Text.of("Commande de manipulation des warps"))
             .permission("essentials.command.warp")
             .executor(this)
-            .arguments(GenericArguments.choices(Text.of("warp"), WarpImp.getWarps()::keySet, WarpImp.getWarps()::get))
+            .arguments(GenericArguments.choices(Text.of("warp"), WarpImp.getWarps()::keySet, WarpImp.getWarps()::get), GenericArguments.optional(GenericArguments.player(Text.of("joueur"))))
             .children(getChildrenList(new List(getPlugin()),
                 new Create(getPlugin()),
                 new Delete(getPlugin()),
