@@ -1,4 +1,4 @@
-package net.mcfr.services;
+package net.mcfr.death;
 
 import org.spongepowered.api.entity.living.player.Player;
 

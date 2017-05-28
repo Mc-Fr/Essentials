@@ -21,7 +21,7 @@ import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.death.CareCenter;
 import net.mcfr.death.CareImp;
-import net.mcfr.services.CareService;
+import net.mcfr.death.CareService;
 
 public class CareCenterCommand extends AbstractCommand {
 

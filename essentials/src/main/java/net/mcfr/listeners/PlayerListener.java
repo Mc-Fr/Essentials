@@ -29,9 +29,9 @@ import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.chat.MessageData;
 import net.mcfr.death.CareImp;
+import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionService;
 import net.mcfr.roleplay.Skill;
-import net.mcfr.services.CareService;
 import net.mcfr.utils.McFrPlayer;
 
 public class PlayerListener {

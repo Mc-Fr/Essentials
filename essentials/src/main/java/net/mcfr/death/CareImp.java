@@ -21,7 +21,6 @@ import net.mcfr.roleplay.Attribute;
 import net.mcfr.roleplay.RolePlayService;
 import net.mcfr.roleplay.rollResults.AttributeRollResult;
 import net.mcfr.roleplay.rollResults.RollResult;
-import net.mcfr.services.CareService;
 import net.mcfr.utils.McFrConnection;
 import net.mcfr.utils.McFrPlayer;
 

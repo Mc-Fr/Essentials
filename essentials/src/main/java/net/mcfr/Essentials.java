@@ -26,6 +26,7 @@ import com.google.inject.Inject;
 import net.mcfr.chat.TribalWord;
 import net.mcfr.commands.utils.Command;
 import net.mcfr.death.CareImp;
+import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionImp;
 import net.mcfr.expedition.ExpeditionService;
 import net.mcfr.listeners.CommandListener;
@@ -34,7 +35,6 @@ import net.mcfr.listeners.NatureListener;
 import net.mcfr.listeners.PlayerListener;
 import net.mcfr.roleplay.RolePlayImp;
 import net.mcfr.roleplay.RolePlayService;
-import net.mcfr.services.CareService;
 
 @Plugin(id = "essentials", name = "Essentials", version = "1.0", dependencies = @Dependency(id = "mcfr_b_i"))
 public class Essentials {
