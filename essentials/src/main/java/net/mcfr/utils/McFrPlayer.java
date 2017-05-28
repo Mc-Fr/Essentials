@@ -87,6 +87,7 @@ public class McFrPlayer {
   private long lastBreathTime;
   private long readDescriptionTime;
   private int listeningRange;
+  private Map<String, String> itemDescriptions;
 
   public static void addPlayer(McFrPlayer player) {
     players.add(player);
@@ -140,6 +141,7 @@ public class McFrPlayer {
     this.healthState = new HealthState(100);
     this.manaState = new ManaState(100);
     this.listeningRange = 20;
+    this.itemDescriptions = new HashMap<>();
   }
 
   public Player getPlayer() {
@@ -331,7 +333,15 @@ public class McFrPlayer {
       PreparedStatement getAdvantages = connection.prepareStatement(
           "SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
       PreparedStatement registerPlayer = connection.prepareStatement("CALL addPlayer(?,?)");
-
+      PreparedStatement getDescriptions = connection.prepareStatement("SELECT name, description FROM srv_description WHERE uuid = ?");
+      
+      this.itemDescriptions.clear();
+      getDescriptions.setString(1, this.player.getUniqueId().toString());
+      ResultSet descriptions = getDescriptions.executeQuery();
+      while (descriptions.next()) {
+        this.itemDescriptions.put(descriptions.getString("name"), descriptions.getString("description"));
+      }
+      
       getPseudonym.setString(1, this.player.getName());
       ResultSet playerData = getPseudonym.executeQuery();
 
@@ -627,6 +637,18 @@ public class McFrPlayer {
 
   public void updateLastBreathTime() {
     this.lastBreathTime = Calendar.getInstance().getTime().getTime();
+  }
+  
+  public Map<String, String> getItemDescriptions() {
+    return this.itemDescriptions;
+  }
+  
+  public boolean hasItemDescription(String name) {
+    return this.itemDescriptions.containsKey(name);
+  }
+  
+  public String getItemDescription(String name) {
+    return this.itemDescriptions.get(name);
   }
 
   @Override
