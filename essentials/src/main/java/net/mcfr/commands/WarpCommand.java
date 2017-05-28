@@ -1,5 +1,7 @@
 package net.mcfr.commands;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
@@ -10,8 +12,11 @@ import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.service.pagination.PaginationService;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.world.storage.WorldProperties;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
@@ -74,7 +79,7 @@ public class WarpCommand extends AbstractCommand {
         Player p = (Player) src;
         Warp warp = new Warp(args.<String>getOne("name").get(), p.getLocation());
         Optional<WarpService> optWarpService = Sponge.getServiceManager().provide(WarpService.class);
-        
+
         if (optWarpService.isPresent()) {
           if (optWarpService.get().addWarp(warp)) {
             src.sendMessage(Text.of(TextColors.YELLOW, "Le warp a été créé."));
@@ -117,7 +122,7 @@ public class WarpCommand extends AbstractCommand {
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       Warp warp = args.<Warp>getOne("warp").get();
       Optional<WarpService> optWarpService = Sponge.getServiceManager().provide(WarpService.class);
-      
+
       if (optWarpService.isPresent()) {
         if (optWarpService.get().deleteWarp(warp)) {
           src.sendMessage(Text.of(TextColors.YELLOW, "Le warp a été supprimé."));
@@ -158,6 +163,42 @@ public class WarpCommand extends AbstractCommand {
 
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
+      Optional<WarpService> optWarpService = Sponge.getServiceManager().provide(WarpService.class);
+
+      if (optWarpService.isPresent()) {
+        java.util.List<Text> texts = new ArrayList<>();
+
+        Collection<Warp> warps;
+        if (args.hasAny("world")) {
+          String worldName = args.<WorldProperties>getOne("world").get().getWorldName();
+
+          warps = new ArrayList<>();
+          for (Warp warp : WarpImp.getWarps().values().stream().filter(w -> w.getLocation().getExtent().getName().equals(worldName))
+              .toArray(Warp[]::new)) {
+            warps.add(warp);
+          }
+        } else {
+          warps = WarpImp.getWarps().values();
+        }
+
+        //#f:0
+        warps.forEach(w -> texts.add(
+                Text.builder()
+                .append(Text.join(Text.of(TextColors.GREEN, "Nom: "),
+                    Text.of(TextColors.WHITE, w.getName()),
+                    Text.of(TextColors.GREEN, " ; "),
+                    Text.of(TextColors.WHITE, w.getLocation().getExtent().getName())))
+                .onClick(TextActions.runCommand("/warp " + w.getName()))
+                .build()));
+        //#f:1
+
+        PaginationService paginationService = Sponge.getServiceManager().provide(PaginationService.class).get();
+        paginationService.builder().title(Text.of(TextColors.GREEN, "Warps")).linesPerPage(15).padding(Text.of(TextColors.DARK_GREEN, "="))
+            .contents(texts).sendTo(src);
+      } else {
+        src.sendMessage(Text.of(TextColors.RED, "Le service de warps n'a pas été initialisé correctement."));
+      }
+
       return CommandResult.empty();
     }
 
@@ -167,6 +208,7 @@ public class WarpCommand extends AbstractCommand {
       return CommandSpec.builder()
               .description(Text.of(""))
               .permission("essentials.command.warp.list")
+              .arguments(GenericArguments.optional(GenericArguments.world(Text.of("world"))))
               .executor(this)
               .build();
       //#f:1
