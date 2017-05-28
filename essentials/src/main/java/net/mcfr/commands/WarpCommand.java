@@ -1,5 +1,8 @@
 package net.mcfr.commands;
 
+import java.util.Optional;
+
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -14,6 +17,8 @@ import net.mcfr.Essentials;
 import net.mcfr.commands.utils.AbstractCommand;
 import net.mcfr.dao.DaoFactory;
 import net.mcfr.warp.Warp;
+import net.mcfr.warp.WarpImp;
+import net.mcfr.warp.WarpService;
 
 public class WarpCommand extends AbstractCommand {
 
@@ -28,10 +33,10 @@ public class WarpCommand extends AbstractCommand {
       Warp warp = args.<Warp>getOne("warp").get();
       if (p.hasPermission(warp.getPermission())) {
         p.setLocation(warp.getLocation());
-        src.sendMessage(Text.of("Vous avez été téléporté sur le warp."));
+        src.sendMessage(Text.of(TextColors.DARK_GREEN, "Vous avez été téléporté sur : " + warp.getName()));
         return CommandResult.success();
       }
-      src.sendMessage(Text.of("Vous n'avez les permissions nécessaires."));
+      src.sendMessage(Text.of(TextColors.DARK_GREEN, "Vous n'avez les permissions nécessaires pour utiliser ce warp."));
     } else
       src.sendMessage(ONLY_PLAYERS_COMMAND);
     return CommandResult.empty();
@@ -44,7 +49,7 @@ public class WarpCommand extends AbstractCommand {
             .description(Text.of("Commande de manipulation des warps"))
             .permission("essentials.command.warp")
             .executor(this)
-            .arguments(GenericArguments.string(Text.of("warp")))
+            .arguments(GenericArguments.choices(Text.of("warp"), WarpImp.getWarps()::keySet, WarpImp.getWarps()::get))
             .children(getChildrenList(new List(getPlugin()),
                 new Create(getPlugin()),
                 new Delete(getPlugin()),
@@ -68,11 +73,18 @@ public class WarpCommand extends AbstractCommand {
       if (src instanceof Player) {
         Player p = (Player) src;
         Warp warp = new Warp(args.<String>getOne("name").get(), p.getLocation());
-        if (DaoFactory.getWarpDao().create(warp)) {
-          src.sendMessage(Text.of(TextColors.YELLOW, "Le warp a été créé."));
-          return CommandResult.success();
+        Optional<WarpService> optWarpService = Sponge.getServiceManager().provide(WarpService.class);
+        
+        if (optWarpService.isPresent()) {
+          if (optWarpService.get().addWarp(warp)) {
+            src.sendMessage(Text.of(TextColors.YELLOW, "Le warp a été créé."));
+            return CommandResult.success();
+          } else {
+            src.sendMessage(Text.of(TextColors.RED, "L'opération a échoué."));
+          }
+        } else {
+          src.sendMessage(Text.of(TextColors.RED, "Le service de warps n'a pas été initialisé correctement."));
         }
-        src.sendMessage(Text.of(TextColors.RED, "L'opération a échoué."));
       } else
         src.sendMessage(ONLY_PLAYERS_COMMAND);
       return CommandResult.empty();
@@ -104,11 +116,19 @@ public class WarpCommand extends AbstractCommand {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
       Warp warp = args.<Warp>getOne("warp").get();
-      if (DaoFactory.getWarpDao().delete(warp)) {
-        src.sendMessage(Text.of(TextColors.YELLOW, "Le warp a été supprimé."));
-        return CommandResult.success();
+      Optional<WarpService> optWarpService = Sponge.getServiceManager().provide(WarpService.class);
+      
+      if (optWarpService.isPresent()) {
+        if (optWarpService.get().deleteWarp(warp)) {
+          src.sendMessage(Text.of(TextColors.YELLOW, "Le warp a été supprimé."));
+          return CommandResult.success();
+        } else {
+          src.sendMessage(Text.of(TextColors.RED, "L'opération a échoué."));
+        }
+      } else {
+        src.sendMessage(Text.of(TextColors.RED, "Le service de warps n'a pas été initialisé correctement."));
       }
-      src.sendMessage(Text.of(TextColors.RED, "L'opération a échoué."));
+
       return CommandResult.empty();
     }
 
@@ -119,7 +139,7 @@ public class WarpCommand extends AbstractCommand {
               .description(Text.of("Permet de supprimer un warp."))
               .permission("essentials.command.warp.delete")
               .executor(this)
-              .arguments(GenericArguments.choices(Text.of("warp"), Warp.getWarps()))
+              .arguments(GenericArguments.choices(Text.of("warp"), WarpImp.getWarps()::keySet, WarpImp.getWarps()::get))
               .build();
       //#f:1
     }
@@ -182,7 +202,7 @@ public class WarpCommand extends AbstractCommand {
               .description(Text.of("Permet de (dé)verrouiller un warp"))
               .permission("essentials.command.warp.lock")
               .executor(this)
-              .arguments(GenericArguments.choices(Text.of("warp"), Warp.getWarps()))
+              .arguments(GenericArguments.choices(Text.of("warp"), WarpImp.getWarps()::keySet, WarpImp.getWarps()::get))
               .build();
       //#f:1
     }

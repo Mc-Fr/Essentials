@@ -35,6 +35,8 @@ import net.mcfr.listeners.NatureListener;
 import net.mcfr.listeners.PlayerListener;
 import net.mcfr.roleplay.RolePlayImp;
 import net.mcfr.roleplay.RolePlayService;
+import net.mcfr.warp.WarpImp;
+import net.mcfr.warp.WarpService;
 
 @Plugin(id = "essentials", name = "Essentials", version = "1.0", dependencies = @Dependency(id = "mcfr_b_i"))
 public class Essentials {
@@ -62,6 +64,7 @@ public class Essentials {
     Sponge.getServiceManager().setProvider(this, RolePlayService.class, new RolePlayImp());
     Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
     Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
+    Sponge.getServiceManager().setProvider(this, WarpService.class, new WarpImp());
 
     Arrays.stream(Command.values()).map(c -> c.createCommand(this)).filter(o -> o.isPresent()).map(o -> o.get()).forEach(
         c -> Sponge.getCommandManager().register(this, c.getCommandSpec(), c.getAliases()));
@@ -80,6 +83,7 @@ public class Essentials {
     TribalWord.loadFromDatabase();
     Sponge.getServiceManager().provide(CareService.class).get().loadFromDatabase();
     Sponge.getServiceManager().provide(ExpeditionService.class).get().loadFromDatabase();
+    Sponge.getServiceManager().provide(WarpService.class).get().loadFromDatabase();
   }
 
   public void toggleServerLock() {

@@ -34,7 +34,7 @@ public class WarpDao implements Dao<Warp> {
           continue;
         }
         Location<World> loc = new Location<>(optWorld.get(), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"));
-        Warp warp = new Warp(rs.getString("warp"), loc);
+        Warp warp = new Warp(rs.getString("name"), loc);
         warp.setLocked(rs.getBoolean("locked"));
         warps.add(warp);
       }
