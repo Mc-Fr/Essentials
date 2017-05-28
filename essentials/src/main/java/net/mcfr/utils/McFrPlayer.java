@@ -333,7 +333,7 @@ public class McFrPlayer {
       PreparedStatement getAdvantages = connection.prepareStatement(
           "SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
       PreparedStatement registerPlayer = connection.prepareStatement("CALL addPlayer(?,?)");
-      PreparedStatement getDescriptions = connection.prepareStatement("SELECT name, description FROM srv_description WHERE uuid = ?");
+      PreparedStatement getDescriptions = connection.prepareStatement("SELECT name, description FROM srv_description WHERE player_uuid = ?");
       
       this.itemDescriptions.clear();
       getDescriptions.setString(1, this.player.getUniqueId().toString());

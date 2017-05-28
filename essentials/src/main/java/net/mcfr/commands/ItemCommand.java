@@ -63,7 +63,10 @@ public class ItemCommand extends AbstractCommand {
             .children(getChildrenList(new Help(getPlugin()),
                 new Name(getPlugin()),
                 new Description(getPlugin()),
-                new Clear(getPlugin())))
+                new Clear(getPlugin()),
+                new List(getPlugin()),
+                new Read(getPlugin()),
+                new Load(getPlugin())))
             .build();
     // #f:1
   }
@@ -253,7 +256,7 @@ public class ItemCommand extends AbstractCommand {
                 .append(Text.join(Text.of(TextColors.GREEN, "Nom: "),
                     Text.of(TextColors.WHITE, n),
                     Text.of(TextColors.GREEN, " : \""),
-                    Text.of(TextColors.WHITE, descriptions.get(n).substring(0, 50)),
+                    Text.of(TextColors.WHITE, descriptions.get(n).substring(0, 50) + "..."),
                     Text.of(TextColors.GREEN, "\"")))
                 .onClick(TextActions.suggestCommand("/item load " + n))
                 .build()));
