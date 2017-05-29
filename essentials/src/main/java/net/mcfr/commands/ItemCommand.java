@@ -256,7 +256,7 @@ public class ItemCommand extends AbstractCommand {
                 .append(Text.join(Text.of(TextColors.GREEN, "Nom: "),
                     Text.of(TextColors.WHITE, n),
                     Text.of(TextColors.GREEN, " : \""),
-                    Text.of(TextColors.WHITE, descriptions.get(n).substring(0, 50) + "..."),
+                    Text.of(TextColors.WHITE, descriptions.get(n).substring(0, (int) Math.min(50, 60 - n.length())) + "..."),
                     Text.of(TextColors.GREEN, "\"")))
                 .onClick(TextActions.suggestCommand("/item load " + n))
                 .build()));
@@ -317,7 +317,7 @@ public class ItemCommand extends AbstractCommand {
       return CommandSpec.builder()
               .description(Text.of("Applique à l'item tenu en main la description pré-enregistrée du nom spécifié."))
               .permission("essentials.command.item.load")
-              .arguments(GenericArguments.string(Text.of("nom")))
+              .arguments(GenericArguments.remainingJoinedStrings(Text.of("nom")))
               .executor(this)
               .build();
       //#f:1
@@ -370,7 +370,7 @@ public class ItemCommand extends AbstractCommand {
       return CommandSpec.builder()
               .description(Text.of("Affiche la description pré-enregistrée du nom spécifié."))
               .permission("essentials.command.item.read")
-              .arguments(GenericArguments.string(Text.of("nom")))
+              .arguments(GenericArguments.remainingJoinedStrings(Text.of("nom")))
               .executor(this)
               .build();
       //#f:1
