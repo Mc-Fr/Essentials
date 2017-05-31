@@ -88,6 +88,7 @@ public class McFrPlayer {
   private long readDescriptionTime;
   private int listeningRange;
   private Map<String, String> itemDescriptions;
+  private int harvestTokens;
 
   public static void addPlayer(McFrPlayer player) {
     players.add(player);
@@ -142,10 +143,23 @@ public class McFrPlayer {
     this.manaState = new ManaState(100);
     this.listeningRange = 20;
     this.itemDescriptions = new HashMap<>();
+    this.harvestTokens = 0;
   }
 
   public Player getPlayer() {
     return this.player;
+  }
+  
+  public void sendMessage(Text message) {
+    this.player.sendMessage(message);
+  }
+  
+  public int getHarvestTokens() {
+    return this.harvestTokens;
+  }
+  
+  public int getTokenValue() {
+    return (11 - this.harvestTokens) * 10;
   }
 
   public State getExpeditionState() {
