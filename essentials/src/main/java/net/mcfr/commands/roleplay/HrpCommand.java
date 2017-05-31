@@ -17,7 +17,7 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 
 import net.mcfr.Essentials;
-import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.commands.AbstractCommand;
 
 public class HrpCommand extends AbstractCommand {
 

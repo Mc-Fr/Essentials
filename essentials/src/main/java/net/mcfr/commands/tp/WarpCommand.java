@@ -19,7 +19,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.storage.WorldProperties;
 
 import net.mcfr.Essentials;
-import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.commands.AbstractCommand;
 import net.mcfr.dao.DaoFactory;
 import net.mcfr.warp.Warp;
 import net.mcfr.warp.WarpImp;

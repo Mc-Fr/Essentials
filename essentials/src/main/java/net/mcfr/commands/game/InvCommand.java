@@ -9,7 +9,7 @@ import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.text.Text;
 
 import net.mcfr.Essentials;
-import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.commands.AbstractCommand;
 
   //TODO : tout reste à faire
 

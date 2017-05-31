@@ -1,4 +1,4 @@
-package net.mcfr.commands.utils;
+package net.mcfr.commands;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;

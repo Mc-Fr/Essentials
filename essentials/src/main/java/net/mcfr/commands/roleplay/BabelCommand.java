@@ -12,7 +12,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.chat.Language;
-import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.commands.AbstractCommand;
 import net.mcfr.utils.McFrPlayer;
 
 public class BabelCommand extends AbstractCommand {

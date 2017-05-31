@@ -11,7 +11,7 @@ import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.text.Text;
 
 import net.mcfr.Essentials;
-import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.commands.AbstractCommand;
 
 public class SpectateCommand extends AbstractCommand {
   

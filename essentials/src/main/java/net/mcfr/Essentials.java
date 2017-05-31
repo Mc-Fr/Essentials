@@ -24,7 +24,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.inject.Inject;
 
 import net.mcfr.chat.TribalWord;
-import net.mcfr.commands.utils.Command;
+import net.mcfr.commands.Command;
 import net.mcfr.death.CareImp;
 import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionImp;

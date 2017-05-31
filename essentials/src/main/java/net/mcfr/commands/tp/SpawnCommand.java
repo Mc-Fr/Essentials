@@ -13,7 +13,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import net.mcfr.Essentials;
-import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.commands.AbstractCommand;
 
 public class SpawnCommand extends AbstractCommand {
 

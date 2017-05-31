@@ -14,7 +14,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.chat.TribalWord;
-import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.commands.AbstractCommand;
 
 /**
  * Commande avec arborescence sur le langage tribal.<br/>

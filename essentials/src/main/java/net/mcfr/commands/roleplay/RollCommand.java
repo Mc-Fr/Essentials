@@ -17,7 +17,7 @@ import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.chat.ChatType;
-import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.commands.AbstractCommand;
 import net.mcfr.roleplay.Attribute;
 import net.mcfr.roleplay.DamageCategory;
 import net.mcfr.roleplay.Defense;

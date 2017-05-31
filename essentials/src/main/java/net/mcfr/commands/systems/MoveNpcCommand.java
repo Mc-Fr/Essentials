@@ -13,7 +13,7 @@ import org.spongepowered.api.text.Text;
 import com.flowpowered.math.vector.Vector3d;
 
 import net.mcfr.Essentials;
-import net.mcfr.commands.utils.AbstractCommand;
+import net.mcfr.commands.AbstractCommand;
 
 public class MoveNpcCommand extends AbstractCommand {
 
