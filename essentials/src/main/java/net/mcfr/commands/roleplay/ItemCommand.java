@@ -256,7 +256,7 @@ public class ItemCommand extends AbstractCommand {
                 .append(Text.join(Text.of(TextColors.GREEN, "Nom: "),
                     Text.of(TextColors.WHITE, n),
                     Text.of(TextColors.GREEN, " : \""),
-                    Text.of(TextColors.WHITE, descriptions.get(n).substring(0, (int) Math.max(descriptions.get(n).length(), Math.min(50, 60 - n.length()))) + "..."),
+                    Text.of(TextColors.WHITE, descriptions.get(n).substring(0, (int) Math.min(descriptions.get(n).length(), Math.min(50, 60 - n.length()))) + "..."),
                     Text.of(TextColors.GREEN, "\"")))
                 .onClick(TextActions.suggestCommand("/item load " + n))
                 .build()));
