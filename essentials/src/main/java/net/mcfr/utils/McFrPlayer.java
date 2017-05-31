@@ -110,7 +110,7 @@ public class McFrPlayer {
   }
 
   public static McFrPlayer getMcFrPlayer(Player player) {
-    return players.stream().filter(p -> p.getPlayer().equals(player)).findFirst().get();
+    return players.stream().filter(p -> p.getPlayer().getUniqueId().equals(player.getUniqueId())).findFirst().get();
   }
 
   public static double distance(Player p1, Player p2) {
@@ -665,7 +665,7 @@ public class McFrPlayer {
     if (getClass() != obj.getClass())
       return false;
 
-    return this.player.equals(((McFrPlayer) obj).player);
+    return this.player.getUniqueId().equals(((McFrPlayer) obj).player.getUniqueId());
   }
 
   @Override

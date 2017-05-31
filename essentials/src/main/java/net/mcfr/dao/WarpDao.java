@@ -1,6 +1,7 @@
 package net.mcfr.dao;
 
 import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,8 +20,8 @@ public class WarpDao implements Dao<Warp> {
   @Override
   public List<Warp> getAll() {
     List<Warp> warps = new ArrayList<>();
-    try {
-      ResultSet rs = McFrConnection.getConnection().createStatement().executeQuery("select name, world, x, y, z, locked from warp");
+    try (Connection connection = McFrConnection.getConnection()) {
+      ResultSet rs = connection.createStatement().executeQuery("select name, world, x, y, z, locked from warp");
       List<String> unknownWorlds = new ArrayList<>();
       while (rs.next()) {
         String worldName = rs.getString("world");
@@ -46,8 +47,8 @@ public class WarpDao implements Dao<Warp> {
 
   @Override
   public boolean create(Warp o) {
-    try {
-      CallableStatement cs = McFrConnection.getConnection().prepareCall("{ call create_warp(?, ?, ?, ?, ?) }");
+    try (Connection connection = McFrConnection.getConnection()) {
+      CallableStatement cs = connection.prepareCall("{ call create_warp(?, ?, ?, ?, ?) }");
       cs.setString(1, o.getName());
       Location<World> loc = o.getLocation();
       cs.setString(2, loc.getExtent().getName());
@@ -64,8 +65,8 @@ public class WarpDao implements Dao<Warp> {
 
   @Override
   public boolean delete(Warp o) {
-    try {
-      CallableStatement cs = McFrConnection.getConnection().prepareCall("{ call delete_warp(?) }");
+    try (Connection connection = McFrConnection.getConnection()) {
+      CallableStatement cs = connection.prepareCall("{ call delete_warp(?) }");
       cs.setString(1, o.getName());
       cs.execute();
       return true;
@@ -77,8 +78,8 @@ public class WarpDao implements Dao<Warp> {
 
   @Override
   public boolean update(Warp o) {
-    try {
-      CallableStatement cs = McFrConnection.getConnection().prepareCall("{ call set_lock_warp(?, ?) }");
+    try (Connection connection = McFrConnection.getConnection()) {
+      CallableStatement cs = connection.prepareCall("{ call set_lock_warp(?, ?) }");
       cs.setString(1, o.getName());
       cs.setBoolean(2, o.isLocked());
       cs.execute();
