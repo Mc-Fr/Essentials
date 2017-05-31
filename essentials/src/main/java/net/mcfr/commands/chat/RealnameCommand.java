@@ -8,6 +8,7 @@ import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.command.args.CommandContext;
 import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
@@ -23,13 +24,24 @@ public class RealnameCommand extends AbstractCommand {
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
-    String nom = args.<String>getOne("nom").get();
-    List<McFrPlayer> l = McFrPlayer.getMcFrPlayers();
-    if (l.stream().filter(p -> p.getName().equalsIgnoreCase(nom)).count() == 0) {
-      src.sendMessage(Text.of(TextColors.YELLOW, "Aucun joueur ne correspond à ce nom."));
+    if (src instanceof Player) {
+      String nom = args.<String>getOne("nom").get();
+      boolean seeHidden = ((Player)src).hasPermission("essentials.seeHidden");
+      
+      List<McFrPlayer> l = McFrPlayer.getMcFrPlayers();
+      
+      if (l.stream().filter(p -> p.getName().equalsIgnoreCase(nom) && (seeHidden || !p.isHidden())).count() == 0) {
+        src.sendMessage(Text.of(TextColors.YELLOW, "Aucun joueur ne correspond à ce nom."));
+        
+      } else {
+        src.sendMessage(Text.of(TextColors.YELLOW, "Liste des \"" + nom + "\" :"));
+        
+        l.stream().filter(p -> p.getName().equalsIgnoreCase(nom) && (seeHidden || !p.isHidden()))
+            .forEach(p -> src.sendMessage(Text.of(TextColors.YELLOW, " - " + p.getPlayer().getName())));
+      }
+      
     } else {
-      src.sendMessage(Text.of(TextColors.YELLOW, "Liste des \"" + nom + "\" :"));
-      l.stream().filter(p -> p.getName().equals(nom)).forEach(p -> src.sendMessage(Text.of(TextColors.YELLOW, " - " + p.getPlayer().getName())));
+      src.sendMessage(ONLY_PLAYERS_COMMAND);
     }
     return CommandResult.success();
   }

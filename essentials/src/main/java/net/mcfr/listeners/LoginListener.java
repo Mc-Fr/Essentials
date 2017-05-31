@@ -29,6 +29,9 @@ public class LoginListener {
     McFrPlayer player = new McFrPlayer(e.getTargetEntity());
     McFrPlayer.addPlayer(player);
     player.loadFromDataBase();
+    player.hideAll();
+    if (player.isHidden())
+      player.hideForAll();
 
     Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
     if (optCareService.isPresent())

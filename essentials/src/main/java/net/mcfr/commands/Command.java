@@ -15,6 +15,7 @@ import net.mcfr.commands.game.FlyCommand;
 import net.mcfr.commands.game.GmCommand;
 import net.mcfr.commands.game.GodCommand;
 import net.mcfr.commands.game.HealCommand;
+import net.mcfr.commands.game.HideCommand;
 import net.mcfr.commands.game.ServerLockCommand;
 import net.mcfr.commands.game.SpectateCommand;
 import net.mcfr.commands.game.SpeedCommand;
@@ -56,6 +57,7 @@ public enum Command {
   GOD(GodCommand.class),
   HEAL(HealCommand.class),
   HEALTH(HealthCommand.class),
+  HIDE(HideCommand.class),
   HRP(HrpCommand.class),
   ITEM(ItemCommand.class),
   MANA(ManaCommand.class),

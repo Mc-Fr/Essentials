@@ -19,6 +19,8 @@ import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.tab.TabList;
+import org.spongepowered.api.entity.living.player.tab.TabListEntry;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
@@ -322,26 +324,26 @@ public class McFrPlayer {
       this.attributes.clear();
       this.traits.clear();
       PreparedStatement getPseudonym = connection.prepareStatement("SELECT name, deaths FROM srv_player WHERE pseudonym = ?");
-      PreparedStatement getUserId = connection.prepareStatement(
-          "SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
-      PreparedStatement getCharacterSheetId = connection.prepareStatement(
-          "SELECT id, health, mana, description FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
-      PreparedStatement getCharacterSheet = connection.prepareStatement(
-          "SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement getAttributes = connection.prepareStatement(
-          "SELECT attribut, level FROM fiche_perso_personnage_attribut WHERE id_fiche_perso_personnage = ?");
-      PreparedStatement getAdvantages = connection.prepareStatement(
-          "SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
+      PreparedStatement getUserId = connection
+          .prepareStatement("SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
+      PreparedStatement getCharacterSheetId = connection
+          .prepareStatement("SELECT id, health, mana, description FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
+      PreparedStatement getCharacterSheet = connection
+          .prepareStatement("SELECT * FROM fiche_perso_personnage_competence WHERE id_fiche_perso_personnage = ?");
+      PreparedStatement getAttributes = connection
+          .prepareStatement("SELECT attribut, level FROM fiche_perso_personnage_attribut WHERE id_fiche_perso_personnage = ?");
+      PreparedStatement getAdvantages = connection
+          .prepareStatement("SELECT avantage,value FROM fiche_perso_personnage_avantage WHERE id_fiche_perso_personnage = ?");
       PreparedStatement registerPlayer = connection.prepareStatement("CALL addPlayer(?,?)");
       PreparedStatement getDescriptions = connection.prepareStatement("SELECT name, description FROM srv_description WHERE player_uuid = ?");
-      
+
       this.itemDescriptions.clear();
       getDescriptions.setString(1, this.player.getUniqueId().toString());
       ResultSet descriptions = getDescriptions.executeQuery();
       while (descriptions.next()) {
         this.itemDescriptions.put(descriptions.getString("name"), descriptions.getString("description"));
       }
-      
+
       getPseudonym.setString(1, this.player.getName());
       ResultSet playerData = getPseudonym.executeQuery();
 
@@ -442,13 +444,13 @@ public class McFrPlayer {
       effects.addElement(effect);
     }
     if (hasTrait("guerison_rapide_surnaturelle")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.REGENERATION).duration(EFFECT_DURATION).amplifier(1).particles(
-          false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.REGENERATION).duration(EFFECT_DURATION).amplifier(1).particles(false)
+          .build();
       effects.addElement(effect);
     }
     if (hasTrait("armure_naturelle")) {
-      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.RESISTANCE).duration(EFFECT_DURATION).amplifier(
-          getTraitLevel("armure_naturelle")).particles(false).build();
+      PotionEffect effect = PotionEffect.builder().potionType(PotionEffectTypes.RESISTANCE).duration(EFFECT_DURATION)
+          .amplifier(getTraitLevel("armure_naturelle")).particles(false).build();
       effects.addElement(effect);
     }
     if (getTraitLevel("vision_dans_la_nuit") > 3 || hasTrait("vision_dans_le_noir")) {
@@ -491,8 +493,9 @@ public class McFrPlayer {
   }
 
   /**
-   * Calcule la compétence de la liste fournie dans laquelle le personnage a le plus haut score effectif. (c'est à dire
-   * en comptant l'ajout des attributs et la gestion des interdépendances entre compétences)
+   * Calcule la compétence de la liste fournie dans laquelle le personnage a le
+   * plus haut score effectif. (c'est à dire en comptant l'ajout des attributs
+   * et la gestion des interdépendances entre compétences)
    * 
    * @param skills
    *          Liste de compétences à comparer
@@ -638,17 +641,60 @@ public class McFrPlayer {
   public void updateLastBreathTime() {
     this.lastBreathTime = Calendar.getInstance().getTime().getTime();
   }
-  
+
   public Map<String, String> getItemDescriptions() {
     return this.itemDescriptions;
   }
-  
+
   public boolean hasItemDescription(String name) {
     return this.itemDescriptions.containsKey(name);
   }
-  
+
   public String getItemDescription(String name) {
     return this.itemDescriptions.get(name);
+  }
+
+  public void hide(Player p) {
+    TabList tabList = this.player.getTabList();
+
+    for (TabListEntry e : tabList.getEntries()) {
+      if (e.getProfile().equals(p.getProfile())) {
+        e.setDisplayName(Text.of(TextColors.DARK_RED, "???"));
+      }
+    }
+  }
+
+  public void unhide(Player p) {
+    TabList tabList = this.player.getTabList();
+
+    for (TabListEntry e : tabList.getEntries()) {
+      if (e.getProfile().equals(p.getProfile())) {
+        e.setDisplayName(Text.of(TextColors.WHITE, p.getName()));
+      }
+    }
+  }
+
+  public void hideForAll() {
+    Sponge.getServer().getOnlinePlayers().stream().filter(p -> !p.hasPermission("essentials.seeHidden")).forEach(p -> McFrPlayer.getMcFrPlayer(p).hide(this.player));
+  }
+
+  public void unhideForAll() {
+    Sponge.getServer().getOnlinePlayers().stream().filter(p -> !p.hasPermission("essentials.seeHidden")).forEach(p -> McFrPlayer.getMcFrPlayer(p).unhide(this.player));
+  }
+
+  public void hideAll() {
+    List<Player> hiddenPlayers = new ArrayList<>();
+
+    for (Player p : Sponge.getServer().getOnlinePlayers()) {
+      if (p.hasPermission("essentials.hidden"))
+        hiddenPlayers.add(p);
+    }
+
+    hiddenPlayers.forEach(p -> hide(p));
+  }
+
+  public boolean isHidden() {
+    return this.player.hasPermission("essentials.hidden");
   }
 
   @Override
