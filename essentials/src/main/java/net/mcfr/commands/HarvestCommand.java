@@ -1,7 +1,6 @@
 package net.mcfr.commands;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
@@ -44,7 +43,7 @@ public class HarvestCommand extends AbstractCommand {
 
       java.util.List<Text> texts = new ArrayList<>();
 
-      List<HarvestArea> areas = harvest.getAreasForPlayer(p);
+      java.util.List<HarvestArea> areas = harvest.getAreasForPlayer(p);
 
       //#f:0
       texts.add(Text.join(Text.of(TextColors.GREEN, "Vous avez "),
@@ -88,4 +87,32 @@ public class HarvestCommand extends AbstractCommand {
   public String[] getAliases() {
     return new String[] { "harvest" };
   }
+  
+/*  static class List extends AbstractCommand {
+    
+  }
+  
+  static class AddArea extends AbstractCommand {
+    
+  }
+  
+  static class RemoveArea extends AbstractCommand {
+    
+  }
+  
+  static class AddItemEntry extends AbstractCommand {
+    
+  }
+  
+  static class RemoveItemEntry extends AbstractCommand {
+    
+  }
+  
+  static class AddRareItemEntry extends AbstractCommand {
+    
+  }
+  
+  static class RemoveRareItemEntry extends AbstractCommand {
+    
+  }*/
 }

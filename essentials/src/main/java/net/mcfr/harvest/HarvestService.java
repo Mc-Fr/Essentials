@@ -29,6 +29,8 @@ public interface HarvestService {
   
   public List<HarvestArea> getAreasForPlayer(McFrPlayer p);
   
+  public List<HarvestArea> getAreasAround(McFrPlayer p);
+  
   public void askForHarvest(McFrPlayer p, HarvestArea area);
   
   public void harvest(McFrPlayer p, HarvestArea area);
