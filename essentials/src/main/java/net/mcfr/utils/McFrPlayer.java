@@ -335,7 +335,7 @@ public class McFrPlayer {
       this.skills.clear();
       this.attributes.clear();
       this.traits.clear();
-      PreparedStatement getPseudonym = connection.prepareStatement("SELECT name, deaths FROM srv_player WHERE pseudonym = ?");
+      PreparedStatement getPseudonym = connection.prepareStatement("SELECT name, deaths, tokens FROM srv_player WHERE pseudonym = ?");
       PreparedStatement getUserId = connection.prepareStatement(
           "SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
       PreparedStatement getCharacterSheetId = connection.prepareStatement(
@@ -360,8 +360,9 @@ public class McFrPlayer {
       ResultSet playerData = getPseudonym.executeQuery();
 
       if (playerData.next()) {
-        this.name = playerData.getString(1);
-        this.deaths = playerData.getInt(2);
+        this.name = playerData.getString("name");
+        this.deaths = playerData.getInt("deaths");
+        this.harvestTokens = playerData.getInt("tokens");
       } else {
         this.name = this.player.getName();
         this.deaths = 0;

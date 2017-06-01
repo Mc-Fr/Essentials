@@ -59,7 +59,7 @@ public class HarvestDao implements Dao<HarvestArea> {
             
             // Metadata
             DataView dataView = item.toContainer().set(DataQuery.of("UnsafeDamage"), itemEntries.getInt("metaData"));
-            item.setRawData(dataView);
+            item = ItemStack.builder().fromContainer(dataView).build();
 
             // HarvestArea
             area.addItem(item);
@@ -81,7 +81,7 @@ public class HarvestDao implements Dao<HarvestArea> {
             ItemStack item = ItemStack.builder().itemType(type.get()).quantity(rareItemEntries.getInt("quantity")).build();
             
             // Metadata
-            DataView dataView = item.toContainer().set(DataQuery.of("UnsafeDamage"), itemEntries.getInt("metaData"));
+            DataView dataView = item.toContainer().set(DataQuery.of("UnsafeDamage"), rareItemEntries.getInt("metaData"));
             item.setRawData(dataView);
 
             // Name

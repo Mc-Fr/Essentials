@@ -26,6 +26,20 @@ public class HarvestCommand extends AbstractCommand {
   public HarvestCommand(Essentials plugin) {
     super(plugin);
   }
+  
+  public void askForHarvest(McFrPlayer p, HarvestArea area, HarvestService harvest) {
+    //#f:0
+    Text clickableText = Text.builder()
+        .append(Text.of(TextColors.DARK_GREEN, ">> Confirmer <<"))
+        .onClick(TextActions.executeCallback((cmdSrc) -> harvest.harvest(p, area)))
+        .build();
+    
+    p.sendMessage(Text.join(Text.of(TextColors.GREEN, "Voulez-vous récolter : "),
+        Text.of(TextColors.WHITE, area.getName()),
+        Text.of(TextColors.GREEN, " ? "),
+        clickableText));
+    //f#1
+  }
 
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
@@ -38,8 +52,8 @@ public class HarvestCommand extends AbstractCommand {
 
     HarvestService harvest = optHarvestService.get();
 
-    if (args.hasAny("joueur")) {
-      McFrPlayer p = McFrPlayer.getMcFrPlayer(args.<Player>getOne("joueur").get());
+    if (src instanceof Player) {
+      McFrPlayer p = McFrPlayer.getMcFrPlayer((Player) src);
 
       java.util.List<Text> texts = new ArrayList<>();
 
@@ -51,20 +65,20 @@ public class HarvestCommand extends AbstractCommand {
           Text.of(TextColors.GREEN, " jetons de récolte. Votre jeton actuel vaut "),
           Text.of(TextColors.WHITE, p.getTokenValue()),
           Text.of(TextColors.GREEN, "% d'une récolte.")));
-      
+      //TODO : changer le texte si 0 harvest tokens
       areas.forEach(a -> texts.add(
               Text.builder()
-              .append(Text.join(Text.of(TextColors.GREEN, "Récolte de : "),
-                  Text.of(TextColors.WHITE, a.getName()),
-                  Text.of(TextColors.GREEN, " : \"")))
-              .onClick(TextActions.executeCallback((cmdSrc) -> harvest.askForHarvest(p, a)))
+              .append(Text.join(Text.of(TextColors.DARK_GREEN, "Récolte de : "),
+                  Text.of(TextColors.WHITE, a.getName())))
+              .onClick(TextActions.executeCallback((cmdSrc) -> askForHarvest(p, a, harvest)))
               .build()));
+      
+      texts.add(Text.of(TextColors.GREEN, "Cliquez sur une ressource pour la récolter."));
       //#f:1
 
       PaginationService paginationService = Sponge.getServiceManager().provide(PaginationService.class).get();
-      paginationService.builder().title(Text.of(TextColors.GREEN, "Zones de récolte"))
-          .footer(Text.of(TextColors.GREEN, "Cliquez sur une ressource pour la récolter")).linesPerPage(15)
-          .padding(Text.of(TextColors.DARK_GREEN, "=")).contents(texts).sendTo(src);
+      paginationService.builder().title(Text.of(TextColors.GREEN, "Zones de récolte")).linesPerPage(15).padding(Text.of(TextColors.DARK_GREEN, "="))
+          .contents(texts).sendTo(src);
 
     } else {
       src.sendMessage(ONLY_PLAYERS_COMMAND);
@@ -87,32 +101,34 @@ public class HarvestCommand extends AbstractCommand {
   public String[] getAliases() {
     return new String[] { "harvest" };
   }
-  
-/*  static class List extends AbstractCommand {
-    
-  }
-  
-  static class AddArea extends AbstractCommand {
-    
-  }
-  
-  static class RemoveArea extends AbstractCommand {
-    
-  }
-  
-  static class AddItemEntry extends AbstractCommand {
-    
-  }
-  
-  static class RemoveItemEntry extends AbstractCommand {
-    
-  }
-  
-  static class AddRareItemEntry extends AbstractCommand {
-    
-  }
-  
-  static class RemoveRareItemEntry extends AbstractCommand {
-    
-  }*/
+
+  /*
+   * static class List extends AbstractCommand {
+   * 
+   * }
+   * 
+   * static class AddArea extends AbstractCommand {
+   * 
+   * }
+   * 
+   * static class RemoveArea extends AbstractCommand {
+   * 
+   * }
+   * 
+   * static class AddItemEntry extends AbstractCommand {
+   * 
+   * }
+   * 
+   * static class RemoveItemEntry extends AbstractCommand {
+   * 
+   * }
+   * 
+   * static class AddRareItemEntry extends AbstractCommand {
+   * 
+   * }
+   * 
+   * static class RemoveRareItemEntry extends AbstractCommand {
+   * 
+   * }
+   */
 }

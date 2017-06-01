@@ -175,8 +175,10 @@ public class HarvestArea {
 
   public List<ItemStack> getHarvest() {
     List<ItemStack> harvest = new ArrayList<>();
-
-    harvest.addAll(this.itemList);
+    
+    for (ItemStack stack : this.itemList) {
+      harvest.add(stack.copy());
+    }
 
     float rand = new Random().nextFloat();
     float cumulatedProbability = 0f;
@@ -184,7 +186,7 @@ public class HarvestArea {
     for (RareItemEntry e : this.rareItemList) {
       cumulatedProbability += e.getProbability();
       if (rand <= cumulatedProbability) {
-        harvest.add(e.getItemStack());
+        harvest.add(e.getItemStack().copy());
         break;
       }
     }

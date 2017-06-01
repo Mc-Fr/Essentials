@@ -8,7 +8,6 @@ import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -102,27 +101,16 @@ public class HarvestImp implements HarvestService {
 
     return areas;
   }
-
-  @Override
-  public void askForHarvest(McFrPlayer p, HarvestArea area) {
-    //#f:0
-    p.sendMessage(Text.join(Text.of(TextColors.GREEN, "Voulez-vous récolter : "),
-        Text.of(TextColors.WHITE, area.getName()),
-        Text.of(TextColors.GREEN, " ?")));
-    p.sendMessage(Text.builder()
-        .append(Text.of(TextColors.DARK_GREEN, ">> Confirmer <<"))
-        .onClick(TextActions.executeCallback((cmdSrc) -> this.harvest(p, area)))
-        .build());
-    //f#1
-  }
   
   @Override
   public void harvest(McFrPlayer p, HarvestArea area) {
+    //TODO : vérifier la présence de harvest tokens
+    
     Optional<ItemStack> optItem = p.getPlayer().getItemInHand(HandTypes.MAIN_HAND);
     if (optItem.isPresent() && area.isToolCorrect(optItem.get().getItem())) {
 
       List<ItemStack> items = area.getHarvest();
-      float tokenValue = p.getTokenValue();
+      float tokenValue = 0.01f * p.getTokenValue();
       Inventory inventory = p.getPlayer().getInventory();
       
       for (ItemStack stack : items) {
@@ -130,8 +118,8 @@ public class HarvestImp implements HarvestService {
         inventory.offer(stack);
       }
       
+      //TODO : baisser les harvest tokens
       //TODO : abîmer l'outil en fonction de sa classe
-      
     } else {
       p.sendMessage(Text.of(TextColors.GREEN, "Vous devez avoir un outil correspondant à votre récolte en main."));
     }
