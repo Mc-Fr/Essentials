@@ -13,6 +13,7 @@ import net.mcfr.commands.ExpeditionCommand;
 import net.mcfr.commands.FlyCommand;
 import net.mcfr.commands.GmCommand;
 import net.mcfr.commands.GodCommand;
+import net.mcfr.commands.HarvestCommand;
 import net.mcfr.commands.HealCommand;
 import net.mcfr.commands.HealthCommand;
 import net.mcfr.commands.HrpCommand;
@@ -54,6 +55,7 @@ public enum Command {
   FLY(FlyCommand.class),
   GM(GmCommand.class),
   GOD(GodCommand.class),
+  HARVEST(HarvestCommand.class),
   HEAL(HealCommand.class),
   HEALTH(HealthCommand.class),
   HRP(HrpCommand.class),
