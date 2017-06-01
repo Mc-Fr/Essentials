@@ -12,6 +12,7 @@ import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import net.mcfr.dao.DaoFactory;
 import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrPlayer;
 
@@ -24,8 +25,7 @@ public class HarvestImp implements HarvestService {
   
   @Override
   public void loadFromDatabase() {
-    this.harvestAreas.clear();
-    //TODO
+    this.harvestAreas = DaoFactory.getHarvestDao().getAll();
   }
   
   @Override
@@ -36,8 +36,14 @@ public class HarvestImp implements HarvestService {
   @Override
   public void addArea(String name, Location<World> loc, Skill skill) {
     HarvestArea newArea = new HarvestArea(name, loc, skill);
-    newArea.registerInDatabase();
+    DaoFactory.getHarvestDao().create(newArea);
     this.harvestAreas.add(newArea);
+  }
+  
+  @Override
+  public void removeArea(HarvestArea area) {
+    DaoFactory.getHarvestDao().delete(area);
+    this.harvestAreas.remove(area);
   }
   
   @Override

@@ -80,10 +80,6 @@ public class HarvestArea {
     this.itemList = new ArrayList<>();
     this.rareItemList = new ArrayList<>();
   }
-  
-  public void registerInDatabase() {
-    //TODO
-  }
 
   public String getName() {
     return this.name;
@@ -91,6 +87,10 @@ public class HarvestArea {
   
   public Skill getSkill() {
     return this.skill;
+  }
+  
+  public Location<World> getLocation() {
+    return this.location;
   }
   
   public boolean isToolCorrect(ItemType tool) {
@@ -105,7 +105,7 @@ public class HarvestArea {
     this.itemList.clear();
   }
 
-  public void addItem(float quantity, ItemStack item) {
+  public void addItem(ItemStack item) {
     this.itemList.add(item.copy());
   }
 

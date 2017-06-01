@@ -16,6 +16,8 @@ public interface HarvestService {
   
   public void addArea(String name, Location<World> loc, Skill skill);
   
+  public void removeArea(HarvestArea area);
+  
   public List<HarvestArea> getAreasForPlayer(McFrPlayer p);
   
   public void askForHarvest(McFrPlayer p, HarvestArea area);
