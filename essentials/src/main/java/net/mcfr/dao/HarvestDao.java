@@ -94,7 +94,7 @@ public class HarvestDao implements Dao<HarvestArea> {
             item.offer(Keys.ITEM_LORE, list);
 
             // Probability & HarvestArea
-            area.addRareItem(rareItemEntries.getFloat("probability"), item);
+            area.addRareItem(new RareItemEntry(rareItemEntries.getFloat("probability"), item));
           } else {
             System.out.println("ItemType non reconnu : " + rareItemEntries.getString("itemType"));
           }
@@ -191,10 +191,8 @@ public class HarvestDao implements Dao<HarvestArea> {
     }
   }
   
-  public boolean removeRareItemEntry(RareItemEntry entry, HarvestArea area) {
+  public boolean removeRareItemEntry(ItemStack item, HarvestArea area) {
     try (Connection connection = McFrConnection.getConnection()) {
-      ItemStack item = entry.getItemStack();
-      
       CallableStatement cs = connection.prepareCall("{ call removeHarvestRareItemEntry(?, ?, ?, ?) }");
       cs.setString(1, item.getItem().getId());
       cs.setInt(2, (int) item.toContainer().get(DataQuery.of("UnsafeDamage")).orElse(0));

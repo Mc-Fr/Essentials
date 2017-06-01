@@ -1,6 +1,5 @@
 package net.mcfr.dao;
 
-import net.mcfr.harvest.HarvestArea;
 import net.mcfr.warp.Warp;
 
 public class DaoFactory {
@@ -14,7 +13,7 @@ public class DaoFactory {
   /**
    * @return un DAO pour gérer le {@code HarvestService}.
    */
-  public static Dao<HarvestArea> getHarvestDao() {
+  public static HarvestDao getHarvestDao() {
     return new HarvestDao();
   }
 }

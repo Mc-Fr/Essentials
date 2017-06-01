@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.spongepowered.api.data.type.HandTypes;
+import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.TextActions;
@@ -17,6 +18,8 @@ import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrPlayer;
 
 public class HarvestImp implements HarvestService {
+  private final static int SKILL_HARVESTING_LEVEL = 12;
+  
   private List<HarvestArea> harvestAreas;
   
   public HarvestImp() {
@@ -47,11 +50,36 @@ public class HarvestImp implements HarvestService {
   }
   
   @Override
+  public void addItemEntry(ItemStack item, HarvestArea area) {
+    DaoFactory.getHarvestDao().addItemEntry(item, area);
+    area.addItem(item);
+  }
+  
+  @Override
+  public void addRareItemEntry(ItemStack item, float probability, HarvestArea area) {
+    RareItemEntry entry = new RareItemEntry(probability, item);
+    DaoFactory.getHarvestDao().addRareItemEntry(entry, area);
+    area.addRareItem(entry);
+  }
+  
+  @Override
+  public void removeItemEntry(ItemStack item, HarvestArea area) {
+    DaoFactory.getHarvestDao().removeItemEntry(item, area);
+    area.removeItem(item);
+  }
+  
+  @Override
+  public void removeRareItemEntry(ItemStack item, HarvestArea area) {
+    DaoFactory.getHarvestDao().removeRareItemEntry(item, area);
+    area.removeRareItem(item);
+  }
+  
+  @Override
   public List<HarvestArea> getAreasForPlayer(McFrPlayer p) {
     List<HarvestArea> areas = new ArrayList<>();
     
     for (HarvestArea a : this.harvestAreas) {
-      if (a.isInRange(p.getPlayer()) && p.getSkillLevel(a.getSkill(), Optional.empty()) >= 12)
+      if (a.isInRange(p.getPlayer()) && p.getSkillLevel(a.getSkill(), Optional.empty()) >= SKILL_HARVESTING_LEVEL)
         areas.add(a);
     }
     
@@ -80,6 +108,13 @@ public class HarvestImp implements HarvestService {
   
   @Override
   public void harvest(McFrPlayer p, HarvestArea area) {
-    //TODO
+    List<ItemStack> items = area.getHarvest();
+    float tokenValue = p.getTokenValue();
+    Inventory inventory = p.getPlayer().getInventory();
+    
+    for (ItemStack stack : items) {
+      stack.setQuantity((int) Math.ceil(tokenValue * stack.getQuantity()));
+      inventory.offer(stack);
+    }
   }
 }
