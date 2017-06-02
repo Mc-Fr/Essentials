@@ -33,6 +33,7 @@ import net.mcfr.commands.roleplay.WhoIsCommand;
 import net.mcfr.commands.systems.BurrowCommand;
 import net.mcfr.commands.systems.CareCenterCommand;
 import net.mcfr.commands.systems.ExpeditionCommand;
+import net.mcfr.commands.systems.HarvestCommand;
 import net.mcfr.commands.systems.MoveNpcCommand;
 import net.mcfr.commands.systems.TribalLanguageCommand;
 import net.mcfr.commands.tp.BackCommand;
@@ -54,6 +55,7 @@ public enum Command {
   FLY(FlyCommand.class),
   GM(GmCommand.class),
   GOD(GodCommand.class),
+  HARVEST(HarvestCommand.class),
   HEAL(HealCommand.class),
   HEALTH(HealthCommand.class),
   HRP(HrpCommand.class),

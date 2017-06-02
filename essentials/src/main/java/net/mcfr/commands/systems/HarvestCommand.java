@@ -1,4 +1,4 @@
-package net.mcfr.commands;
+package net.mcfr.commands.systems;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +20,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
+import net.mcfr.commands.AbstractCommand;
 import net.mcfr.dao.HarvestTools;
 import net.mcfr.harvest.HarvestArea;
 import net.mcfr.harvest.HarvestImp;
