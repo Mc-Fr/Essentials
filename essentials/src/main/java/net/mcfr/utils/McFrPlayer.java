@@ -88,6 +88,7 @@ public class McFrPlayer {
   private long readDescriptionTime;
   private int listeningRange;
   private Map<String, String> itemDescriptions;
+  private int harvestTokens;
 
   public static void addPlayer(McFrPlayer player) {
     players.add(player);
@@ -142,10 +143,36 @@ public class McFrPlayer {
     this.manaState = new ManaState(100);
     this.listeningRange = 20;
     this.itemDescriptions = new HashMap<>();
+    this.harvestTokens = 0;
   }
 
   public Player getPlayer() {
     return this.player;
+  }
+  
+  public void sendMessage(Text message) {
+    this.player.sendMessage(message);
+  }
+  
+  public int getHarvestTokens() {
+    return this.harvestTokens;
+  }
+  
+  public void setHarvestTokens(int value) {
+    this.harvestTokens = value;
+    
+    try (Connection connection = McFrConnection.getConnection()) {
+      PreparedStatement changeTokens = connection.prepareStatement("UPDATE srv_player SET tokens = ? WHERE uuid = ?");
+      changeTokens.setInt(1, this.harvestTokens);
+      changeTokens.setString(2, this.player.getUniqueId().toString());
+      changeTokens.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  public int getTokenValue() {
+    return (11 - this.harvestTokens) * 10;
   }
 
   public State getExpeditionState() {
@@ -321,7 +348,7 @@ public class McFrPlayer {
       this.skills.clear();
       this.attributes.clear();
       this.traits.clear();
-      PreparedStatement getPseudonym = connection.prepareStatement("SELECT name, deaths FROM srv_player WHERE pseudonym = ?");
+      PreparedStatement getPseudonym = connection.prepareStatement("SELECT name, deaths, tokens FROM srv_player WHERE pseudonym = ?");
       PreparedStatement getUserId = connection.prepareStatement(
           "SELECT user_id FROM phpbb_users PU, account_link AL WHERE AL.forum = PU.username AND AL.minecraft = ?");
       PreparedStatement getCharacterSheetId = connection.prepareStatement(
@@ -346,8 +373,9 @@ public class McFrPlayer {
       ResultSet playerData = getPseudonym.executeQuery();
 
       if (playerData.next()) {
-        this.name = playerData.getString(1);
-        this.deaths = playerData.getInt(2);
+        this.name = playerData.getString("name");
+        this.deaths = playerData.getInt("deaths");
+        this.harvestTokens = playerData.getInt("tokens");
       } else {
         this.name = this.player.getName();
         this.deaths = 0;

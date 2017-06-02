@@ -29,6 +29,8 @@ import net.mcfr.death.CareImp;
 import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionImp;
 import net.mcfr.expedition.ExpeditionService;
+import net.mcfr.harvest.HarvestImp;
+import net.mcfr.harvest.HarvestService;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.LoginListener;
 import net.mcfr.listeners.NatureListener;
@@ -65,9 +67,10 @@ public class Essentials {
     Sponge.getServiceManager().setProvider(this, ExpeditionService.class, new ExpeditionImp());
     Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
     Sponge.getServiceManager().setProvider(this, WarpService.class, new WarpImp());
+    Sponge.getServiceManager().setProvider(this, HarvestService.class, new HarvestImp());
 
-    Arrays.stream(Command.values()).map(c -> c.createCommand(this)).filter(o -> o.isPresent()).map(o -> o.get()).forEach(
-        c -> Sponge.getCommandManager().register(this, c.getCommandSpec(), c.getAliases()));
+    Arrays.stream(Command.values()).map(c -> c.createCommand(this)).filter(o -> o.isPresent()).map(o -> o.get())
+        .forEach(c -> Sponge.getCommandManager().register(this, c.getCommandSpec(), c.getAliases()));
 
     getLogger().info("McFrEssentials Plugin has loaded.");
   }
@@ -78,12 +81,11 @@ public class Essentials {
     if (commandsFile.exists())
       new JsonParser().parse(new JsonReader(new FileReader(commandsFile))).getAsJsonObject().get("commands").getAsJsonArray().forEach(this::planTask);
 
-    
-    
     TribalWord.loadFromDatabase();
     Sponge.getServiceManager().provide(CareService.class).get().loadFromDatabase();
     Sponge.getServiceManager().provide(ExpeditionService.class).get().loadFromDatabase();
     Sponge.getServiceManager().provide(WarpService.class).get().loadFromDatabase();
+    Sponge.getServiceManager().provide(HarvestService.class).get().loadFromDatabase();
   }
 
   public void toggleServerLock() {
@@ -102,7 +104,7 @@ public class Essentials {
     String expression = command.get("command").getAsString();
     long delay = command.get("delay").getAsLong();
     long interval = command.get("interval").getAsLong();
-    taskBuilder.execute(() -> manager.process(Sponge.getServer().getConsole(), expression)).delay(delay, TimeUnit.SECONDS).interval(interval,
-        TimeUnit.SECONDS).submit(this);
+    taskBuilder.execute(() -> manager.process(Sponge.getServer().getConsole(), expression)).delay(delay, TimeUnit.SECONDS)
+        .interval(interval, TimeUnit.SECONDS).submit(this);
   }
 }

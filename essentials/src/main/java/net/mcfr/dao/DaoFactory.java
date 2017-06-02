@@ -9,4 +9,11 @@ public class DaoFactory {
   public static Dao<Warp> getWarpDao() {
     return new WarpDao();
   }
+  
+  /**
+   * @return un DAO pour gérer le {@code HarvestService}.
+   */
+  public static HarvestDao getHarvestDao() {
+    return new HarvestDao();
+  }
 }
