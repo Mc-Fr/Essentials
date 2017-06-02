@@ -16,7 +16,7 @@ import net.mcfr.dao.HarvestTools;
 import net.mcfr.roleplay.Skill;
 
 public class HarvestArea {
-  private final static float RADIUS = 5f;
+  private final static float RADIUS = 10f;
 
   private String name;
   private Location<World> location;
