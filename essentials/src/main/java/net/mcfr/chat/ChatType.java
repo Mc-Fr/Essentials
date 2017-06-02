@@ -36,6 +36,7 @@ public enum ChatType {
   ADMIN(-1, RED, "=", true, "[Admin] %1$s : %3$s");
 
   public static final Map<String, Integer> rangeStrings = new HashMap<>();
+  public static final Map<String, ChatType> voiceStrings = new HashMap<>();
   
   static {
     rangeStrings.put("p\"'", 2);
@@ -43,6 +44,13 @@ public enum ChatType {
     rangeStrings.put("p'", 10);
     rangeStrings.put("p&", 45);
     rangeStrings.put("p!", 60);
+    
+    voiceStrings.put("p\"'", WHISPER);
+    voiceStrings.put("p\"", LOW_VOICE);
+    voiceStrings.put("p'", SOFT_VOICE);
+    voiceStrings.put("p", MEDIUM);
+    voiceStrings.put("p&", LOUD_SPEAK);
+    voiceStrings.put("p!", SHOUT);
   }
   
   /**

@@ -11,6 +11,7 @@ import net.mcfr.commands.chat.RangeCommand;
 import net.mcfr.commands.chat.RealnameCommand;
 import net.mcfr.commands.chat.ReplyCommand;
 import net.mcfr.commands.chat.SpyMpCommand;
+import net.mcfr.commands.chat.VoiceCommand;
 import net.mcfr.commands.game.FlyCommand;
 import net.mcfr.commands.game.GmCommand;
 import net.mcfr.commands.game.GodCommand;
@@ -82,6 +83,7 @@ public enum Command {
   TPTO(TpToCommand.class),
   TRIBELANG(TribalLanguageCommand.class),
   VANISH(VanishCommand.class),
+  VOICE(VoiceCommand.class),
   WALK(WalkCommand.class),
   WARP(WarpCommand.class),
   WHOIS(WhoIsCommand.class);
