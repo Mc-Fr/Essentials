@@ -72,7 +72,7 @@ public class HarvestCommand extends AbstractCommand {
       } else {
         texts.add(Text.join(Text.of(TextColors.GREEN, "Vous avez "),
             Text.of(TextColors.WHITE, p.getHarvestTokens()),
-            Text.of(TextColors.GREEN, " jetons de récolte. Votre jeton actuel vaut "),
+            Text.of(TextColors.GREEN, " jeton" + (p.getHarvestTokens() > 1 ? "s" : "") + " de récolte. Votre jeton actuel vaut "),
             Text.of(TextColors.WHITE, p.getTokenValue()),
             Text.of(TextColors.GREEN, "% d'une récolte.")));
       }
