@@ -1,10 +1,13 @@
 package net.mcfr.harvest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.spongepowered.api.data.type.HandTypes;
+import org.spongepowered.api.effect.sound.SoundTypes;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
@@ -13,39 +16,39 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import net.mcfr.dao.DaoFactory;
+import net.mcfr.dao.HarvestTools;
 import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrPlayer;
 
 public class HarvestImp implements HarvestService {
   private final static int SKILL_HARVESTING_LEVEL = 12;
 
-  private List<HarvestArea> harvestAreas;
+  private static Map<String, HarvestArea> harvestAreas = new HashMap<>();
 
   public HarvestImp() {
-    this.harvestAreas = new ArrayList<>();
+  }
+  
+  public static Map<String, HarvestArea> getHarvestAreas() {
+    return harvestAreas;
   }
 
   @Override
   public void loadFromDatabase() {
-    this.harvestAreas = DaoFactory.getHarvestDao().getAll();
+    for (HarvestArea a : DaoFactory.getHarvestDao().getAll())
+      harvestAreas.put(a.getName(), a);
   }
 
   @Override
-  public List<HarvestArea> getHarvestAreas() {
-    return this.harvestAreas;
-  }
-
-  @Override
-  public void addArea(String name, Location<World> loc, Skill skill) {
-    HarvestArea newArea = new HarvestArea(name, loc, skill);
+  public void addArea(String name, Location<World> loc, Skill skill, HarvestTools tool, int toolDamage) {
+    HarvestArea newArea = new HarvestArea(name, loc, skill, tool, toolDamage);
     DaoFactory.getHarvestDao().create(newArea);
-    this.harvestAreas.add(newArea);
+    harvestAreas.put(newArea.getName(), newArea);
   }
 
   @Override
   public void removeArea(HarvestArea area) {
     DaoFactory.getHarvestDao().delete(area);
-    this.harvestAreas.remove(area);
+    harvestAreas.remove(area.getName());
   }
 
   @Override
@@ -55,7 +58,7 @@ public class HarvestImp implements HarvestService {
   }
 
   @Override
-  public void addRareItemEntry(ItemStack item, float probability, HarvestArea area) {
+  public void addRareItemEntry(ItemStack item, double probability, HarvestArea area) {
     RareItemEntry entry = new RareItemEntry(probability, item);
     DaoFactory.getHarvestDao().addRareItemEntry(entry, area);
     area.addRareItem(entry);
@@ -77,7 +80,7 @@ public class HarvestImp implements HarvestService {
   public List<HarvestArea> getAreasForPlayer(McFrPlayer p) {
     List<HarvestArea> areas = new ArrayList<>();
 
-    for (HarvestArea a : this.harvestAreas) {
+    for (HarvestArea a : harvestAreas.values()) {
       if (a.isInRange(p.getPlayer()) && p.getSkillLevel(a.getSkill(), Optional.empty()) >= SKILL_HARVESTING_LEVEL)
         areas.add(a);
     }
@@ -94,7 +97,7 @@ public class HarvestImp implements HarvestService {
   public List<HarvestArea> getAreasAround(McFrPlayer p) {
     List<HarvestArea> areas = new ArrayList<>();
 
-    for (HarvestArea a : this.harvestAreas) {
+    for (HarvestArea a : harvestAreas.values()) {
       if (a.isInRange(p.getPlayer()))
         areas.add(a);
     }
@@ -104,25 +107,34 @@ public class HarvestImp implements HarvestService {
   
   @Override
   public void harvest(McFrPlayer p, HarvestArea area) {
-    //TODO : vérifier la présence de harvest tokens
-    
-    Optional<ItemStack> optItem = p.getPlayer().getItemInHand(HandTypes.MAIN_HAND);
-    if (optItem.isPresent() && area.isToolCorrect(optItem.get().getItem())) {
+    if (p.getHarvestTokens() > 0) {
+      Optional<ItemStack> optItem = p.getPlayer().getItemInHand(HandTypes.MAIN_HAND);
+      if (optItem.isPresent() && area.isToolCorrect(optItem.get().getItem())) {
 
-      List<ItemStack> items = area.getHarvest();
-      float tokenValue = 0.01f * p.getTokenValue();
-      Inventory inventory = p.getPlayer().getInventory();
-      
-      for (ItemStack stack : items) {
-        stack.setQuantity((int) Math.ceil(tokenValue * stack.getQuantity()));
-        inventory.offer(stack);
+        List<ItemStack> items = area.getHarvest();
+        float tokenValue = 0.01f * p.getTokenValue();
+        Inventory inventory = p.getPlayer().getInventory();
+        
+        for (ItemStack stack : items) {
+          stack.setQuantity((int) Math.ceil(tokenValue * stack.getQuantity()));
+          inventory.offer(stack);
+        }
+        
+        p.setHarvestTokens(p.getHarvestTokens() - 1);
+        
+        ItemStack usedTool = area.useTool(optItem.get());
+        
+        if (usedTool == null) {
+          p.getPlayer().playSound(SoundTypes.ENTITY_ITEM_BREAK, p.getPlayer().getLocation().getPosition(), 1);
+        }
+        
+        p.getPlayer().setItemInHand(HandTypes.MAIN_HAND, usedTool);
+        
+      } else {
+        p.sendMessage(Text.of(TextColors.GREEN, "Vous devez avoir un outil correspondant à votre récolte en main."));
       }
-      
-      //TODO : baisser les harvest tokens
-      //TODO : abîmer l'outil en fonction de sa classe
     } else {
-      p.sendMessage(Text.of(TextColors.GREEN, "Vous devez avoir un outil correspondant à votre récolte en main."));
+      p.sendMessage(Text.of(TextColors.GREEN, "Vous n'avez plus de jeton de récolte. Attendez demain !"));
     }
-    
   }
 }

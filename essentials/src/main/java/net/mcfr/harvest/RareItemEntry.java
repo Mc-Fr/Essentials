@@ -3,15 +3,15 @@ package net.mcfr.harvest;
 import org.spongepowered.api.item.inventory.ItemStack;
 
 public class RareItemEntry {
-  private float probability;
+  private double probability;
   private ItemStack item;
   
-  public RareItemEntry(float p, ItemStack item) {
+  public RareItemEntry(double p, ItemStack item) {
     this.probability = p;
     this.item = item;
   }
   
-  public float getProbability() {
+  public double getProbability() {
     return this.probability;
   }
   

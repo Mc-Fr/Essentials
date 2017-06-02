@@ -158,6 +158,19 @@ public class McFrPlayer {
     return this.harvestTokens;
   }
   
+  public void setHarvestTokens(int value) {
+    this.harvestTokens = value;
+    
+    try (Connection connection = McFrConnection.getConnection()) {
+      PreparedStatement changeTokens = connection.prepareStatement("UPDATE srv_player SET tokens = ? WHERE uuid = ?");
+      changeTokens.setInt(1, this.harvestTokens);
+      changeTokens.setString(2, this.player.getUniqueId().toString());
+      changeTokens.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+  }
+  
   public int getTokenValue() {
     return (11 - this.harvestTokens) * 10;
   }

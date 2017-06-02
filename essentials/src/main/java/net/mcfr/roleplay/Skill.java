@@ -17,6 +17,7 @@ import net.mcfr.utils.McFrPlayer;
 public class Skill {
   private static Map<String, Skill> skills = new HashMap<>();
   private static Map<String, Skill> combatSkills = new HashMap<>();
+  private static Map<String, Skill> harvestSkills = new HashMap<>();
 
   private String name;
   private String displayName;
@@ -64,6 +65,17 @@ public class Skill {
         if (skillData.getString("category").equals("combat")) {
           combatSkills.put(skill.getName(), skill);
         }
+        
+        switch (skill.getName()) {
+        case "bucheron":
+        case "minage":
+        case "peche":
+        case "chasse":
+        case "fermier":
+        case "elevage":
+          harvestSkills.put(skill.getName(), skill);
+          break;
+        }
       }
       skillData.close();
 
@@ -92,6 +104,10 @@ public class Skill {
 
   public static Map<String, Skill> getCombatSkills() {
     return combatSkills;
+  }
+  
+  public static Map<String, Skill> getHarvestSkills() {
+    return harvestSkills;
   }
 
   public static Skill getSkillByName(String name) {

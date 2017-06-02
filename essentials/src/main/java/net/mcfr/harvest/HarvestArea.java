@@ -1,85 +1,39 @@
 package net.mcfr.harvest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
-import org.spongepowered.api.GameRegistry;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.DataQuery;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemType;
-import org.spongepowered.api.item.ItemTypes;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
+import net.mcfr.dao.HarvestTools;
 import net.mcfr.roleplay.Skill;
 
 public class HarvestArea {
   private final static float RADIUS = 5f;
-  private final static Map<Skill, List<ItemType>> toolMap = new HashMap<>();
-
-  static {
-    GameRegistry registry = Sponge.getGame().getRegistry();
-
-    List<ItemType> woodcutterList = new ArrayList<>();
-    List<ItemType> minerList = new ArrayList<>();
-    List<ItemType> fishermanList = new ArrayList<>();
-    List<ItemType> hunterList = new ArrayList<>();
-    List<ItemType> farmerList = new ArrayList<>();
-    List<ItemType> breederList = new ArrayList<>();
-
-    woodcutterList.add(ItemTypes.DIAMOND_AXE);
-    woodcutterList.add(ItemTypes.GOLDEN_AXE);
-    woodcutterList.add(ItemTypes.IRON_AXE);
-
-    minerList.add(ItemTypes.DIAMOND_PICKAXE);
-    minerList.add(ItemTypes.GOLDEN_PICKAXE);
-    minerList.add(ItemTypes.IRON_PICKAXE);
-
-    fishermanList.add(ItemTypes.FISHING_ROD);
-    fishermanList.add(registry.getType(ItemType.class, "mcfr_b_i:good_fishing_rod").get());
-    fishermanList.add(registry.getType(ItemType.class, "mcfr_b_i:fishing_net").get());
-
-    hunterList.add(ItemTypes.BOW);
-    hunterList.add(registry.getType(ItemType.class, "mcfr_b_i:iron_bow").get());
-    hunterList.add(registry.getType(ItemType.class, "mcfr_b_i:golden_bow").get());
-    hunterList.add(registry.getType(ItemType.class, "mcfr_b_i:steel_bow").get());
-    hunterList.add(registry.getType(ItemType.class, "mcfr_b_i:barbarian_bow").get());
-    hunterList.add(registry.getType(ItemType.class, "mcfr_b_i:long_bow").get());
-    hunterList.add(registry.getType(ItemType.class, "mcfr_b_i:hunter_bow").get());
-    hunterList.add(registry.getType(ItemType.class, "mcfr_b_i:long_hunter_bow").get());
-    hunterList.add(registry.getType(ItemType.class, "mcfr_b_i:ancient_bow").get());
-
-    farmerList.add(ItemTypes.DIAMOND_HOE);
-    farmerList.add(ItemTypes.GOLDEN_HOE);
-    farmerList.add(ItemTypes.IRON_HOE);
-
-    breederList.add(ItemTypes.SHEARS);
-
-    toolMap.put(Skill.getSkillByName("bucheron"), woodcutterList);
-    toolMap.put(Skill.getSkillByName("minage"), minerList);
-    toolMap.put(Skill.getSkillByName("peche"), fishermanList);
-    toolMap.put(Skill.getSkillByName("chasse"), hunterList);
-    toolMap.put(Skill.getSkillByName("fermier"), farmerList);
-    toolMap.put(Skill.getSkillByName("elevage"), breederList);
-  }
 
   private String name;
   private Location<World> location;
   private Skill skill;
+  private HarvestTools tool;
+  private int toolDamage;
   private List<ItemStack> itemList;
   private List<RareItemEntry> rareItemList;
 
-  public HarvestArea(String name, Location<World> loc, Skill skill) {
+  public HarvestArea(String name, Location<World> loc, Skill skill, HarvestTools tool, int toolDamage) {
     this.name = name;
     this.location = loc;
     this.skill = skill;
     this.itemList = new ArrayList<>();
     this.rareItemList = new ArrayList<>();
+    this.tool = tool;
+    this.toolDamage = toolDamage;
   }
 
   public String getName() {
@@ -89,17 +43,30 @@ public class HarvestArea {
   public Skill getSkill() {
     return this.skill;
   }
+  
+  public HarvestTools getTool() {
+    return this.tool;
+  }
+  
+  public int getToolDamage() {
+    return this.toolDamage;
+  }
 
   public Location<World> getLocation() {
     return this.location;
   }
 
   public boolean isToolCorrect(ItemType tool) {
-    for (ItemType i : toolMap.get(this.skill)) {
-      if (i.equals(tool))
-        return true;
-    }
-    return false;
+    return this.tool.isToolCorrect(tool);
+  }
+  
+  public ItemStack useTool(ItemStack tool) {
+    tool.offer(Keys.ITEM_DURABILITY, tool.get(Keys.ITEM_DURABILITY).get() - this.toolDamage);
+    
+    if (tool.get(Keys.ITEM_DURABILITY).get() <= 0)
+      return null;
+    
+    return tool;
   }
 
   public void clearItemList() {
