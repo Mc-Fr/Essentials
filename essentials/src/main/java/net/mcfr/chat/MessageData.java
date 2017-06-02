@@ -49,8 +49,14 @@ public class MessageData {
     Objects.requireNonNull(sender);
     this.sender = sender;
     this.message = text;
-    this.chatType = ChatType.getChatType(getMessage(), McFrPlayer.getMcFrPlayer(sender).getDefaultChat());
-    this.message = getMessage().substring(getChatType().getCharsRequired().length());
+    
+    if (ChatType.isDefaultChat(getMessage())) {
+      this.chatType = McFrPlayer.getMcFrPlayer(sender).getDefaultChat();
+    } else {
+      this.chatType = ChatType.getChatType(getMessage());
+      this.message = getMessage().substring(getChatType().getCharsRequired().length());
+    }
+    
     this.recipients = getListeningPlayers();
   }
 

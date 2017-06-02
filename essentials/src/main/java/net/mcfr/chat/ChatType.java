@@ -157,7 +157,7 @@ public enum ChatType {
    *          le tchat par défaut défini par le joueur
    * @return le type de tchat correspondant
    */
-  public static ChatType getChatType(String text, ChatType defaultChat) {
+  public static ChatType getChatType(String text) {
     String prefix;
     if (text.length() > 1) {
       prefix = text.substring(0, 2);
@@ -174,8 +174,29 @@ public enum ChatType {
       if (type.getCharsRequired().equals(prefix))
         return type;
     }
+    
+    return MEDIUM;
+  }
+  
+  public static boolean isDefaultChat(String text) {
+    String prefix;
+    if (text.length() > 1) {
+      prefix = text.substring(0, 2);
 
-    return defaultChat;
+      for (ChatType type : values()) {
+        if (type.getCharsRequired().equals(prefix))
+          return false;
+      }
+    }
+
+    prefix = text.substring(0, 1);
+
+    for (ChatType type : values()) {
+      if (type.getCharsRequired().equals(prefix))
+        return false;
+    }
+    
+    return true;
   }
 
   /**
