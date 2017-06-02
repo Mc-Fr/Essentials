@@ -11,6 +11,7 @@ import net.mcfr.commands.chat.RangeCommand;
 import net.mcfr.commands.chat.RealnameCommand;
 import net.mcfr.commands.chat.ReplyCommand;
 import net.mcfr.commands.chat.SpyMpCommand;
+import net.mcfr.commands.chat.TrollCommand;
 import net.mcfr.commands.chat.VoiceCommand;
 import net.mcfr.commands.game.FlyCommand;
 import net.mcfr.commands.game.GmCommand;
@@ -77,6 +78,7 @@ public enum Command {
   SPECTATE(SpectateCommand.class),
   SPEED(SpeedCommand.class),
   SPYMP(SpyMpCommand.class),
+  TROLL(TrollCommand.class),
   TP(TpCommand.class),
   TPH(TpHereCommand.class),
   TPPOS(TpPosCommand.class),
