@@ -31,7 +31,7 @@ public class HarvestDao implements Dao<HarvestArea> {
   public List<HarvestArea> getAll() {
     List<HarvestArea> areas = new ArrayList<>();
     try (Connection connection = McFrConnection.getConnection()) {
-      ResultSet rs = connection.createStatement().executeQuery("select name, world, x, y, z, skill, tool, toolDamage from srv_harvestareas");
+      ResultSet rs = connection.createStatement().executeQuery("select name, displayName, world, x, y, z, skill, tool, toolDamage from srv_harvestareas");
       List<String> unknownWorlds = new ArrayList<>();
       
       while (rs.next()) {
@@ -51,12 +51,13 @@ public class HarvestDao implements Dao<HarvestArea> {
         }
         
         String name = rs.getString("name");
+        String displayName = rs.getString("displayName");
         Location<World> loc = new Location<>(optWorld.get(), rs.getInt("x"), rs.getInt("y"), rs.getInt("z"));
         Skill skill = Skill.getSkillByName(rs.getString("skill"));
         HarvestTools tool = HarvestTools.valueOf(rs.getString("tool"));
         int toolDamage = rs.getInt("toolDamage");
         
-        HarvestArea area = new HarvestArea(name, loc, skill, tool, toolDamage);
+        HarvestArea area = new HarvestArea(name, displayName, loc, skill, tool, toolDamage);
         areas.add(area);
 
         ResultSet itemEntries = connection.createStatement()
@@ -122,7 +123,7 @@ public class HarvestDao implements Dao<HarvestArea> {
   @Override
   public boolean create(HarvestArea o) {
     try (Connection connection = McFrConnection.getConnection()) {
-      CallableStatement cs = connection.prepareCall("{ call addHarvestArea(?, ?, ?, ?, ?, ?, ?, ?) }");
+      CallableStatement cs = connection.prepareCall("{ call addHarvestArea(?, ?, ?, ?, ?, ?, ?, ?, ?) }");
       cs.setString(1, o.getName());
       Location<World> loc = o.getLocation();
       cs.setString(2, loc.getExtent().getName());
@@ -132,6 +133,7 @@ public class HarvestDao implements Dao<HarvestArea> {
       cs.setString(6, o.getSkill().getName());
       cs.setString(7, o.getTool().name());
       cs.setInt(8, o.getToolDamage());
+      cs.setString(9, o.getDisplayName());
       cs.execute();
       return true;
     } catch (SQLException e) {

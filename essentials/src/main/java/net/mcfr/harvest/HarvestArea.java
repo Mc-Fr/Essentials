@@ -19,6 +19,7 @@ public class HarvestArea {
   private final static float RADIUS = 10f;
 
   private String name;
+  private String displayName;
   private Location<World> location;
   private Skill skill;
   private HarvestTools tool;
@@ -26,8 +27,9 @@ public class HarvestArea {
   private List<ItemStack> itemList;
   private List<RareItemEntry> rareItemList;
 
-  public HarvestArea(String name, Location<World> loc, Skill skill, HarvestTools tool, int toolDamage) {
+  public HarvestArea(String name, String displayName, Location<World> loc, Skill skill, HarvestTools tool, int toolDamage) {
     this.name = name;
+    this.displayName = displayName;
     this.location = loc;
     this.skill = skill;
     this.itemList = new ArrayList<>();
@@ -38,6 +40,10 @@ public class HarvestArea {
 
   public String getName() {
     return this.name;
+  }
+  
+  public String getDisplayName() {
+    return this.displayName;
   }
 
   public Skill getSkill() {

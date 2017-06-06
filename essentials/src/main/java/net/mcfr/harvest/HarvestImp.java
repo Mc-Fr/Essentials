@@ -37,10 +37,19 @@ public class HarvestImp implements HarvestService {
     for (HarvestArea a : DaoFactory.getHarvestDao().getAll())
       harvestAreas.put(a.getName(), a);
   }
+  
+  @Override
+  public boolean isNameFree(String name) {
+    for (HarvestArea a : harvestAreas.values())
+      if (a.getName().equals(name))
+        return false;
+    
+    return true;
+  }
 
   @Override
-  public void addArea(String name, Location<World> loc, Skill skill, HarvestTools tool, int toolDamage) {
-    HarvestArea newArea = new HarvestArea(name, loc, skill, tool, toolDamage);
+  public void addArea(String name, String displayName, Location<World> loc, Skill skill, HarvestTools tool, int toolDamage) {
+    HarvestArea newArea = new HarvestArea(name, displayName, loc, skill, tool, toolDamage);
     DaoFactory.getHarvestDao().create(newArea);
     harvestAreas.put(newArea.getName(), newArea);
   }

@@ -14,7 +14,9 @@ public interface HarvestService {
   
   public void loadFromDatabase();
   
-  public void addArea(String name, Location<World> loc, Skill skill, HarvestTools tool, int toolDamage);
+  public boolean isNameFree(String name);
+  
+  public void addArea(String name, String displayName, Location<World> loc, Skill skill, HarvestTools tool, int toolDamage);
   
   public void removeArea(HarvestArea area);
   

@@ -80,7 +80,7 @@ public class HarvestCommand extends AbstractCommand {
       areas.forEach(a -> texts.add(
               Text.builder()
               .append(Text.join(Text.of(TextColors.DARK_GREEN, "Récolte de : "),
-                  Text.of(TextColors.WHITE, a.getName())))
+                  Text.of(TextColors.WHITE, a.getDisplayName())))
               .onClick(TextActions.executeCallback((cmdSrc) -> askForHarvest(p, a, harvest)))
               .build()));
       
@@ -133,7 +133,7 @@ public class HarvestCommand extends AbstractCommand {
 
       java.util.List<Text> texts = new ArrayList<>(areas.size());
       areas.forEach(
-          a -> texts.add(Text.builder().append((Text.of(TextColors.WHITE, "- " + a.getName()))).onClick(TextActions.executeCallback((cmdSrc) -> {
+          a -> texts.add(Text.builder().append((Text.of(TextColors.WHITE, "- " + a.getName() + " : " + a.getDisplayName()))).onClick(TextActions.executeCallback((cmdSrc) -> {
             if (cmdSrc instanceof Player)
               ((Player) cmdSrc).setLocation(a.getLocation());
           })).build()));
@@ -177,8 +177,14 @@ public class HarvestCommand extends AbstractCommand {
       }
 
       if (src instanceof Player) {
+        if (!optHarvestService.get().isNameFree(args.<String>getOne("nom").get())) {
+          src.sendMessage(Text.of(TextColors.DARK_GREEN, "Le nom fourni est déjà pris par une zone de récolte."));
+          return CommandResult.success();
+        }
+        
         //#f:0
         optHarvestService.get().addArea(args.<String>getOne("nom").get(),
+            args.<String>getOne("affichage").get(),
             ((Player) src).getLocation(),
             args.<Skill>getOne("compétence").get(),
             args.<HarvestTools>getOne("outil").get(),
@@ -199,6 +205,7 @@ public class HarvestCommand extends AbstractCommand {
               .description(Text.of("Ajoute une zone de récolte à l'emplacement du joueur"))
               .permission("essentials.command.harvest.addarea")
               .arguments(GenericArguments.string(Text.of("nom")),
+                  GenericArguments.string(Text.of("affichage")),
                   GenericArguments.choices(Text.of("compétence"), Skill.getHarvestSkills()),
                   GenericArguments.enumValue(Text.of("outil"), HarvestTools.class),
                   GenericArguments.integer(Text.of("usure")))

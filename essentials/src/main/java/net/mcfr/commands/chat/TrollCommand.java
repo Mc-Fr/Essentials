@@ -11,7 +11,6 @@ import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.AbstractCommand;
-import net.mcfr.utils.McFrPlayer;
 
 public class TrollCommand extends AbstractCommand {
 
@@ -22,7 +21,7 @@ public class TrollCommand extends AbstractCommand {
   @Override
   public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
     //#f:0
-    if (src instanceof Player && McFrPlayer.getMcFrPlayer((Player)src).getName().equals("canibalissimo"))
+    if (src instanceof Player && ((Player)src).getName().equals("canibalissimo"))
       src.sendMessage(Text.of(TextColors.DARK_RED, "T'es viré. - Signé Daeniya"));
     else
       src.sendMessage(Text.join(
