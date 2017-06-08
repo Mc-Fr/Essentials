@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
@@ -36,6 +37,15 @@ public class LoginListener {
         player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes dans une zone sécurisée."));
       else
         player.getPlayer().sendMessage(Text.of(TextColors.GOLD, "Attention, vous êtes encore dans une zone non sécurisée !"));
+    
+    try (Connection connection = McFrConnection.getConnection()) {
+      PreparedStatement logConnection = connection.prepareStatement("CALL logConnection(?,?)");
+      logConnection.setString(1, e.getTargetEntity().getUniqueId().toString());
+      logConnection.setLong(2, Calendar.getInstance().getTime().getTime());
+      logConnection.execute();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
   }
 
   @Listener
@@ -46,21 +56,21 @@ public class LoginListener {
       try (Connection jdrConnection = McFrConnection.getConnection()) {
         final String connectPermission = "essentials.admin.connect_without_character";
         int userId = -1;
-        PreparedStatement forumAccountId = jdrConnection.prepareStatement(
-            "SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
+        PreparedStatement forumAccountId = jdrConnection
+            .prepareStatement("SELECT user_id FROM phpbb_users PU JOIN account_link AL ON AL.forum = PU.username WHERE AL.minecraft = ?");
         forumAccountId.setString(1, e.getTargetUser().getName());
         ResultSet user = forumAccountId.executeQuery();
 
         if (user.next()) {
           userId = user.getInt(1);
-          PreparedStatement activeCharacterSheet = jdrConnection.prepareStatement(
-              "SELECT id FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
+          PreparedStatement activeCharacterSheet = jdrConnection
+              .prepareStatement("SELECT id FROM fiche_perso_personnage WHERE id_user = ? AND active = 1");
           activeCharacterSheet.setInt(1, userId);
           ResultSet characterSheet = activeCharacterSheet.executeQuery();
 
           if (characterSheet.next()) {
-            PreparedStatement deathDataReq = jdrConnection.prepareStatement(
-                "SELECT avantage FROM fiche_perso_personnage_avantage WHERE avantage = \"mort\" AND id_fiche_perso_personnage = ?");
+            PreparedStatement deathDataReq = jdrConnection
+                .prepareStatement("SELECT avantage FROM fiche_perso_personnage_avantage WHERE avantage = \"mort\" AND id_fiche_perso_personnage = ?");
             deathDataReq.setInt(1, characterSheet.getInt(1));
             ResultSet deathData = deathDataReq.executeQuery();
             if (deathData.next())
@@ -81,5 +91,14 @@ public class LoginListener {
   @Listener
   public void onPlayerDisconnect(ClientConnectionEvent.Disconnect e) {
     McFrPlayer.removePlayer(e.getTargetEntity());
+
+    try (Connection connection = McFrConnection.getConnection()) {
+      PreparedStatement logDisconnection = connection.prepareStatement("CALL logDisconnection(?,?)");
+      logDisconnection.setString(1, e.getTargetEntity().getUniqueId().toString());
+      logDisconnection.setLong(2, Calendar.getInstance().getTime().getTime());
+      logDisconnection.execute();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
   }
 }
