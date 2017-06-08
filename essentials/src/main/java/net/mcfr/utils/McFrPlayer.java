@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -86,6 +87,7 @@ public class McFrPlayer {
   private Location<World> previousLocation;
   private long lastBreathTime;
   private long readDescriptionTime;
+  private long connectionTime;
   private int listeningRange;
   private Map<String, String> itemDescriptions;
   private int harvestTokens;
@@ -139,6 +141,7 @@ public class McFrPlayer {
     this.selectedBurrow = Optional.empty();
     this.lastBreathTime = 0;
     this.readDescriptionTime = 0;
+    this.connectionTime = 0;
     this.healthState = new HealthState(100);
     this.manaState = new ManaState(100);
     this.listeningRange = 20;
@@ -677,6 +680,31 @@ public class McFrPlayer {
   
   public String getItemDescription(String name) {
     return this.itemDescriptions.get(name);
+  }
+  
+  public void setConnectionTime(long time) {
+    this.connectionTime = time;
+  }
+  
+  public long getConnectionTime() {
+    return this.connectionTime;
+  }
+  
+  public void logSession() {
+    long currentTime = Calendar.getInstance().getTime().getTime();
+    
+    Timestamp connectionDate = new Timestamp(this.connectionTime);
+    float duration = (currentTime - this.connectionTime) * 0.001f / 3600f;
+    
+    try (Connection connection = McFrConnection.getConnection()) {
+      PreparedStatement logSession = connection.prepareStatement("CALL logSession(?,?,?)");
+      logSession.setString(1, this.player.getUniqueId().toString());
+      logSession.setTimestamp(2, connectionDate);
+      logSession.setFloat(3, duration);
+      logSession.execute();
+    } catch (SQLException ex) {
+      ex.printStackTrace();
+    }
   }
 
   @Override

@@ -13,6 +13,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePostInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppingServerEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.scheduler.Task;
@@ -37,6 +38,7 @@ import net.mcfr.listeners.NatureListener;
 import net.mcfr.listeners.PlayerListener;
 import net.mcfr.roleplay.RolePlayImp;
 import net.mcfr.roleplay.RolePlayService;
+import net.mcfr.utils.McFrPlayer;
 import net.mcfr.warp.WarpImp;
 import net.mcfr.warp.WarpService;
 
@@ -86,6 +88,11 @@ public class Essentials {
     Sponge.getServiceManager().provide(ExpeditionService.class).get().loadFromDatabase();
     Sponge.getServiceManager().provide(WarpService.class).get().loadFromDatabase();
     Sponge.getServiceManager().provide(HarvestService.class).get().loadFromDatabase();
+  }
+  
+  @Listener
+  public void onServerStop(GameStoppingServerEvent event) {
+    McFrPlayer.getMcFrPlayers().forEach(McFrPlayer::logSession);
   }
 
   public void toggleServerLock() {

@@ -29,6 +29,7 @@ public class LoginListener {
   public void onPlayerJoin(ClientConnectionEvent.Join e) {
     McFrPlayer player = new McFrPlayer(e.getTargetEntity());
     McFrPlayer.addPlayer(player);
+    player.setConnectionTime(Calendar.getInstance().getTime().getTime());
     player.loadFromDataBase();
 
     Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
@@ -37,15 +38,6 @@ public class LoginListener {
         player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes dans une zone sécurisée."));
       else
         player.getPlayer().sendMessage(Text.of(TextColors.GOLD, "Attention, vous êtes encore dans une zone non sécurisée !"));
-    
-    try (Connection connection = McFrConnection.getConnection()) {
-      PreparedStatement logConnection = connection.prepareStatement("CALL logConnection(?,?)");
-      logConnection.setString(1, e.getTargetEntity().getUniqueId().toString());
-      logConnection.setLong(2, Calendar.getInstance().getTime().getTime());
-      logConnection.execute();
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
   }
 
   @Listener
@@ -90,15 +82,7 @@ public class LoginListener {
 
   @Listener
   public void onPlayerDisconnect(ClientConnectionEvent.Disconnect e) {
+    McFrPlayer.getMcFrPlayer(e.getTargetEntity()).logSession();
     McFrPlayer.removePlayer(e.getTargetEntity());
-
-    try (Connection connection = McFrConnection.getConnection()) {
-      PreparedStatement logDisconnection = connection.prepareStatement("CALL logDisconnection(?,?)");
-      logDisconnection.setString(1, e.getTargetEntity().getUniqueId().toString());
-      logDisconnection.setLong(2, Calendar.getInstance().getTime().getTime());
-      logDisconnection.execute();
-    } catch (SQLException ex) {
-      ex.printStackTrace();
-    }
   }
 }
