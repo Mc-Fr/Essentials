@@ -21,10 +21,10 @@ import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.AbstractCommand;
-import net.mcfr.dao.HarvestTools;
 import net.mcfr.harvest.HarvestArea;
 import net.mcfr.harvest.HarvestImp;
 import net.mcfr.harvest.HarvestService;
+import net.mcfr.harvest.HarvestTools;
 import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrPlayer;
 
@@ -42,7 +42,7 @@ public class HarvestCommand extends AbstractCommand {
         .build();
     
     p.sendMessage(Text.join(Text.of(TextColors.GREEN, "Voulez-vous récolter : "),
-        Text.of(TextColors.WHITE, area.getName()),
+        Text.of(TextColors.WHITE, area.getDisplayName()),
         Text.of(TextColors.GREEN, " ? "),
         clickableText));
     //f#1

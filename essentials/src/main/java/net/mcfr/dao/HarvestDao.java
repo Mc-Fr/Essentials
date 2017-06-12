@@ -20,6 +20,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import net.mcfr.harvest.HarvestArea;
+import net.mcfr.harvest.HarvestTools;
 import net.mcfr.harvest.RareItemEntry;
 import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrConnection;

@@ -1,4 +1,4 @@
-package net.mcfr.dao;
+package net.mcfr.harvest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,15 +9,18 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.ItemTypes;
 
 public enum HarvestTools {
-  PICKAXE,
-  AXE,
-  SHOVEL,
-  FISHING_ROD,
-  BOW,
-  HOE,
-  SHEARS;
+  PICKAXE("Pioche"),
+  AXE("Hâche"),
+  SHOVEL("Pelle"),
+  FISHING_ROD("Canne à pêche"),
+  FISHING_NET("Filet de pêche"),
+  BOW("Arc"),
+  HOE("Faux"),
+  SHEARS("Cisailles"),
+  NO_TOOL("Pas d'outil");
   
   private List<ItemType> toolItems;
+  private String display;
   
   static {
     GameRegistry registry = Sponge.getGame().getRegistry();
@@ -51,11 +54,18 @@ public enum HarvestTools {
     SHEARS.toolItems.add(ItemTypes.SHEARS);
   }
   
-  private HarvestTools() {
+  private HarvestTools(String display) {
     this.toolItems = new ArrayList<>();
+    this.display = display;
+  }
+  
+  public String getDisplay() {
+    return this.display;
   }
   
   public boolean isToolCorrect(ItemType tool) {
+    if (this == NO_TOOL)
+      return true;
     for (ItemType i : this.toolItems)
       if (i.equals(tool))
         return true;

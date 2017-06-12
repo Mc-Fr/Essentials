@@ -6,7 +6,6 @@ import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import net.mcfr.dao.HarvestTools;
 import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrPlayer;
 

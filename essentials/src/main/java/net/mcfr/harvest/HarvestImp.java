@@ -16,7 +16,6 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import net.mcfr.dao.DaoFactory;
-import net.mcfr.dao.HarvestTools;
 import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrPlayer;
 
@@ -118,7 +117,7 @@ public class HarvestImp implements HarvestService {
   public void harvest(McFrPlayer p, HarvestArea area) {
     if (p.getHarvestTokens() > 0) {
       Optional<ItemStack> optItem = p.getPlayer().getItemInHand(HandTypes.MAIN_HAND);
-      if (optItem.isPresent() && area.isToolCorrect(optItem.get().getItem())) {
+      if ((optItem.isPresent() && area.isToolCorrect(optItem.get().getItem())) || area.getTool().equals(HarvestTools.NO_TOOL)) {
 
         List<ItemStack> items = area.getHarvest();
         float tokenValue = 0.01f * p.getTokenValue();
@@ -131,13 +130,15 @@ public class HarvestImp implements HarvestService {
         
         p.setHarvestTokens(p.getHarvestTokens() - 1);
         
-        ItemStack usedTool = area.useTool(optItem.get());
-        
-        if (usedTool == null) {
-          p.getPlayer().playSound(SoundTypes.ENTITY_ITEM_BREAK, p.getPlayer().getLocation().getPosition(), 1);
+        if (!area.getTool().equals(HarvestTools.NO_TOOL)) {
+          ItemStack usedTool = area.useTool(optItem.get());
+          
+          if (usedTool == null) {
+            p.getPlayer().playSound(SoundTypes.ENTITY_ITEM_BREAK, p.getPlayer().getLocation().getPosition(), 1);
+          }
+          
+          p.getPlayer().setItemInHand(HandTypes.MAIN_HAND, usedTool);
         }
-        
-        p.getPlayer().setItemInHand(HandTypes.MAIN_HAND, usedTool);
         
       } else {
         p.sendMessage(Text.of(TextColors.GREEN, "Vous devez avoir un outil correspondant à votre récolte en main."));
