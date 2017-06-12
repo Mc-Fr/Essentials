@@ -36,7 +36,8 @@ public enum HarvestTools {
 
     FISHING_ROD.toolItems.add(ItemTypes.FISHING_ROD);
     FISHING_ROD.toolItems.add(registry.getType(ItemType.class, "mcfr_b_i:good_fishing_rod").get());
-    FISHING_ROD.toolItems.add(registry.getType(ItemType.class, "mcfr_b_i:fishing_net").get());
+    
+    FISHING_NET.toolItems.add(registry.getType(ItemType.class, "mcfr_b_i:fishing_net").get());
 
     BOW.toolItems.add(ItemTypes.BOW);
     BOW.toolItems.add(registry.getType(ItemType.class, "mcfr_b_i:iron_bow").get());
