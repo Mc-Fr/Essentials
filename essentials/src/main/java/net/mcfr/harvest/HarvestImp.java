@@ -129,6 +129,7 @@ public class HarvestImp implements HarvestService {
         }
         
         p.setHarvestTokens(p.getHarvestTokens() - 1);
+        DaoFactory.getHarvestDao().logHarvest(p);
         
         if (!area.getTool().equals(HarvestTools.NO_TOOL)) {
           ItemStack usedTool = area.useTool(optItem.get());

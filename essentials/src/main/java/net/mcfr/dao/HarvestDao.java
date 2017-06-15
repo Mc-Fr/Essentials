@@ -4,7 +4,9 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +26,7 @@ import net.mcfr.harvest.HarvestTools;
 import net.mcfr.harvest.RareItemEntry;
 import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrConnection;
+import net.mcfr.utils.McFrPlayer;
 
 public class HarvestDao implements Dao<HarvestArea> {
   private static GameRegistry registry = Sponge.getGame().getRegistry();
@@ -214,6 +217,19 @@ public class HarvestDao implements Dao<HarvestArea> {
       cs.setInt(2, (int) item.toContainer().get(DataQuery.of("UnsafeDamage")).orElse(0));
       cs.setString(3, item.get(Keys.DISPLAY_NAME).orElse(Text.of("")).toPlain());
       cs.setString(4, area.getName());
+      cs.execute();
+      return true;
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return false;
+    }
+  }
+  
+  public boolean logHarvest(McFrPlayer player) {
+    try (Connection connection = McFrConnection.getConnection()) {
+      CallableStatement cs = connection.prepareCall("{ call logHarvest(?, ?) }");
+      cs.setString(1, player.getPlayer().getUniqueId().toString());
+      cs.setTimestamp(2, new Timestamp(Calendar.getInstance().getTime().getTime()));
       cs.execute();
       return true;
     } catch (SQLException e) {
