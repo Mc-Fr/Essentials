@@ -45,8 +45,7 @@ public class Weather {
       this.humidityState = this.humidityState.next(this.rand);
     }
 
-    this.temperature = this.season.getTemperatureModificator() + this.humidityState.getLevel().getTemperatureModificator() + this.rand.nextInt(11)
-        - 5;
+    this.temperature = this.season.getTemperatureModificator() + this.humidityState.getLevel().getTemperatureModificator() + this.rand.nextInt(11) - 5;
     
     Sponge.getCommandManager().process(Sponge.getServer().getConsole(), "meteo");
   }
@@ -55,7 +54,7 @@ public class Weather {
     BiomeGenres biomeGenre = BiomeGenres.getGenreByBiome(biome);
     int hour = date.getHour();
 
-    int localTemperature = this.temperature - (altitude - 90) / 8 + biomeGenre.getTemperatureModificator(hour);
+    int localTemperature = this.temperature - (altitude - 75) / 8 + biomeGenre.getTemperatureModificator(hour);
 
     StringJoiner result = new StringJoiner(" * ");
     result.add(this.humidityState.getLevel().getWeatherString(biomeGenre, this.season, hour, this.wind, new Random(this.lastUpdate.getSeed())));

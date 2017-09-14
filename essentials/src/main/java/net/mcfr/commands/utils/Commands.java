@@ -15,7 +15,7 @@ import net.mcfr.commands.HealCommand;
 import net.mcfr.commands.HealthCommand;
 import net.mcfr.commands.HrpCommand;
 import net.mcfr.commands.ItemCommand;
-import net.mcfr.commands.MeteoCommand;
+import net.mcfr.commands.KeyCodeCommand;
 import net.mcfr.commands.MoveNpcCommand;
 import net.mcfr.commands.MpCommand;
 import net.mcfr.commands.MuteCommand;
@@ -36,6 +36,7 @@ import net.mcfr.commands.TpPosCommand;
 import net.mcfr.commands.TpToCommand;
 import net.mcfr.commands.TribalLanguageCommand;
 import net.mcfr.commands.VanishCommand;
+import net.mcfr.commands.WeatherCommand;
 import net.mcfr.commands.WhoIsCommand;
 
 public enum Commands {
@@ -54,7 +55,7 @@ public enum Commands {
   HEALTH(HealthCommand.class),
   HRP(HrpCommand.class),
   ITEM(ItemCommand.class),
-  METEO(MeteoCommand.class),
+  KEYCODE(KeyCodeCommand.class),
   MOVENPC(MoveNpcCommand.class),
   MP(MpCommand.class),
   MUTE(MuteCommand.class),
@@ -75,6 +76,7 @@ public enum Commands {
   TPTO(TpToCommand.class),
   TRIBELANG(TribalLanguageCommand.class),
   VANISH(VanishCommand.class),
+  WEATHER(WeatherCommand.class),
   WHOIS(WhoIsCommand.class);
 
   private Class<? extends AbstractCommand> cmdClass;

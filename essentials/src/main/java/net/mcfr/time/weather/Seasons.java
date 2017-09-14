@@ -1,10 +1,6 @@
 package net.mcfr.time.weather;
 
-import static net.mcfr.time.weather.humidity.HumidityLevels.CLOUDY;
-import static net.mcfr.time.weather.humidity.HumidityLevels.HEAVY_RAIN;
-import static net.mcfr.time.weather.humidity.HumidityLevels.STORM;
-import static net.mcfr.time.weather.humidity.HumidityLevels.SUNNY;
-import static net.mcfr.time.weather.humidity.HumidityLevels.THIN_RAIN;
+import static net.mcfr.time.weather.humidity.HumidityLevels.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +35,8 @@ public enum Seasons {
     SPRING_TRANSITIONS.add(new Transition(HEAVY_RAIN, CLOUDY, 0.1f));
     SPRING_TRANSITIONS.add(new Transition(STORM, SUNNY, 1f));
     
-    SUMMER_TRANSITIONS.add(new Transition(SUNNY, SUNNY, 0.9f));
-    SUMMER_TRANSITIONS.add(new Transition(SUNNY, CLOUDY, 0.1f));
+    SUMMER_TRANSITIONS.add(new Transition(SUNNY, SUNNY, 0.7f));
+    SUMMER_TRANSITIONS.add(new Transition(SUNNY, CLOUDY, 0.3f));
     SUMMER_TRANSITIONS.add(new Transition(CLOUDY, CLOUDY, 0.1f));
     SUMMER_TRANSITIONS.add(new Transition(CLOUDY, HEAVY_RAIN, 0.8f));
     SUMMER_TRANSITIONS.add(new Transition(CLOUDY, STORM, 0.1f));

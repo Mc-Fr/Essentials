@@ -11,11 +11,13 @@ public class TimeImp implements TimeService {
   private McFrDate date;
   private Weather weather;
   private Optional<TimeValue> freezedTime;
+  private boolean initialized;
   
   public TimeImp() {
     this.date = new McFrDate();
     this.freezedTime = Optional.empty();
     this.weather = new Weather(this.date);
+    this.initialized = false;
   }
   
   @Override
