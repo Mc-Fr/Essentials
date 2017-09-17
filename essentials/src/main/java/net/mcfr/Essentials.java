@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -32,12 +33,17 @@ import net.mcfr.expedition.ExpeditionImp;
 import net.mcfr.expedition.ExpeditionService;
 import net.mcfr.harvest.HarvestImp;
 import net.mcfr.harvest.HarvestService;
+import net.mcfr.listeners.BurrowListener;
 import net.mcfr.listeners.CommandListener;
 import net.mcfr.listeners.LoginListener;
 import net.mcfr.listeners.NatureListener;
 import net.mcfr.listeners.PlayerListener;
+import net.mcfr.locks.LocksImp;
+import net.mcfr.locks.LocksService;
 import net.mcfr.roleplay.RolePlayImp;
 import net.mcfr.roleplay.RolePlayService;
+import net.mcfr.time.TimeImp;
+import net.mcfr.time.TimeService;
 import net.mcfr.utils.McFrPlayer;
 import net.mcfr.warp.WarpImp;
 import net.mcfr.warp.WarpService;
@@ -56,10 +62,18 @@ public class Essentials {
   @Listener
   public void onInit(GameInitializationEvent e) {
     this.serverLock = false;
+
+    registerListeners();
+
+    getLogger().info("McFrEssentials Plugin has loaded.");
   }
 
   @Listener
   public void onPostInit(GamePostInitializationEvent e) {
+  }
+  
+  private void registerListeners() {
+    Sponge.getEventManager().registerListeners(this, new BurrowListener());
     Sponge.getEventManager().registerListeners(this, new CommandListener());
     Sponge.getEventManager().registerListeners(this, new LoginListener(this));
     Sponge.getEventManager().registerListeners(this, new NatureListener());
@@ -70,6 +84,8 @@ public class Essentials {
     Sponge.getServiceManager().setProvider(this, CareService.class, new CareImp());
     Sponge.getServiceManager().setProvider(this, WarpService.class, new WarpImp());
     Sponge.getServiceManager().setProvider(this, HarvestService.class, new HarvestImp());
+    Sponge.getServiceManager().setProvider(this, TimeService.class, new TimeImp());
+    Sponge.getServiceManager().setProvider(this, LocksService.class, new LocksImp());
 
     Arrays.stream(Command.values()).map(c -> c.createCommand(this)).filter(o -> o.isPresent()).map(o -> o.get())
         .forEach(c -> Sponge.getCommandManager().register(this, c.getCommandSpec(), c.getAliases()));
@@ -82,12 +98,20 @@ public class Essentials {
     File commandsFile = new File("config/esssentials-config/commands.json");
     if (commandsFile.exists())
       new JsonParser().parse(new JsonReader(new FileReader(commandsFile))).getAsJsonObject().get("commands").getAsJsonArray().forEach(this::planTask);
-
+    
+    Optional<TimeService> optTimeService = Sponge.getServiceManager().provide(TimeService.class);
+    
+    if (optTimeService.isPresent())
+      Sponge.getScheduler().createTaskBuilder().execute(() -> optTimeService.get().update()).intervalTicks(1).submit(this);
+    
+    Sponge.getServer().getWorldProperties("world").get().setGameRule("doDaylightCycle", "false");
+    
     TribalWord.loadFromDatabase();
     Sponge.getServiceManager().provide(CareService.class).get().loadFromDatabase();
     Sponge.getServiceManager().provide(ExpeditionService.class).get().loadFromDatabase();
     Sponge.getServiceManager().provide(WarpService.class).get().loadFromDatabase();
     Sponge.getServiceManager().provide(HarvestService.class).get().loadFromDatabase();
+    Sponge.getServiceManager().provide(LocksService.class).get().loadFromDatabase();
   }
   
   @Listener

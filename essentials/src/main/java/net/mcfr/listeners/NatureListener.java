@@ -2,11 +2,23 @@ package net.mcfr.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.data.Transaction;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.EntityType;
 import org.spongepowered.api.entity.EntityTypes;
+import org.spongepowered.api.entity.Item;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
+import org.spongepowered.api.item.inventory.ItemStack;
+
+import net.mcfr.commands.roleplay.KeyCodeCommand;
+import net.mcfr.locks.LocksImp.LockResult;
+import net.mcfr.locks.LocksService;
 
 public class NatureListener {
   private static List<EntityType> forbiddenEntities = new ArrayList<>();
@@ -50,5 +62,52 @@ public class NatureListener {
   @Listener
   public void onSpawnEntity(SpawnEntityEvent event) {
     event.setCancelled(event.getEntities().stream().filter(e -> forbiddenEntities.contains(e.getType())).count() != 0);
+  }
+
+  @Listener
+  public void onBlockBroken(ChangeBlockEvent.Break event) {
+    Optional<LocksService> optLocksService = Sponge.getServiceManager().provide(LocksService.class);
+
+    if (optLocksService.isPresent()) {
+      LocksService locksService = optLocksService.get();
+
+      for (Transaction<BlockSnapshot> t : event.getTransactions()) {
+        if (locksService.getLockableBlocks().contains(t.getOriginal().getState().getType())) {
+          LockResult result = locksService.removeLock(t.getOriginal().getPosition(), event.getTargetWorld());
+          
+          if (result == LockResult.REMOVED) {
+            ItemStack lockItem = ItemStack.builder().itemType(KeyCodeCommand.LOCK_ITEM).quantity(1).build();
+            Item item = (Item) event.getTargetWorld().createEntity(EntityTypes.ITEM, t.getOriginal().getPosition());
+            item.offer(Keys.REPRESENTED_ITEM, lockItem.createSnapshot());
+            event.getTargetWorld().spawnEntity(item, event.getCause());
+          }
+        }
+      }
+
+    }
+  }
+
+  @Listener
+  public void onBlockModified(ChangeBlockEvent.Modify event) {
+    Optional<LocksService> optLocksService = Sponge.getServiceManager().provide(LocksService.class);
+
+    if (optLocksService.isPresent()) {
+      LocksService locksService = optLocksService.get();
+
+      for (Transaction<BlockSnapshot> t : event.getTransactions()) {
+        if (locksService.getLockableBlocks().contains(t.getOriginal().getState().getType())) {
+          if (t.getOriginal().getState().getType() != t.getFinal().getState().getType()) {
+            LockResult result = locksService.removeLock(t.getOriginal().getPosition(), event.getTargetWorld());
+            if (result == LockResult.REMOVED) {
+              ItemStack lockItem = ItemStack.builder().itemType(KeyCodeCommand.LOCK_ITEM).quantity(1).build();
+              Item item = (Item) event.getTargetWorld().createEntity(EntityTypes.ITEM, t.getOriginal().getPosition());
+              item.offer(Keys.REPRESENTED_ITEM, lockItem.createSnapshot());
+              event.getTargetWorld().spawnEntity(item, event.getCause());
+            }
+          }
+        }
+      }
+
+    }
   }
 }

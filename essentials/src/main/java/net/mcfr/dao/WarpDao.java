@@ -21,7 +21,7 @@ public class WarpDao implements Dao<Warp> {
   public List<Warp> getAll() {
     List<Warp> warps = new ArrayList<>();
     try (Connection connection = McFrConnection.getConnection()) {
-      ResultSet rs = connection.createStatement().executeQuery("select name, world, x, y, z, locked from warp");
+      ResultSet rs = connection.createStatement().executeQuery("select name, world, x, y, z, locked from srv_warp");
       List<String> unknownWorlds = new ArrayList<>();
       while (rs.next()) {
         String worldName = rs.getString("world");

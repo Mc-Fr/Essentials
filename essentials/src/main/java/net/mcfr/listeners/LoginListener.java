@@ -33,11 +33,14 @@ public class LoginListener {
     player.loadFromDataBase();
 
     Optional<CareService> optCareService = Sponge.getServiceManager().provide(CareService.class);
-    if (optCareService.isPresent())
+    if (optCareService.isPresent()) {
       if (optCareService.get().isInProtectedArea(player.getPlayer()))
         player.getPlayer().sendMessage(Text.of(TextColors.YELLOW, "Vous êtes dans une zone sécurisée."));
       else
         player.getPlayer().sendMessage(Text.of(TextColors.GOLD, "Attention, vous êtes encore dans une zone non sécurisée !"));
+    }
+    Sponge.getCommandManager().process(player.getPlayer(), "date");
+    Sponge.getCommandManager().process(player.getPlayer(), "meteo");
   }
 
   @Listener

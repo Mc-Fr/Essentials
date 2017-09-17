@@ -16,4 +16,11 @@ public class DaoFactory {
   public static HarvestDao getHarvestDao() {
     return new HarvestDao();
   }
+  
+  /**
+   * @return un DAO pour gérer les {@code Lock}s.
+   */
+  public static LockDao getLockDao() {
+    return new LockDao();
+  }
 }

@@ -21,10 +21,10 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.mcfr</groupId>
-			<artifactId>mcfr</artifactId>
-			<version>1.0</version>
+			<artifactId>McFr</artifactId>
+			<version>1.2.0</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/libs/mcfr-1.0.jar</systemPath>
+			<systemPath>${project.basedir}/libs/McFr-1.2.0.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.spongepowered</groupId>

@@ -22,15 +22,18 @@ import net.mcfr.commands.game.SpectateCommand;
 import net.mcfr.commands.game.SpeedCommand;
 import net.mcfr.commands.game.VanishCommand;
 import net.mcfr.commands.roleplay.BabelCommand;
+import net.mcfr.commands.roleplay.DateCommand;
 import net.mcfr.commands.roleplay.DescCommand;
 import net.mcfr.commands.roleplay.HealthCommand;
 import net.mcfr.commands.roleplay.HrpCommand;
 import net.mcfr.commands.roleplay.ItemCommand;
+import net.mcfr.commands.roleplay.KeyCodeCommand;
 import net.mcfr.commands.roleplay.ManaCommand;
 import net.mcfr.commands.roleplay.NameCommand;
 import net.mcfr.commands.roleplay.RefreshCommand;
 import net.mcfr.commands.roleplay.RollCommand;
 import net.mcfr.commands.roleplay.WalkCommand;
+import net.mcfr.commands.roleplay.WeatherCommand;
 import net.mcfr.commands.roleplay.WhoIsCommand;
 import net.mcfr.commands.systems.BurrowCommand;
 import net.mcfr.commands.systems.CareCenterCommand;
@@ -52,6 +55,7 @@ public enum Command {
   BACK(BackCommand.class),
   BURROW(BurrowCommand.class),
   CARE_CENTER(CareCenterCommand.class),
+  DATE(DateCommand.class),
   DESC(DescCommand.class),
   EXPEDITION(ExpeditionCommand.class),
   FLY(FlyCommand.class),
@@ -62,6 +66,7 @@ public enum Command {
   HEALTH(HealthCommand.class),
   HRP(HrpCommand.class),
   ITEM(ItemCommand.class),
+  KEY(KeyCodeCommand.class),
   MANA(ManaCommand.class),
   MOVENPC(MoveNpcCommand.class),
   MP(MpCommand.class),
@@ -88,6 +93,7 @@ public enum Command {
   VOICE(VoiceCommand.class),
   WALK(WalkCommand.class),
   WARP(WarpCommand.class),
+  WEATHER(WeatherCommand.class),
   WHOIS(WhoIsCommand.class);
 
   private Class<? extends AbstractCommand> cmdClass;

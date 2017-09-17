@@ -5,14 +5,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
+import org.spongepowered.api.data.type.HandTypes;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.effect.potion.PotionEffectTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.entity.projectile.arrow.Arrow;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.cause.entity.damage.source.DamageSources;
 import org.spongepowered.api.event.cause.entity.damage.source.EntityDamageSource;
 import org.spongepowered.api.event.entity.DamageEntityEvent;
@@ -24,15 +29,20 @@ import org.spongepowered.api.event.filter.cause.First;
 import org.spongepowered.api.event.item.inventory.DropItemEvent;
 import org.spongepowered.api.event.message.MessageChannelEvent;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
+import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.chat.MessageData;
+import net.mcfr.commands.roleplay.KeyCodeCommand;
 import net.mcfr.death.CareImp;
 import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionService;
+import net.mcfr.locks.LocksService;
+import net.mcfr.mecanisms.keys.McfrCodedItem;
 import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrPlayer;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class PlayerListener {
   private final long LAST_BREATH_INVICIBILITY = 2000;
@@ -123,6 +133,61 @@ public class PlayerListener {
         McFrPlayer.getMcFrPlayer(player).updateReadDescriptionTime();
         McFrPlayer otherPlayer = McFrPlayer.getMcFrPlayer((Player) e.getTargetEntity());
         player.sendMessage(Text.of(TextColors.DARK_GREEN, "* " + otherPlayer.getName() + " * " + otherPlayer.getDescription() + " *"));
+      }
+    }
+  }
+  
+  @Listener
+  public void onInteractBlock(InteractBlockEvent.Secondary e, @First Player player) {
+    Optional<LocksService> optLocksService = Sponge.getServiceManager().provide(LocksService.class);
+    
+    if (e.getTargetBlock() != BlockSnapshot.NONE && optLocksService.isPresent()) {
+      BlockType block = e.getTargetBlock().getState().getType();
+      LocksService locksService = optLocksService.get();
+      
+      if (locksService.getLockableBlocks().contains(block)) {
+        Optional<ItemStack> item = player.getItemInHand(HandTypes.MAIN_HAND);
+            
+        if (item.isPresent() && item.get().getItem() == KeyCodeCommand.LOCK_ITEM) {
+          switch (locksService.addLock(e.getTargetBlock().getPosition(), player.getWorld(), ((McfrCodedItem)item.get().getItem()).getCode((EntityPlayer)player))) {
+          case ALREADY_ADDED:
+            player.sendMessage(Text.of(TextColors.YELLOW, "Une serrure est déjà présente ici."));
+            e.setCancelled(true);
+            break;
+          case ADDED:
+            player.sendMessage(Text.of(TextColors.YELLOW, "La serrure a été installée."));
+            player.setItemInHand(HandTypes.MAIN_HAND, null);
+            e.setCancelled(true);
+            break;
+          case WRONG_CODE:
+            player.sendMessage(Text.of(TextColors.YELLOW, "La serrure tenue en main est vierge."));
+            e.setCancelled(true);
+          default:
+            break;
+          }
+        } else if (item.isPresent() && item.get().getItem() == KeyCodeCommand.KEY_ITEM) {
+          switch (locksService.switchLock(e.getTargetBlock().getPosition(), player.getWorld(), ((McfrCodedItem)item.get().getItem()).getCode((EntityPlayer)player))) {
+          case UNLOCKED:
+            player.sendMessage(Text.of(TextColors.YELLOW, "La serrure a été déverrouillée."));
+            e.setCancelled(true);
+            break;
+          case LOCKED:
+            player.sendMessage(Text.of(TextColors.YELLOW, "La serrure a été verrouillée."));
+            e.setCancelled(true);
+            break;
+          case WRONG_CODE:
+            player.sendMessage(Text.of(TextColors.YELLOW, "Ce n'est pas la bonne clé."));
+            e.setCancelled(true);
+            break;
+          default:
+            break;
+          }
+        } else {
+          if (player.gameMode().get() != GameModes.CREATIVE && locksService.isLocked(e.getTargetBlock().getPosition(), player.getWorld())) {
+            player.sendMessage(Text.of(TextColors.YELLOW, "La serrure est verrouillée."));
+            e.setCancelled(true);
+          }
+        }
       }
     }
   }
