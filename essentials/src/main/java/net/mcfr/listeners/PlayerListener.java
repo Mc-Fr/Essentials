@@ -34,7 +34,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
 
 import net.mcfr.chat.MessageData;
-import net.mcfr.commands.roleplay.KeyCodeCommand;
+import net.mcfr.commands.roleplay.KeyCommand;
 import net.mcfr.death.CareImp;
 import net.mcfr.death.CareService;
 import net.mcfr.expedition.ExpeditionService;
@@ -47,7 +47,7 @@ import net.minecraft.entity.player.EntityPlayer;
 public class PlayerListener {
   private final long LAST_BREATH_INVICIBILITY = 2000;
   private final long LAST_BREATH_DELAY = 15000;
-
+  
   @Listener
   public void onPlayerMove(MoveEntityEvent e, @First Player p) {
     if (p != null) {
@@ -148,7 +148,7 @@ public class PlayerListener {
       if (locksService.getLockableBlocks().contains(block)) {
         Optional<ItemStack> item = player.getItemInHand(HandTypes.MAIN_HAND);
             
-        if (item.isPresent() && item.get().getItem() == KeyCodeCommand.LOCK_ITEM) {
+        if (item.isPresent() && item.get().getItem() == KeyCommand.LOCK_ITEM) {
           switch (locksService.addLock(e.getTargetBlock().getPosition(), player.getWorld(), ((McfrCodedItem)item.get().getItem()).getCode((EntityPlayer)player))) {
           case ALREADY_ADDED:
             player.sendMessage(Text.of(TextColors.YELLOW, "Une serrure est déjà présente ici."));
@@ -165,7 +165,7 @@ public class PlayerListener {
           default:
             break;
           }
-        } else if (item.isPresent() && item.get().getItem() == KeyCodeCommand.KEY_ITEM) {
+        } else if (item.isPresent() && item.get().getItem() == KeyCommand.KEY_ITEM) {
           switch (locksService.switchLock(e.getTargetBlock().getPosition(), player.getWorld(), ((McfrCodedItem)item.get().getItem()).getCode((EntityPlayer)player))) {
           case UNLOCKED:
             player.sendMessage(Text.of(TextColors.YELLOW, "La serrure a été déverrouillée."));

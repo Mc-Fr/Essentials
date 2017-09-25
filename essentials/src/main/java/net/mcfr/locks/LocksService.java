@@ -19,6 +19,8 @@ public interface LocksService {
   
   public boolean isLocked(Vector3i pos, World world);
   
+  public Optional<Lock> getLock(Vector3i pos, World world);
+  
   public LockResult switchLock(Vector3i pos, World world, Optional<Integer> code);
   
   public LockResult addLock(Vector3i pos, World world, Optional<Integer> code);

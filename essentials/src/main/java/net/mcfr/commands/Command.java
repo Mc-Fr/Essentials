@@ -27,7 +27,7 @@ import net.mcfr.commands.roleplay.DescCommand;
 import net.mcfr.commands.roleplay.HealthCommand;
 import net.mcfr.commands.roleplay.HrpCommand;
 import net.mcfr.commands.roleplay.ItemCommand;
-import net.mcfr.commands.roleplay.KeyCodeCommand;
+import net.mcfr.commands.roleplay.KeyCommand;
 import net.mcfr.commands.roleplay.ManaCommand;
 import net.mcfr.commands.roleplay.NameCommand;
 import net.mcfr.commands.roleplay.RefreshCommand;
@@ -66,7 +66,7 @@ public enum Command {
   HEALTH(HealthCommand.class),
   HRP(HrpCommand.class),
   ITEM(ItemCommand.class),
-  KEY(KeyCodeCommand.class),
+  KEY(KeyCommand.class),
   MANA(ManaCommand.class),
   MOVENPC(MoveNpcCommand.class),
   MP(MpCommand.class),

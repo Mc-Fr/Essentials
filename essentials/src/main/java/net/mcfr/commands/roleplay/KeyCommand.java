@@ -3,6 +3,7 @@ package net.mcfr.commands.roleplay;
 import java.util.Optional;
 
 import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
@@ -15,20 +16,25 @@ import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.format.TextColors;
+import org.spongepowered.api.util.blockray.BlockRay;
+import org.spongepowered.api.util.blockray.BlockRayHit;
+import org.spongepowered.api.world.World;
 
 import net.mcfr.Essentials;
 import net.mcfr.commands.AbstractCommand;
+import net.mcfr.locks.Lock;
+import net.mcfr.locks.LocksService;
 import net.mcfr.mecanisms.keys.McfrCodedItem;
 import net.mcfr.roleplay.Skill;
 import net.mcfr.utils.McFrPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 
-public class KeyCodeCommand extends AbstractCommand {
+public class KeyCommand extends AbstractCommand {
 
   public static final ItemType KEY_ITEM = Sponge.getGame().getRegistry().getType(ItemType.class, "mcfr_b_i:key").get();
   public static final ItemType LOCK_ITEM = Sponge.getGame().getRegistry().getType(ItemType.class, "mcfr_b_i:lock").get();
 
-  public KeyCodeCommand(Essentials plugin) {
+  public KeyCommand(Essentials plugin) {
     super(plugin);
   }
 
@@ -99,7 +105,7 @@ public class KeyCodeCommand extends AbstractCommand {
               src.sendMessage(Text.of(TextColors.YELLOW, "La serrure est cassée ou déjà codée."));
           else
             src.sendMessage(Text.of(TextColors.YELLOW,
-                "Vous n'avez pas le niveau nécessaire en forge ou en mécanique pour forger une serrure de complexité " + difficulty + "."));
+                "Vous n'avez pas le niveau nécessaire en mécanique pour forger une serrure de complexité " + difficulty + "."));
 
           return CommandResult.success();
         }
@@ -109,7 +115,7 @@ public class KeyCodeCommand extends AbstractCommand {
     } else {
       src.sendMessage(ONLY_PLAYERS_COMMAND);
     }
-    
+
     return CommandResult.success();
   }
 
@@ -145,6 +151,19 @@ public class KeyCodeCommand extends AbstractCommand {
         int mecanicLevel = McFrPlayer.getMcFrPlayer(player).getSkillLevel(Skill.getSkillByName("mecanique"), Optional.empty());
 
         Optional<ItemStack> optStack = player.getItemInHand(HandTypes.MAIN_HAND);
+        BlockRay<World> ray = BlockRay.from(player).distanceLimit(3).build();
+        Optional<LocksService> service = Sponge.getServiceManager().provide(LocksService.class);
+        Optional<Lock> lookedLock = Optional.empty();
+        
+        while (ray.hasNext()) {
+          BlockRayHit<World> hit = ray.next();
+          if (hit.getExtent().getBlock(hit.getBlockPosition()).getType() != BlockTypes.AIR) {
+            if (service.isPresent()) {
+              lookedLock = service.get().getLock(hit.getBlockPosition(), hit.getExtent());
+            }
+            break;
+          }
+        }
 
         if (optStack.isPresent()) {
           ItemStack stack = optStack.get();
@@ -187,9 +206,29 @@ public class KeyCodeCommand extends AbstractCommand {
             }
             return CommandResult.success();
           }
+        } else if (lookedLock.isPresent()) {
+          int code = lookedLock.get().getCode();
+          int difficulty = 2;
+
+          while (code / Math.pow(10, difficulty) >= 1) {
+            difficulty++;
+          }
+
+          if (difficulty == 2 && mecanicLevel >= 12) {
+            src.sendMessage(Text.of(TextColors.YELLOW, "Code de la serrure : " + code));
+          } else if (difficulty == 3 && mecanicLevel >= 14) {
+            src.sendMessage(Text.of(TextColors.YELLOW, "Code de la serrure : " + code));
+          } else if (difficulty == 4 && mecanicLevel >= 16) {
+            src.sendMessage(Text.of(TextColors.YELLOW, "Code de la serrure : " + code));
+          } else {
+            src.sendMessage(
+                Text.of(TextColors.YELLOW, "Vous n'avez pas le niveau nécessaire en mécanique pour découvrir le code de cette serrure."));
+          }
+
+          return CommandResult.success();
         }
 
-        src.sendMessage(Text.of(TextColors.YELLOW, "Vous devez tenir une clé ou une serrure en main."));
+        src.sendMessage(Text.of(TextColors.YELLOW, "Vous devez tenir une clé ou une serrure en main ou regarder une serrure déjà installée."));
       } else {
         src.sendMessage(ONLY_PLAYERS_COMMAND);
       }

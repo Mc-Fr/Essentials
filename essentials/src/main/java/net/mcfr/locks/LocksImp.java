@@ -88,6 +88,11 @@ public class LocksImp implements LocksService {
   public boolean isLocked(Vector3i pos, World world) {
     return locks.stream().filter(o -> o.isAtLocation(pos, world)).filter(o -> o.isLocked()).findAny().isPresent();
   }
+  
+  @Override
+  public Optional<Lock> getLock(Vector3i pos, World world) {
+    return locks.stream().filter(o -> o.isAtLocation(pos, world)).findAny();
+  }
 
   @Override
   public LockResult switchLock(Vector3i pos, World world, Optional<Integer> code) {

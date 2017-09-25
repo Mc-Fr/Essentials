@@ -16,7 +16,7 @@ import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.event.entity.SpawnEntityEvent;
 import org.spongepowered.api.item.inventory.ItemStack;
 
-import net.mcfr.commands.roleplay.KeyCodeCommand;
+import net.mcfr.commands.roleplay.KeyCommand;
 import net.mcfr.locks.LocksImp.LockResult;
 import net.mcfr.locks.LocksService;
 
@@ -76,7 +76,7 @@ public class NatureListener {
           LockResult result = locksService.removeLock(t.getOriginal().getPosition(), event.getTargetWorld());
           
           if (result == LockResult.REMOVED) {
-            ItemStack lockItem = ItemStack.builder().itemType(KeyCodeCommand.LOCK_ITEM).quantity(1).build();
+            ItemStack lockItem = ItemStack.builder().itemType(KeyCommand.LOCK_ITEM).quantity(1).build();
             Item item = (Item) event.getTargetWorld().createEntity(EntityTypes.ITEM, t.getOriginal().getPosition());
             item.offer(Keys.REPRESENTED_ITEM, lockItem.createSnapshot());
             event.getTargetWorld().spawnEntity(item, event.getCause());
@@ -99,7 +99,7 @@ public class NatureListener {
           if (t.getOriginal().getState().getType() != t.getFinal().getState().getType()) {
             LockResult result = locksService.removeLock(t.getOriginal().getPosition(), event.getTargetWorld());
             if (result == LockResult.REMOVED) {
-              ItemStack lockItem = ItemStack.builder().itemType(KeyCodeCommand.LOCK_ITEM).quantity(1).build();
+              ItemStack lockItem = ItemStack.builder().itemType(KeyCommand.LOCK_ITEM).quantity(1).build();
               Item item = (Item) event.getTargetWorld().createEntity(EntityTypes.ITEM, t.getOriginal().getPosition());
               item.offer(Keys.REPRESENTED_ITEM, lockItem.createSnapshot());
               event.getTargetWorld().spawnEntity(item, event.getCause());
